@@ -1,0 +1,272 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   3ICEO-LATAM — Global Styles v2
+   Tokens 100% extraídos del Figma Design System (STYLES_figma.zip)
+───────────────────────────────────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Gloock&family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── CSS VARIABLES (tokens exactos del Figma) ──────────────────────────── */
+:root {
+  /* ── Main CTA (botones QUIERO ASISTIR / DONAR) */
+  --cta-primary:        #B53077;
+  --cta-primary-hover:  #802254;
+  --cta-primary-light:  #E0B6CD;
+
+  /* ── Actions (botones y links secundarios) */
+  --action-primary:     #097589;
+  --action-dark:        #074954;
+  --action-light:       #ADD2D9;
+
+  /* ── Input borders según estado */
+  --border-default:     #C3DED9;   /* activo vacío */
+  --border-focus:       #0E7B66;   /* focus */
+  --border-filled:      #094E41;   /* filled */
+  --border-neutral:     #5A6E77;
+  --border-error:       #A7170C;
+
+  /* ── Neutrals */
+  --neutral-white:      #FFFFFF;
+  --neutral-80:         rgba(255,255,255,0.80);
+  --neutral-55:         rgba(255,255,255,0.55);
+  --neutral-40:         rgba(255,255,255,0.40);
+  --neutral-18:         rgba(255,255,255,0.18);
+  --neutral-bg:         #F7F6F3;
+  --neutral-200:        #D9DEE2;
+  --neutral-400:        #5A6E77;
+  --neutral-800:        #12303E;
+  --neutral-blue:       #A3D7FF;
+
+  /* ── Brand Aquamarina */
+  --aqua-bg:            #E6F3EE;   /* fondo páginas de formulario */
+  --aqua-50:            #C0FFF2;
+  --aqua-100:           #AEE5DA;
+  --aqua-200:           #76E2CC;
+  --aqua-300:           #74B4A7;
+  --aqua-400:           #03A383;
+  --aqua-500:           #097589;
+  --aqua-600:           #3C625B;
+  --aqua-700:           #004A3B;
+
+  /* ── Brand Blue */
+  --blue-50:            #DAEBF2;
+  --blue-100:           #D4ECFF;
+  --blue-200:           #BED1DA;
+  --blue-300:           #8CCDFF;
+  --blue-400:           #4886B5;
+  --blue-500:           #1894F2;
+  --blue-600:           #12303E;
+  --blue-700:           #1C495C;
+
+  /* ── Navy (fondo footer, heroes, textos principales) */
+  --navy:               #09344e;
+  --navy-dark:          #12303E;
+  --navy-medium:        #1C495C;
+
+  /* ── Shadows (Figma: Posición Y:2px X:2px Desenfoque:8px) */
+  --shadow-light:       2px 2px 8px rgba(18, 48, 62, 0.15);
+  --shadow-dark:        2px 2px 8px rgba(18, 48, 62, 0.30);
+  --shadow-focus:       0 0 0 2px rgba(255,255,255,0.60);
+  --shadow-focus-dark:  2px 2px 8px rgba(18, 48, 62, 0.30);
+
+  /* ── Tipografía */
+  --font-display:       'Gloock', Georgia, serif;
+  --font-ui:            'Poppins', sans-serif;
+  --font-body:          'Inter', sans-serif;
+
+  --radius-sm:          6px;
+  --radius:             8px;
+  --radius-pill:        999px;
+}
+
+/* ─── RESET BASE ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--neutral-800);
+  background-color: var(--neutral-white);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── TIPOGRAFÍA ─────────────────────────────────────────────────────────── */
+/* Display / Gloock — solo en H1 de heroes y páginas */
+.text-display {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 4.5vw, 48px);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--navy);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-ui);
+  color: var(--navy);
+  line-height: 1.2;
+}
+h1 { font-size: 36px; font-weight: 700; }
+h2 { font-size: 28px; font-weight: 600; }
+h3 { font-size: 20px; font-weight: 500; }
+h4 { font-size: 16px; font-weight: 600; }
+
+p  { font-family: var(--font-body); font-size: 15px; line-height: 1.6; color: var(--neutral-800); }
+a  { color: var(--action-primary); text-decoration: none; transition: color .2s; }
+a:hover { color: var(--action-dark); }
+
+/* ─── BOTONES (del Figma "Buttons & links") ──────────────────────────────── */
+
+/* Main CTA / filled — #B53077 */
+.btn-cta {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  background-color: var(--cta-primary);
+  color: var(--neutral-white);
+  font-family: var(--font-ui); font-size: 14px; font-weight: 600;
+  padding: 12px 28px; border-radius: var(--radius-pill); border: none;
+  cursor: pointer; letter-spacing: 0.04em;
+  transition: background-color .2s, transform .15s, box-shadow .2s;
+  box-shadow: var(--shadow-light);
+  white-space: nowrap;
+}
+.btn-cta:hover { background-color: var(--cta-primary-hover); transform: translateY(-1px); box-shadow: var(--shadow-dark); }
+.btn-cta:disabled { background-color: var(--cta-primary-light); cursor: not-allowed; transform: none; }
+
+/* Main CTA / outlined */
+.btn-cta-outline {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  background-color: transparent;
+  color: var(--cta-primary);
+  font-family: var(--font-ui); font-size: 14px; font-weight: 600;
+  padding: 10px 28px; border-radius: var(--radius-pill);
+  border: 2px solid var(--cta-primary);
+  cursor: pointer; letter-spacing: 0.04em;
+  transition: all .2s;
+  white-space: nowrap;
+}
+.btn-cta-outline:hover { background-color: var(--cta-primary); color: var(--neutral-white); }
+
+/* Actions / filled — #097589 */
+.btn-action {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  background-color: var(--action-primary);
+  color: var(--neutral-white);
+  font-family: var(--font-ui); font-size: 14px; font-weight: 600;
+  padding: 12px 28px; border-radius: var(--radius-pill); border: none;
+  cursor: pointer; letter-spacing: 0.04em;
+  transition: background-color .2s, transform .15s;
+  white-space: nowrap;
+}
+.btn-action:hover { background-color: var(--action-dark); transform: translateY(-1px); }
+.btn-action:disabled { background-color: var(--action-light); cursor: not-allowed; transform: none; }
+
+/* Actions / outlined */
+.btn-action-outline {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  background-color: transparent;
+  color: var(--action-primary);
+  font-family: var(--font-ui); font-size: 14px; font-weight: 600;
+  padding: 10px 28px; border-radius: var(--radius-pill);
+  border: 2px solid var(--action-primary);
+  cursor: pointer; letter-spacing: 0.04em;
+  transition: all .2s;
+  white-space: nowrap;
+}
+.btn-action-outline:hover { background-color: var(--action-primary); color: var(--neutral-white); }
+
+/* Dark background variants */
+.btn-cta-dark { background-color: var(--cta-primary); }
+.btn-action-dark { background-color: transparent; border: 2px solid rgba(255,255,255,0.6); color: white; }
+.btn-action-dark:hover { background-color: rgba(255,255,255,0.1); border-color: white; }
+
+/* ─── INPUTS (del Figma "INPUTS") ────────────────────────────────────────── */
+.input-label {
+  display: block;
+  font-family: var(--font-ui); font-size: 13px; font-weight: 500;
+  color: var(--navy); margin-bottom: 6px;
+}
+.input-field {
+  width: 100%; height: 48px; padding: 0 14px;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--border-default);
+  background-color: var(--neutral-white);
+  font-family: var(--font-ui); font-size: 15px; color: var(--neutral-800);
+  outline: none; transition: border-color .2s, box-shadow .2s;
+  box-sizing: border-box;
+}
+.input-field::placeholder { color: var(--neutral-400); font-size: 14px; }
+.input-field:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(14,123,102,0.12); }
+.input-field.filled { border-color: var(--border-filled); }
+.input-field.error { border-color: var(--border-error); }
+
+.input-textarea {
+  width: 100%; min-height: 110px; padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--border-default);
+  background-color: var(--neutral-white);
+  font-family: var(--font-ui); font-size: 15px; color: var(--neutral-800);
+  outline: none; resize: vertical; transition: border-color .2s;
+  box-sizing: border-box;
+}
+.input-textarea:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(14,123,102,0.12); }
+
+.input-select {
+  width: 100%; height: 48px; padding: 0 14px;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--border-default);
+  background-color: var(--neutral-white);
+  font-family: var(--font-ui); font-size: 14px; color: var(--neutral-800);
+  outline: none; cursor: pointer; transition: border-color .2s;
+  box-sizing: border-box;
+}
+.input-select:focus { border-color: var(--border-focus); }
+
+.input-hint  { font-family: var(--font-ui); font-size: 11px; color: var(--action-primary); margin-top: 3px; display: block; }
+.input-error { font-family: var(--font-ui); font-size: 11px; color: var(--border-error);    margin-top: 3px; display: block; }
+.input-opt   { font-family: var(--font-ui); font-size: 11px; color: var(--neutral-400);     margin-top: 3px; display: block; }
+
+/* Dark mode inputs (footer) */
+.input-dark {
+  background-color: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: var(--radius-sm);
+  color: white;
+  font-family: var(--font-ui); font-size: 14px;
+  padding: 10px 14px; outline: none;
+  transition: border-color .2s;
+}
+.input-dark::placeholder { color: rgba(255,255,255,0.45); }
+.input-dark:focus { border-color: var(--aqua-100); }
+
+/* ─── CARDS ──────────────────────────────────────────────────────────────── */
+.card {
+  background-color: var(--neutral-white);
+  border-radius: 12px;
+  box-shadow: var(--shadow-light);
+  padding: 32px;
+  transition: box-shadow .2s, transform .2s;
+}
+.card-hover:hover { box-shadow: var(--shadow-dark); transform: translateY(-2px); }
+
+/* ─── LAYOUT HELPERS ─────────────────────────────────────────────────────── */
+.container-brand { max-width: 1280px; margin: 0 auto; width: 100%; }
+.section-padding  { padding: 80px 24px; }
+@media (min-width: 768px)  { .section-padding { padding: 100px 48px; } }
+@media (min-width: 1280px) { .section-padding { padding: 120px 80px; } }
+
+/* ─── SCROLLBAR ──────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--neutral-bg); }
+::-webkit-scrollbar-thumb { background: var(--action-primary); border-radius: 3px; }
+
+/* ─── ANIMATION UTILS ────────────────────────────────────────────────────── */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white; border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}

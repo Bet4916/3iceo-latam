@@ -1,0 +1,45 @@
+# ─── Next.js ──────────────────────────────────────────────────
+.next/
+out/
+build/
+
+# ─── Node ──────────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ─── Variables de entorno (NUNCA a Git) ────────────────────────
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ─── Unity / Gamificación ──────────────────────────────────────
+gamification/Library/
+gamification/Temp/
+gamification/Build/
+gamification/Logs/
+gamification/obj/
+gamification/UserSettings/
+gamification/*.csproj
+gamification/*.sln
+gamification/[Ll]ogs/
+gamification/[Mm]emoryCaptures/
+gamification/Assets/AssetStoreTools*
+gamification/Assets/Plugins/Editor/JetBrains*
+
+# ─── OS ────────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+Thumbs.db
+*.swp
+
+# ─── IDEs ──────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
