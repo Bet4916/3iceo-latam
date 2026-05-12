@@ -56,8 +56,8 @@ export async function POST(request: NextRequest) {
     sfData.append('retURL',  'https://congreso.somosawaq.org/')
 
     // Descomenta estas dos líneas para hacer pruebas y ver qué llega a Salesforce:
-    sfData.append('debug',      '1')
-    sfData.append('debugEmail', 'tu_email@tec.mx')
+    // sfData.append('debug',      '1')
+    // sfData.append('debugEmail', 'tu_email@tec.mx')
 
     // ── Campos estándar ──────────────────────────────────────────────────
     sfData.append('name',        nombreCompleto)
