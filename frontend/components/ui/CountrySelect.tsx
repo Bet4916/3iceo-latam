@@ -155,7 +155,7 @@ export function CountrySelect({
       components={{ Option, SingleValue, Placeholder: CountryPlaceholder }}
       styles={{
         ...selectStyles,
-        control: (base, state) => ({
+        control: (base: object, state: { isFocused: boolean }) => ({
           ...(selectStyles.control as Function)(base, state),
           borderColor: hasError ? '#A7170C' : state.isFocused ? '#097589' : '#C3DED9',
         }),
