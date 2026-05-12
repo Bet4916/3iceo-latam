@@ -150,7 +150,7 @@ export function CountrySelect({
     <Select
       options={OPTIONS}
       value={selected}
-      onChange={opt => onChange(opt?.value ?? '')}
+      onChange={(opt) => onChange((opt as CountryOption | null)?.value ?? '')}
       placeholder={placeholder}
       components={{ Option, SingleValue, Placeholder: CountryPlaceholder }}
       styles={{
