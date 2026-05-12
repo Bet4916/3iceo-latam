@@ -51,28 +51,34 @@ const TIPOS_ORG: TipoOrg[] = ['Universidad', 'Empresa privada', 'Administración
 const AREAS_TEMATICAS = ['Biodiversidad y ecosistemas', 'Cambio climático y adaptación', 'Economía circular y residuos', 'Energías renovables', 'Agua y saneamiento', 'Educación ambiental', 'Política y legislación ambiental', 'Innovación social verde', 'Comunidades indígenas y territorio', 'Otra área temática']
 const TIPOS_COLABORACION = ['Patrocinio económico', 'Patrocinio en especie', 'Alianza institucional', 'Media partner / difusión', 'Colaboración académica', 'Voluntariado organizativo', 'Otro tipo de colaboración']
 
+// Mapeo de valores internos → valores exactos del picklist de Salesforce
+const TIPO_MAP: Record<string, string> = {
+  asistencia:   'Asistente',
+  ponente:      'Ponente',
+  colaboracion: 'Colaborador',
+}
+
 const S = {
-  label: { fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 500, color: '#09344e', display: 'block', marginBottom: 6 } as React.CSSProperties,
-  input: { width: '100%', height: 48, padding: '0 14px', borderRadius: 8, border: '1.5px solid #C3DED9', backgroundColor: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 15, color: '#12303E', outline: 'none', boxSizing: 'border-box' as const, transition: 'border-color 0.2s' } as React.CSSProperties,
-  select: { width: '100%', height: 48, padding: '0 14px', borderRadius: 8, border: '1.5px solid #C3DED9', backgroundColor: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, color: '#12303E', outline: 'none', cursor: 'pointer', boxSizing: 'border-box' as const, appearance: 'auto' as const } as React.CSSProperties,
+  label:    { fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 500, color: '#09344e', display: 'block', marginBottom: 6 } as React.CSSProperties,
+  input:    { width: '100%', height: 48, padding: '0 14px', borderRadius: 8, border: '1.5px solid #C3DED9', backgroundColor: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 15, color: '#12303E', outline: 'none', boxSizing: 'border-box' as const, transition: 'border-color 0.2s' } as React.CSSProperties,
+  select:   { width: '100%', height: 48, padding: '0 14px', borderRadius: 8, border: '1.5px solid #C3DED9', backgroundColor: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, color: '#12303E', outline: 'none', cursor: 'pointer', boxSizing: 'border-box' as const, appearance: 'auto' as const } as React.CSSProperties,
   textarea: { width: '100%', minHeight: 110, padding: '12px 14px', borderRadius: 8, border: '1.5px solid #C3DED9', backgroundColor: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 15, color: '#12303E', outline: 'none', boxSizing: 'border-box' as const, resize: 'vertical' as const } as React.CSSProperties,
-  hint: { fontFamily: 'Poppins, sans-serif', fontSize: 11, color: '#097589', marginTop: 4, display: 'block' } as React.CSSProperties,
+  hint:     { fontFamily: 'Poppins, sans-serif', fontSize: 11, color: '#097589', marginTop: 4, display: 'block' } as React.CSSProperties,
   optional: { fontFamily: 'Poppins, sans-serif', fontSize: 11, color: '#5A6E77', marginTop: 4, display: 'block' } as React.CSSProperties,
-  error: { fontFamily: 'Poppins, sans-serif', fontSize: 11, color: '#A7170C', marginTop: 4, display: 'block' } as React.CSSProperties,
-  field: { display: 'flex', flexDirection: 'column' as const, gap: 0 },
+  error:    { fontFamily: 'Poppins, sans-serif', fontSize: 11, color: '#A7170C', marginTop: 4, display: 'block' } as React.CSSProperties,
+  field:    { display: 'flex', flexDirection: 'column' as const, gap: 0 },
 }
 
 const INITIAL_FORM: Form = {
   tipoSolicitud: null, quiereStand: false, tituloPonencia: '', resumenPonencia: '', areaTematica: '',
   tipoColaboracion: '', descripcionColaboracion: '', email: '', nombre: '', tipoOrg: null,
   tipoOrgEspecifica: '', nombreOrg: '', puesto: '',
-  codigoPais: 'CO',   // ← Colombia por defecto
+  codigoPais: 'CO',
   telefono: '',
   ubicacionPaisCode: '', ubicacionRegionCode: '', ubicacionCiudad: '',
   mensaje: '', aceptaPrivacidad: false, aceptaComunicaciones: false,
 }
 
-// Icono de ubicación reutilizable
 function LocationIcon({ size = 14 }: { size?: number }) {
   return (
     <img
@@ -86,14 +92,15 @@ function LocationIcon({ size = 14 }: { size?: number }) {
 }
 
 export default function RegistroPage() {
-  const [step, setStep] = useState<Step>(1)
-  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [step, setStep]           = useState<Step>(1)
+  const [errors, setErrors]       = useState<Record<string, string>>({})
   const [submitting, setSubmitting] = useState(false)
-  const [form, setForm] = useState<Form>(INITIAL_FORM)
+  const [submitError, setSubmitError] = useState<string | null>(null)   // ← NUEVO
+  const [form, setForm]           = useState<Form>(INITIAL_FORM)
   const formRef = useRef<HTMLDivElement>(null)
 
   const regions = form.ubicacionPaisCode ? State.getStatesOfCountry(form.ubicacionPaisCode) : []
-  const cities = form.ubicacionPaisCode && form.ubicacionRegionCode
+  const cities  = form.ubicacionPaisCode && form.ubicacionRegionCode
     ? City.getCitiesOfState(form.ubicacionPaisCode, form.ubicacionRegionCode) : []
 
   const handleCountryChange = (isoCode: string) => {
@@ -136,14 +143,32 @@ export default function RegistroPage() {
     return Object.keys(e).length === 0
   }
 
+  // ── HANDLE SUBMIT — conectado a Salesforce Web-to-Case via /api/registro ──
   const handleSubmit = async () => {
     if (!validateStep2()) return
     setSubmitting(true)
+    setSubmitError(null)
+
     try {
-      await new Promise(r => setTimeout(r, 1200))
-      setStep(3)
-      scrollToForm()
-    } finally { setSubmitting(false) }
+      const response = await fetch('/api/registro', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setStep(3)
+        scrollToForm()
+      } else {
+        setSubmitError(data.error || 'Ocurrió un error inesperado. Por favor intenta de nuevo.')
+      }
+    } catch {
+      setSubmitError('No se pudo conectar con el servidor. Verifica tu conexión e intenta de nuevo.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const heroTitle = { asistencia: 'Solicitud de asistencia al Congreso', ponente: 'Inscripción como Ponente', colaboracion: 'Propuesta de Colaboración / Alianza' }
@@ -350,7 +375,7 @@ export default function RegistroPage() {
                       {errors.puesto ? <span style={S.error}>{errors.puesto}</span> : <span style={S.hint}>Requerido</span>}
                     </div>
 
-                    {/* Teléfono — Colombia por defecto */}
+                    {/* Teléfono */}
                     <div style={S.field}>
                       <label style={S.label}>Nº Teléfono *</label>
                       <div style={{ display: 'flex', gap: 8 }}>
@@ -364,11 +389,10 @@ export default function RegistroPage() {
                       {errors.telefono ? <span style={S.error}>{errors.telefono}</span> : <span style={S.hint}>Requerido</span>}
                     </div>
 
-                    {/* Ubicación — icon-location.svg en cada selector */}
+                    {/* Ubicación */}
                     <div style={S.field}>
                       <label style={S.label}>Ubicación</label>
 
-                      {/* País */}
                       <CountrySelect
                         value={form.ubicacionPaisCode}
                         onChange={v => handleCountryChange(v)}
@@ -380,7 +404,6 @@ export default function RegistroPage() {
                           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
                             style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 8 }}>
 
-                            {/* Región / Estado */}
                             <div>
                               <div style={{ position: 'relative' }}>
                                 <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', zIndex: 1, display: 'flex' }}>
@@ -399,7 +422,6 @@ export default function RegistroPage() {
                               <span style={S.hint}>Requerido</span>
                             </div>
 
-                            {/* Localidad */}
                             <div>
                               {form.ubicacionRegionCode ? (
                                 cities.length > 0 ? (
@@ -466,6 +488,26 @@ export default function RegistroPage() {
                       </label>
                     </div>
 
+                    {/* ── ERROR de envío ── */}
+                    {submitError && (
+                      <motion.p
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        style={{
+                          fontFamily: 'Poppins, sans-serif',
+                          fontSize: 13,
+                          color: '#A7170C',
+                          backgroundColor: '#fff8f7',
+                          border: '1px solid #f5c2c0',
+                          borderRadius: 8,
+                          padding: '10px 14px',
+                          margin: 0,
+                        }}
+                      >
+                        ⚠️ {submitError}
+                      </motion.p>
+                    )}
+
                     <div style={{ display: 'flex', gap: 12, alignItems: 'center', paddingTop: 8 }}>
                       <button onClick={() => { setStep(1); scrollToForm() }}
                         style={{ padding: '12px 20px', borderRadius: 50, border: '1.5px solid #C3DED9', color: '#097589', backgroundColor: 'transparent', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600, cursor: 'pointer', letterSpacing: '0.03em', display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -490,10 +532,8 @@ export default function RegistroPage() {
             {step === 3 && (
               <motion.div key="s3" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.4 }}>
                 <Card>
-                  {/* Ilustración drop_hands + mensaje principal */}
                   <div style={{ textAlign: 'center', padding: '16px 16px 32px' }}>
 
-                    {/* Imagen principal del Figma */}
                     <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
                       <img
                         src="/icons/drop_hands.svg"
@@ -519,7 +559,6 @@ export default function RegistroPage() {
                       Revisa también tu carpeta de spam.
                     </p>
 
-                    {/* CTA principal */}
                     <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 17, fontWeight: 600, color: '#09344e', marginBottom: 20 }}>
                       Gracias por tu interés y ser parte del 3ICEO
                     </p>
@@ -534,10 +573,8 @@ export default function RegistroPage() {
                       </Link>
                     </div>
 
-                    {/* Divider */}
                     <div style={{ height: 1, backgroundColor: '#EFF4F7', margin: '0 -32px 32px' }} />
 
-                    {/* Sección: Síguenos — follow.svg + RRSS */}
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
                       <img
                         src="/icons/follow.svg"
@@ -549,9 +586,9 @@ export default function RegistroPage() {
                       </p>
                       <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
                         {[
-                          { src: '/icons/icon_instagram.svg', href: 'https://instagram.com/awaqong',          label: 'Instagram' },
-                          { src: '/icons/icon_facebook.svg',  href: 'https://facebook.com/awaqong',           label: 'Facebook'  },
-                          { src: '/icons/icon_linkedin.svg',  href: 'https://linkedin.com/company/awaq-ong',  label: 'LinkedIn'  },
+                          { src: '/icons/icon_instagram.svg', href: 'https://instagram.com/awaqong',         label: 'Instagram' },
+                          { src: '/icons/icon_facebook.svg',  href: 'https://facebook.com/awaqong',          label: 'Facebook'  },
+                          { src: '/icons/icon_linkedin.svg',  href: 'https://linkedin.com/company/awaq-ong', label: 'LinkedIn'  },
                         ].map(({ src, href, label }) => (
                           <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}
                             style={{ width: 44, height: 44, borderRadius: '50%', backgroundColor: '#09344e', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background .2s, transform .2s' }}

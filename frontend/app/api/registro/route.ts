@@ -1,70 +1,100 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// Obtiene token de acceso de Salesforce (OAuth 2.0 Client Credentials)
-async function getSalesforceToken(): Promise<string> {
-  const params = new URLSearchParams({
-    grant_type: 'client_credentials',
-    client_id: process.env.SALESFORCE_CLIENT_ID!,
-    client_secret: process.env.SALESFORCE_CLIENT_SECRET!,
-  })
-  const res = await fetch(`${process.env.SALESFORCE_TOKEN_URL}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: params.toString(),
-  })
-  const data = await res.json()
-  return data.access_token
+// Mapeo de los valores internos del form a los valores exactos de Salesforce
+const TIPO_MAP: Record<string, string> = {
+  asistencia:  'Asistente',
+  ponente:     'Ponente',
+  colaboracion: 'Colaborador',
 }
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
 
-    // Validación básica en backend
-    if (!body.email || !body.nombre || !body.tipoSolicitud || !body.aceptaPrivacidad) {
-      return NextResponse.json({ error: 'Campos obligatorios incompletos' }, { status: 400 })
+    // Validación básica en backend (segunda línea de defensa)
+    if (!body.email || !body.nombre || !body.aceptaPrivacidad) {
+      return NextResponse.json(
+        { error: 'Faltan campos obligatorios' },
+        { status: 400 }
+      )
     }
 
-    const token = await getSalesforceToken()
-    const instanceUrl = process.env.SALESFORCE_INSTANCE_URL
+    // Separar nombre y apellidos (el form los tiene en un solo campo)
+    // Ejemplo: "María García López" → primerNombre="María", apellido="García López"
+    const nombreCompleto = body.nombre.trim()
+    const espacioIdx = nombreCompleto.indexOf(' ')
+    const primerNombre = espacioIdx > -1 ? nombreCompleto.substring(0, espacioIdx) : nombreCompleto
+    const apellido     = espacioIdx > -1 ? nombreCompleto.substring(espacioIdx + 1) : ''
 
-    // Crear el Case en Salesforce (Web-to-Case equivalente vía API)
-    const casePayload = {
-      Subject: `Registro 3ICEO — ${body.tipoSolicitud} — ${body.nombreOrg || body.nombre}`,
-      Description: `Tipo: ${body.tipoSolicitud} | Org: ${body.nombreOrg} | País: ${body.pais}`,
-      Origin: 'Web',
-      Status: 'New',
-      // Campos custom del Case (debes crearlos en Salesforce primero):
-      Tipo_Solicitud__c: body.tipoSolicitud,
-      Email_Solicitante__c: body.email,
-      Nombre__c: `${body.nombre} ${body.apellidos}`,
-      Nombre_Org__c: body.nombreOrg,
-      Tipo_Org__c: body.tipoOrg,
-      Pais__c: body.pais,
-      Ciudad__c: body.ciudad,
-      Quiere_Stand__c: body.quiereStand || false,
-    }
+    // Construir el teléfono completo
+    const telefonoCompleto = `+${body.codigoPais || 'CO'} ${body.telefono || ''}`.trim()
 
-    const sfRes = await fetch(`${instanceUrl}/services/data/v59.0/sobjects/Case`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(casePayload),
-    })
+    // Construir la descripción con toda la info extra que no tiene campo custom
+    const descripcion = [
+      `Tipo org: ${body.tipoOrg || '-'}${body.tipoOrg === 'Otra organización' ? ` (${body.tipoOrgEspecifica})` : ''}`,
+      `Puesto: ${body.puesto || '-'}`,
+      `País: ${body.ubicacionPaisCode || '-'}`,
+      `Ciudad: ${body.ubicacionCiudad || '-'}`,
+      `Quiere stand: ${body.quiereStand ? 'Sí' : 'No'}`,
+      body.tipoSolicitud === 'ponente' && body.tituloPonencia
+        ? `Ponencia: ${body.tituloPonencia} | Área: ${body.areaTematica}` : null,
+      body.tipoSolicitud === 'ponente' && body.resumenPonencia
+        ? `Resumen: ${body.resumenPonencia}` : null,
+      body.tipoSolicitud === 'colaboracion' && body.tipoColaboracion
+        ? `Colaboración: ${body.tipoColaboracion}` : null,
+      body.tipoSolicitud === 'colaboracion' && body.descripcionColaboracion
+        ? `Propuesta: ${body.descripcionColaboracion}` : null,
+      body.mensaje ? `Mensaje: ${body.mensaje}` : null,
+      `Acepta comunicaciones: ${body.aceptaComunicaciones ? 'Sí' : 'No'}`,
+    ].filter(Boolean).join('\n')
 
-    if (!sfRes.ok) {
-      const err = await sfRes.json()
-      console.error('Salesforce error:', err)
-      return NextResponse.json({ error: 'Error al guardar en Salesforce' }, { status: 500 })
-    }
+    // Construir el FormData para Web-to-Case
+    const sfData = new URLSearchParams()
 
-    const sfData = await sfRes.json()
-    return NextResponse.json({ success: true, caseId: sfData.id }, { status: 201 })
+    // ── Campos fijos ─────────────────────────────────────────────────────
+    sfData.append('orgid',   '00D7Q0000092UMO')
+    sfData.append('retURL',  'https://congreso.somosawaq.org/')
+
+    // Descomenta estas dos líneas para hacer pruebas y ver qué llega a Salesforce:
+    // sfData.append('debug',      '1')
+    // sfData.append('debugEmail', 'tu_email@tec.mx')
+
+    // ── Campos estándar ──────────────────────────────────────────────────
+    sfData.append('name',        nombreCompleto)
+    sfData.append('email',       body.email)
+    sfData.append('phone',       telefonoCompleto)
+    sfData.append('company',     body.nombreOrg || '')
+    sfData.append('subject',     `Registro 3ICEO — ${TIPO_MAP[body.tipoSolicitud] || body.tipoSolicitud} — ${body.nombreOrg || nombreCompleto}`)
+    sfData.append('description', descripcion)
+
+    // ── Campos custom con los IDs reales de Salesforce ───────────────────
+    sfData.append('00NP500000QQ1eD', primerNombre)           // Primer Nombre
+    sfData.append('00NP500000QQ1kf', apellido)               // Apellido
+    sfData.append('00NP500000QQ0gX', TIPO_MAP[body.tipoSolicitud] || '') // Tipo Registro
+    sfData.append('00NP500000QPumQ', body.nombreOrg || '')   // Nombre Organización
+    sfData.append('00NP500000QQ1sj', body.aceptaPrivacidad ? '1' : '')  // Consentimiento
+
+    // ── Enviar a Salesforce ──────────────────────────────────────────────
+    const sfResponse = await fetch(
+      'https://webto.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: sfData.toString(),
+      }
+    )
+
+    // Web-to-Case siempre devuelve 200 o 302, nunca un error útil.
+    // Si no lanzó excepción, asumimos que llegó.
+    console.log('Salesforce status:', sfResponse.status)
+
+    return NextResponse.json({ success: true }, { status: 200 })
 
   } catch (error) {
-    console.error('Error interno:', error)
-    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 })
+    console.error('Error en /api/registro:', error)
+    return NextResponse.json(
+      { error: 'No se pudo enviar tu solicitud. Por favor intenta de nuevo.' },
+      { status: 500 }
+    )
   }
 }
