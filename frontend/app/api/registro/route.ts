@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
 
     // ── Enviar a Salesforce ──────────────────────────────────────────────
     const sfResponse = await fetch(
-      'https://webto.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8',
+  'https://webto.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8&orgId=00D7Q0000092UMO',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
