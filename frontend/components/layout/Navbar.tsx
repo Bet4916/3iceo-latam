@@ -12,7 +12,7 @@ const NAV_LINKS = [
   { label: 'Agenda',              href: '/marketing/agenda' },           // 🔵
   { label: 'Líneas temáticas',    href: '/marketing/lineas-tematicas' }, // 🔵
   { label: 'Aliados',             href: '/marketing/aliados' },          // 🔵
-  { label: '⭐ Manifiesto 1ICEO', href: '/marketing/primer-iceo' },    // 🔵
+  { label: '⭐ Manifiesto 2ICEO', href: '/marketing/segundo-iceo' },    // 🔵
   { label: 'Marketplace',         href: '/marketing/marketplace' },      // 🔵
   { label: 'Sede del evento',     href: '/marketing/universidad' },      // 🔵
   { label: 'Prensa',              href: '/marketing/comunicaciones' },   // ✅
