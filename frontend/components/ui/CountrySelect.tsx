@@ -219,7 +219,7 @@ export function PhoneCodeSelect({ value, onChange }: PhoneCodeSelectProps) {
       <Select
         options={OPTIONS}
         value={selected}
-        onChange={opt => onChange(opt?.value ?? '')}
+        onChange={(opt) => onChange((opt as { value: string } | null)?.value ?? '')}
         components={{ Option: PhoneOption, SingleValue: PhoneSingleValue }}
         styles={selectStyles as object}
         isSearchable
