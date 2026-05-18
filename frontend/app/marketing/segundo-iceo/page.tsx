@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { IconLinkedin, IconInstagram, IconFacebook, IconYoutube } from '@/components/ui/icons'
@@ -18,42 +19,107 @@ const FadeIn = ({ children, delay = 0, style }: { children: React.ReactNode; del
 )
 
 // ─── DATOS ────────────────────────────────────────────────────────────────────
+// Todas las imágenes van en /public/icons/
+// Renombra antes de subir:
+//   "jose serrano.svg"   → jose_serrano.svg
+//   "begoña_hera.svg"   → begona_hera.svg
+//   "Memorias_Congreso 2°ICEO.pdf" → memoria_2iceo.pdf
+
 const MOMENTOS = [
-  { num: '30', label: 'Panelistas',                      emoji: '🎙️', bg: 'linear-gradient(135deg,#09344e 0%,#1C495C 100%)' },
-  { num: '14', label: 'Conferencias',                    emoji: '🏛️', bg: 'linear-gradient(135deg,#097589 0%,#09344e 100%)' },
-  { num: '02', label: 'Conversatorios',                  emoji: '💬', bg: 'linear-gradient(135deg,#4886B5 0%,#12303E 100%)' },
-  { num: '28', label: 'Organizaciones en el Marketplace',emoji: '🌿', bg: 'linear-gradient(135deg,#03A383 0%,#09344e 100%)' },
-  { num: '02', label: 'Convenios',                       emoji: '🤝', bg: 'linear-gradient(135deg,#1C495C 0%,#097589 100%)' },
-  { num: '05', label: 'Talleres',                        emoji: '🛠️', bg: 'linear-gradient(135deg,#12303E 0%,#4886B5 100%)' },
-  { num: '17', label: 'Entidades aliadas',               emoji: '🏢', bg: 'linear-gradient(135deg,#09344e 0%,#03A383 100%)' },
-  { num: '03', label: 'Días de Marketplace',             emoji: '📅', bg: 'linear-gradient(135deg,#097589 0%,#4886B5 100%)' },
-  { num: '08', label: 'Universidades aliadas',           emoji: '🎓', bg: 'linear-gradient(135deg,#1C495C 0%,#09344e 100%)' },
+  { num: '30', label: 'Panelistas',                       bg: 'linear-gradient(135deg,#09344e 0%,#1C495C 100%)', image: '/icons/panelistas.svg'       },
+  { num: '14', label: 'Conferencias',                     bg: 'linear-gradient(135deg,#097589 0%,#09344e 100%)', image: '/icons/conferencias.svg'     },
+  { num: '02', label: 'Conversatorios',                   bg: 'linear-gradient(135deg,#4886B5 0%,#12303E 100%)', image: '/icons/conversatorios.svg'   },
+  { num: '28', label: 'Organizaciones en el Marketplace', bg: 'linear-gradient(135deg,#03A383 0%,#09344e 100%)', image: '/icons/org_marletplace.svg'  },
+  { num: '02', label: 'Convenios',                        bg: 'linear-gradient(135deg,#1C495C 0%,#097589 100%)', image: '/icons/convenios.svg'        },
+  { num: '05', label: 'Talleres',                         bg: 'linear-gradient(135deg,#12303E 0%,#4886B5 100%)', image: '/icons/talleres.svg'         },
+  { num: '17', label: 'Entidades aliadas',                bg: 'linear-gradient(135deg,#09344e 0%,#03A383 100%)', image: '/icons/ent_aliados.svg'      },
+  { num: '03', label: 'Días de Marketplace',              bg: 'linear-gradient(135deg,#097589 0%,#4886B5 100%)', image: '/icons/dias_marletplace.svg' },
+  { num: '08', label: 'Universidades aliadas',            bg: 'linear-gradient(135deg,#1C495C 0%,#09344e 100%)', image: '/icons/uni_aliadas.svg'      },
 ]
 
 const IMPACTO = [
-  { num: '1209', label: 'Asistentes Presenciales y Virtuales', icon: '👥' },
-  { num: '192',  label: 'Organizaciones Ambientales',          icon: '🌱' },
-  { num: '06',   label: 'Entidades Públicas',                  icon: '🏛️' },
-  { num: '+135', label: 'Estudiantes Universitarios',          icon: '🎓' },
-  { num: '31',   label: 'Participantes Independientes',        icon: '👤' },
+  { num: '1209', label: 'Asistentes Presenciales y Virtuales', icon: '/icons/icon_asistentes.svg'                   },
+  { num: '192',  label: 'Organizaciones Ambientales',          icon: '/icons/icon_organizaciones.svg'               },
+  { num: '06',   label: 'Entidades Públicas',                  icon: '/icons/icon_ent_pub.svg'                      },
+  { num: '+135', label: 'Estudiantes Universitarios',          icon: '/icons/icon_estudiantes.svg'                  },
+  { num: '31',   label: 'Participantes Independientes',        icon: '/icons/icon_participantes_independientes.svg' },
 ]
 
 const REDES = [
-  { num: '7784+', label: 'Interacciones en los contenidos de la plataforma', bg: 'linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)', Icon: IconInstagram,  platform: 'Instagram'  },
-  { num: '6511+', label: 'Interacciones en los contenidos de la plataforma', bg: '#1877F2',                                                            Icon: IconFacebook,   platform: 'Facebook'   },
-  { num: '851',   label: 'Asistentes al streaming virtual',                  bg: '#FF0000',                                                            Icon: IconYoutube,    platform: 'YouTube'    },
-  { num: '1502',  label: 'Interacciones en los videos del congreso',        bg: '#0A66C2',                                                            Icon: IconLinkedin,   platform: 'LinkedIn'   },
+  { num: '7784+', label: 'Interacciones en los contenidos de la plataforma', bg: 'linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)', Icon: IconInstagram, platform: 'Instagram' },
+  { num: '6511+', label: 'Interacciones en los contenidos de la plataforma', bg: '#1877F2',                                                           Icon: IconFacebook,  platform: 'Facebook'  },
+  { num: '851',   label: 'Asistentes al streaming virtual',                  bg: '#FF0000',                                                           Icon: IconYoutube,   platform: 'YouTube'   },
+  { num: '1502',  label: 'Interacciones en los videos del congreso',         bg: '#0A66C2',                                                           Icon: IconLinkedin,  platform: 'LinkedIn'  },
 ]
 
+// Personalidades — agrega más objetos aquí para que aparezcan en el carrusel
 const PERSONALIDADES = [
-  { name: 'José Serrano Serna',     role: 'Director Ejecutivo Presidente\nAwaq ONG',          flag: '🇨🇴', li: '#' },
-  { name: 'Luis Alfonso Aguirre',   role: 'Gerente de Programa\nPWF Colombia',                flag: '🇨🇴', li: '#' },
-  { name: 'Rolando Evelio Pérez',   role: 'Profesor Planta Tecnológico\nde Monterrey',        flag: '🇲🇽', li: '#' },
-  { name: 'Begoña de la Hera',      role: 'Directora Programa TED\nAwaq ONG',                 flag: '🇪🇸', li: '#' },
+  {
+    name: 'Luis Alfonso Aguirre',
+    role: 'Gerente de Programa\nPWF Colombia',
+    flag: '🇨🇴',
+    li:   'https://www.linkedin.com/in/luis-alfonso-aguirre-montealegre-0770a91a/',
+    img:  '/icons/luis_alfonso.svg',
+  },
+  {
+    name: 'José Serrano Serna',
+    role: 'Director Ejecutivo Presidente\nAwaq ONG',
+    flag: '🇨🇴',
+    li:   'https://www.linkedin.com/in/jsserna5575/',
+    img:  '/icons/jose_serrano.svg',
+  },
+  {
+    name: 'Begoña de la Hera',
+    role: 'Directora Programa TED\nAwaq ONG',
+    flag: '🇪🇸',
+    li:   'https://www.linkedin.com/in/bego%C3%B1a-de-la-hera-25ba801a/',
+    img:  '/icons/begona_hera.svg',
+  },
+  {
+    name: 'Rolando Evelio Pérez',
+    role: 'Profesor Planta Tecnológico\nde Monterrey',
+    flag: '🇲🇽',
+    li:   'https://www.linkedin.com/in/rolando-evelio-p%C3%A9rez-vers%C3%B3n-4137a8264/',
+    img:  '/icons/rolando_evelio.jpg',
+  },
+]
+
+// 4 entrevistas — labels son nombres reales, src no cambia
+const ENTREVISTAS = [
+  { id: 1, label: 'Carolina Acosta',    src: '/videos/entrevista_1.mp4' },
+  { id: 2, label: 'Franklin Corrales',  src: '/videos/entrevista_2.mp4' },
+  { id: 3, label: 'Pablo Javier Rojas', src: '/videos/entrevista_3.mp4' },
+  { id: 4, label: 'Mónica Castillo',    src: '/videos/entrevista_4.mp4' },
 ]
 
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
 export default function SegundoIceoPage() {
+  const [activeVideo, setActiveVideo] = useState(0)
+
+  // ── Drag-to-scroll para el carrusel de personalidades ──
+  const dragRef    = useRef<HTMLDivElement>(null)
+  const isDragging = useRef(false)
+  const startX     = useRef(0)
+  const scrollLeft = useRef(0)
+
+  const onMouseDown = (e: React.MouseEvent) => {
+    isDragging.current = true
+    startX.current = e.pageX - (dragRef.current?.offsetLeft ?? 0)
+    scrollLeft.current = dragRef.current?.scrollLeft ?? 0
+    if (dragRef.current) dragRef.current.style.cursor = 'grabbing'
+  }
+  const onMouseUp = () => {
+    isDragging.current = false
+    if (dragRef.current) dragRef.current.style.cursor = 'grab'
+  }
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging.current || !dragRef.current) return
+    e.preventDefault()
+    const x    = e.pageX - dragRef.current.offsetLeft
+    const walk = (x - startX.current) * 1.4
+    dragRef.current.scrollLeft = scrollLeft.current - walk
+  }
+
   return (
     <div style={{ backgroundColor: '#fff', minHeight: '100vh' }}>
 
@@ -132,7 +198,7 @@ export default function SegundoIceoPage() {
                 organizaciones ambientales en Latinoamérica.
               </p>
 
-              <Link href="#" style={{
+              <Link href="/docs/memoria_2iceo.pdf" target="_blank" style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
                 backgroundColor: '#097589', color: '#fff',
                 fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600,
@@ -145,7 +211,7 @@ export default function SegundoIceoPage() {
               </Link>
             </motion.div>
 
-            {/* ── Imagen ── */}
+            {/* ── Imagen hero — 2do_iceo.svg ── */}
             <motion.div
               initial={{ opacity: 0, x: 32 }}
               animate={{ opacity: 1, x: 0 }}
@@ -162,18 +228,14 @@ export default function SegundoIceoPage() {
               <div style={{
                 position: 'relative', zIndex: 1,
                 borderRadius: 14, overflow: 'hidden',
-                background: 'linear-gradient(135deg,#1C495C 0%,#097589 50%,#09344e 100%)',
                 aspectRatio: '16/10',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
                 boxShadow: '8px 8px 40px rgba(0,0,0,0.4)',
               }}>
-                {/* placeholder — reemplaza con <Image src="..." /> */}
-                <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.25)' }}>
-                  <div style={{ fontSize: 64, marginBottom: 8 }}>🌿</div>
-                  <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.35)' }}>
-                    Imagen del congreso
-                  </p>
-                </div>
+                <img
+                  src="/icons/2do_iceo.svg"
+                  alt="2° ICEO LATAM"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                />
               </div>
             </motion.div>
           </div>
@@ -215,16 +277,19 @@ export default function SegundoIceoPage() {
                   borderRadius: 12, overflow: 'hidden',
                   boxShadow: '2px 2px 8px rgba(18,48,62,0.15)',
                   position: 'relative',
+                  aspectRatio: '4/3',
                 }}>
-                  {/* Image area */}
-                  <div style={{
-                    background: m.bg,
-                    aspectRatio: '4/3',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 48, opacity: 0.85,
-                  }}>
-                    {m.emoji}
-                  </div>
+                  {/* Imagen oficial */}
+                  <img
+                    src={m.image}
+                    alt={m.label}
+                    style={{
+                      position: 'absolute', inset: 0,
+                      width: '100%', height: '100%',
+                      objectFit: 'cover', objectPosition: 'center',
+                      display: 'block',
+                    }}
+                  />
                   {/* Overlay label */}
                   <div style={{
                     position: 'absolute', bottom: 0, left: 0, right: 0,
@@ -279,7 +344,10 @@ export default function SegundoIceoPage() {
                   minWidth: 160, flex: '1 1 160px', maxWidth: 200,
                   boxShadow: '2px 2px 8px rgba(18,48,62,0.10)',
                 }}>
-                  <div style={{ fontSize: 36, marginBottom: 8 }}>{item.icon}</div>
+                  {/* Icono oficial */}
+                  <div style={{ marginBottom: 8, display: 'flex', justifyContent: 'center' }}>
+                    <img src={item.icon} alt={item.label} width={36} height={36} style={{ display: 'block' }} />
+                  </div>
                   <div style={{
                     fontFamily: 'Poppins, sans-serif',
                     fontSize: 34, fontWeight: 700, color: '#097589', lineHeight: 1,
@@ -352,14 +420,15 @@ export default function SegundoIceoPage() {
       </div>
 
       {/* ══════════════════════════════════════════════════════════════════
-          PERSONALIDADES DESTACADAS
+          PERSONALIDADES DESTACADAS — grid 4 fijo, círculos grandes
       ══════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#09344e', padding: '80px 0' }}>
         <div className="container-brand" style={{ padding: '0 48px' }}>
+
           <FadeIn>
             <h2 style={{
               fontFamily: 'Poppins, sans-serif', fontSize: 28, fontWeight: 600,
-              color: '#fff', textAlign: 'center', marginBottom: 48,
+              color: '#fff', textAlign: 'center', marginBottom: 56,
             }}>
               Personalidades destacadas
             </h2>
@@ -368,51 +437,86 @@ export default function SegundoIceoPage() {
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: 32,
+            gap: 32, justifyItems: 'center',
           }} className="pers-grid">
             {PERSONALIDADES.map((p, i) => (
               <FadeIn key={i} delay={i * 0.1}>
-                <div style={{ textAlign: 'center' }}>
-                  {/* Avatar */}
+                <div style={{ textAlign: 'center', width: '100%', maxWidth: 200 }}>
+
+                  {/* Círculo grande con anillo decorativo — tamaño ref ~180px */}
                   <div style={{
-                    width: 130, height: 130, borderRadius: '50%',
-                    margin: '0 auto 12px',
-                    background: 'linear-gradient(135deg,#1C495C 0%,#097589 100%)',
-                    border: '3px solid rgba(174,229,218,0.4)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 52, position: 'relative',
-                    overflow: 'visible',
+                    position: 'relative',
+                    width: 180, height: 180,
+                    margin: '0 auto 20px',
                   }}>
-                    <span>👤</span>
-                    {/* Flag badge */}
-                    <span style={{
-                      position: 'absolute', bottom: 4, right: 4,
-                      fontSize: 18, lineHeight: 1,
+                    {/* Anillo exterior sutil */}
+                    <div style={{
+                      position: 'absolute', inset: -5, borderRadius: '50%',
+                      background: 'linear-gradient(135deg, rgba(174,229,218,0.5) 0%, rgba(9,117,137,0.2) 100%)',
+                    }} />
+                    {/* Foto */}
+                    <div style={{
+                      position: 'relative',
+                      width: 180, height: 180, borderRadius: '50%',
+                      overflow: 'hidden',
+                      border: '4px solid #09344e',
+                      boxShadow: '0 6px 28px rgba(0,0,0,0.4)',
                     }}>
+                      <img
+                        src={p.img}
+                        alt={p.name}
+                        style={{
+                          width: '100%', height: '100%',
+                          objectFit: 'cover', objectPosition: 'top center',
+                          display: 'block',
+                        }}
+                      />
+                    </div>
+
+                    {/* LinkedIn badge superpuesto abajo-izquierda */}
+                    <Link
+                      href={p.li}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        position: 'absolute', bottom: 8, left: 8,
+                        width: 32, height: 32, borderRadius: '50%',
+                        backgroundColor: '#0A66C2',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.35)',
+                        border: '2px solid #09344e',
+                        transition: 'transform 0.15s',
+                      }}
+                      onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.transform = 'scale(1.12)'}
+                      onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.transform = 'scale(1)'}
+                    >
+                      <IconLinkedin size={15} color="white" />
+                    </Link>
+                  </div>
+
+                  {/* Nombre + bandera inline */}
+                  <div style={{
+                    display: 'flex', alignItems: 'center',
+                    justifyContent: 'center', gap: 7, marginBottom: 8,
+                    flexWrap: 'wrap',
+                  }}>
+                    <span style={{ fontSize: 18, lineHeight: 1, flexShrink: 0 }}>
                       {p.flag}
+                    </span>
+                    <span style={{
+                      fontFamily: 'Poppins, sans-serif',
+                      fontSize: 14, fontWeight: 700, color: '#fff',
+                      lineHeight: 1.3,
+                    }}>
+                      {p.name}
                     </span>
                   </div>
 
-                  {/* LinkedIn */}
-                  <Link href={p.li} style={{
-                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                    width: 30, height: 30, borderRadius: '50%',
-                    backgroundColor: '#0A66C2', marginBottom: 8,
-                    color: '#fff',
-                  }}>
-                    <IconLinkedin size={14} color="white" />
-                  </Link>
-
-                  <div style={{
-                    fontFamily: 'Poppins, sans-serif',
-                    fontSize: 14, fontWeight: 600, color: '#fff', marginBottom: 6,
-                  }}>
-                    {p.name}
-                  </div>
+                  {/* Rol */}
                   <div style={{
                     fontFamily: 'Inter, sans-serif',
-                    fontSize: 12, color: 'rgba(255,255,255,0.60)',
-                    lineHeight: 1.5, whiteSpace: 'pre-line',
+                    fontSize: 12, color: 'rgba(255,255,255,0.55)',
+                    lineHeight: 1.55, whiteSpace: 'pre-line',
                   }}>
                     {p.role}
                   </div>
@@ -431,7 +535,7 @@ export default function SegundoIceoPage() {
       </div>
 
       {/* ══════════════════════════════════════════════════════════════════
-          VOCES DEL CONGRESO
+          VOCES DEL CONGRESO — con reproductor de 4 entrevistas
       ══════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#F7F6F3', padding: '80px 0' }}>
         <div className="container-brand" style={{ padding: '0 48px' }}>
@@ -439,7 +543,7 @@ export default function SegundoIceoPage() {
             style={{
               display: 'grid',
               gridTemplateColumns: '1fr 1fr',
-              gap: 60, alignItems: 'center',
+              gap: 60, alignItems: 'start',
             }}
             className="voces-grid"
           >
@@ -478,28 +582,66 @@ export default function SegundoIceoPage() {
               }}>
                 — Participante destacado, 2° ICEO
               </p>
-
-              <Link href="#" style={{
-                display: 'inline-flex', alignItems: 'center', gap: 8,
-                border: '2px solid #097589', color: '#097589',
-                fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600,
-                padding: '10px 24px', borderRadius: 999, textDecoration: 'none',
-                letterSpacing: '0.04em', textTransform: 'uppercase',
-              }}>
-                ▶ Ver testimonios
-              </Link>
             </FadeIn>
 
+            {/* ── Video player con 4 entrevistas ── */}
             <FadeIn delay={0.15}>
-              <div style={{
-                borderRadius: 14, overflow: 'hidden',
-                background: 'linear-gradient(135deg,#AEE5DA 0%,#097589 60%,#09344e 100%)',
-                aspectRatio: '3/4',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '4px 4px 24px rgba(9,52,78,0.2)',
-                fontSize: 80, opacity: 0.7,
-              }}>
-                💬
+              <div>
+                {/* Selector de entrevistas */}
+                <div style={{
+                  display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8,
+                  marginBottom: 14,
+                }}>
+                  {ENTREVISTAS.map((e, i) => (
+                    <button
+                      key={e.id}
+                      onClick={() => setActiveVideo(i)}
+                      style={{
+                        padding: '8px 4px', borderRadius: 8,
+                        border: activeVideo === i ? '2px solid #097589' : '2px solid #C3DED9',
+                        backgroundColor: activeVideo === i ? '#097589' : '#fff',
+                        color: activeVideo === i ? '#fff' : '#5A6E77',
+                        fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600,
+                        cursor: 'pointer', transition: 'all 0.2s',
+                        letterSpacing: '0.02em',
+                      }}
+                    >
+                      {e.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Reproductor de video — contenedor 16/9 sin tocar, video sin recorte adentro */}
+                <div style={{
+                  borderRadius: 14, overflow: 'hidden',
+                  boxShadow: '4px 4px 24px rgba(9,52,78,0.2)',
+                  backgroundColor: '#000',
+                  aspectRatio: '16/9',
+                  position: 'relative',
+                }}>
+                  <video
+                    key={ENTREVISTAS[activeVideo].src}
+                    controls
+                    style={{
+                      width: '100%', height: '100%',
+                      display: 'block', objectFit: 'contain',
+                      backgroundColor: '#000',
+                    }}
+                    poster=""
+                  >
+                    <source src={ENTREVISTAS[activeVideo].src} type="video/mp4" />
+                    Tu navegador no soporta la reproducción de video.
+                  </video>
+                </div>
+
+                {/* Label del video activo */}
+                <p style={{
+                  fontFamily: 'Poppins, sans-serif', fontSize: 12,
+                  color: '#5A6E77', marginTop: 10, textAlign: 'center',
+                  letterSpacing: '0.03em',
+                }}>
+                  {ENTREVISTAS[activeVideo].label} · 2° ICEO LATAM
+                </p>
               </div>
             </FadeIn>
           </div>
@@ -523,15 +665,18 @@ export default function SegundoIceoPage() {
             }}
             className="relevancia-grid"
           >
+            {/* Imagen hero del evento reutilizada */}
             <FadeIn>
               <div style={{
                 borderRadius: 14, overflow: 'hidden',
-                background: 'linear-gradient(135deg,#1C495C 0%,#097589 50%,#03A383 100%)',
                 aspectRatio: '4/3',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '8px 8px 40px rgba(0,0,0,0.3)', fontSize: 80, opacity: 0.7,
+                boxShadow: '8px 8px 40px rgba(0,0,0,0.3)',
               }}>
-                🌳
+                <img
+                  src="/icons/2do_iceo.svg"
+                  alt="Relevancia e Impacto 2° ICEO"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                />
               </div>
             </FadeIn>
 
@@ -557,7 +702,7 @@ export default function SegundoIceoPage() {
                 Su impacto se refleja en nuevas alianzas, intercambio de saberes y
                 fortalecimiento de iniciativas ambientales en toda la región.
               </p>
-              <Link href="#" style={{
+              <Link href="/docs/memoria_2iceo.pdf" target="_blank" style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
                 backgroundColor: '#097589', color: '#fff',
                 fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600,
@@ -586,7 +731,8 @@ export default function SegundoIceoPage() {
             Lee la memoria del 2° ICEO completa
           </h2>
           <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link href="#" style={{
+            {/* Descarga el PDF oficial */}
+            <Link href="/docs/memoria_2iceo.pdf" target="_blank" style={{
               display: 'inline-flex', alignItems: 'center', gap: 8,
               backgroundColor: '#fff', color: '#097589',
               fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700,
@@ -596,7 +742,7 @@ export default function SegundoIceoPage() {
             }}>
               ↓ Descargar memoria
             </Link>
-            <Link href="#" style={{
+            <Link href="/docs/memoria_2iceo.pdf" target="_blank" style={{
               display: 'inline-flex', alignItems: 'center', gap: 8,
               backgroundColor: 'transparent', color: '#fff',
               border: '2px solid rgba(255,255,255,0.8)',
@@ -658,16 +804,18 @@ export default function SegundoIceoPage() {
               </Link>
             </FadeIn>
 
+            {/* Imagen oficial de donación */}
             <FadeIn delay={0.15}>
               <div style={{
                 borderRadius: 14, overflow: 'hidden',
-                background: 'linear-gradient(135deg,#C0FFF2 0%,#AEE5DA 50%,#76E2CC 100%)',
                 aspectRatio: '4/3',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
                 boxShadow: '4px 4px 24px rgba(9,52,78,0.12)',
-                fontSize: 80, opacity: 0.7,
               }}>
-                🤲
+                <img
+                  src="/icons/2do_icep_donacion.svg"
+                  alt="Donación 2° ICEO"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                />
               </div>
             </FadeIn>
           </div>
@@ -675,7 +823,7 @@ export default function SegundoIceoPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════
-          REDES SOCIALES — FOLLOW
+          REDES SOCIALES — solo imagen follow.svg (sin texto extra)
       ══════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#F7F6F3', padding: '80px 0' }}>
         <div className="container-brand" style={{ padding: '0 48px' }}>
@@ -687,49 +835,14 @@ export default function SegundoIceoPage() {
             }}
             className="follow-grid"
           >
+            {/* Solo la imagen follow.svg — sin texto, sin card */}
             <FadeIn>
-              {/* Follow card */}
-              <div style={{
-                background: 'linear-gradient(135deg,#74B4A7 0%,#097589 100%)',
-                borderRadius: 20, padding: '40px 36px',
-                textAlign: 'center', color: '#fff',
-                boxShadow: '4px 4px 24px rgba(9,117,137,0.25)',
-              }}>
-                <div style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontSize: 36, fontWeight: 800, letterSpacing: '0.04em', marginBottom: 2,
-                }}>
-                  FOLLOW US!
-                </div>
-                <div style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontSize: 14, fontWeight: 600, opacity: 0.85, marginBottom: 4,
-                }}>
-                  ON SOCIAL MEDIA
-                </div>
-                <div style={{
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: 13, opacity: 0.65, marginBottom: 24,
-                }}>
-                  @awaqong
-                </div>
-                <div style={{ display: 'flex', gap: 14, justifyContent: 'center' }}>
-                  {([
-                    { href: '#', Icon: IconInstagram },
-                    { href: '#', Icon: IconFacebook  },
-                    { href: '#', Icon: IconLinkedin  },
-                    { href: '#', Icon: IconYoutube   },
-                  ] as const).map(({ href, Icon }, i) => (
-                    <Link key={i} href={href} style={{
-                      width: 42, height: 42, borderRadius: '50%',
-                      border: '2px solid rgba(255,255,255,0.6)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      color: '#fff',
-                    }}>
-                      <Icon size={18} color="white" />
-                    </Link>
-                  ))}
-                </div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <img
+                  src="/icons/follow.svg"
+                  alt="Follow us on social media"
+                  style={{ width: '100%', maxWidth: 380, height: 'auto', display: 'block' }}
+                />
               </div>
             </FadeIn>
 
