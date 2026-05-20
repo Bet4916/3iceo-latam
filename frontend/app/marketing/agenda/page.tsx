@@ -1,813 +1,886 @@
 'use client'
 
-import { useState } from 'react'
-import Link from 'next/link'
+import { useState, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { IconLinkedin } from '@/components/ui/icons'
+import Link from 'next/link'
 
-// ─── ANIMATION HELPER ─────────────────────────────────────────────────────────
-function FadeIn({ children, delay = 0, style }: { children: React.ReactNode; delay?: number; style?: React.CSSProperties }) {
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+function FadeIn({ children, delay = 0, style }: {
+  children: React.ReactNode; delay?: number; style?: React.CSSProperties
+}) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 22 }}
+      initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-60px' }}
-      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay }}
       style={style}
-    >
-      {children}
-    </motion.div>
+    >{children}</motion.div>
   )
 }
 
 // ─── TIPOS ────────────────────────────────────────────────────────────────────
-interface Ponente {
-  nombre: string
-  cargo: string
-  org: string
-  pais: string
-  flag: string
-  img: string
-  li: string
-}
+type TipoSesion = 'registro' | 'apertura' | 'conferencia' | 'taller' | 'panel' | 'pausa' | 'networking' | 'clausura'
 
 interface Sesion {
-  hora: string
-  titulo: string
+  hora:     string   // "09:00 – 09:30"
+  titulo:   string
+  tipo:     TipoSesion
   ponente?: string
-  tipo: 'registro' | 'apertura' | 'conferencia' | 'taller' | 'pausa' | 'panel' | 'networking' | 'clausura'
   highlight?: boolean
 }
 
 interface DiaAgenda {
-  id: string
+  id:        string
   diaSemana: string
-  diaNum: string
-  mes: string
-  temaTitulo: string
-  temaDesc: string
-  manana: Sesion[]
-  tarde: Sesion[]
+  diaNum:    string
+  mes:       string
+  tema:      string
+  colorAccent: string
+  manana:    Sesion[]
+  tarde:     Sesion[]
 }
 
-// ─── DATOS ────────────────────────────────────────────────────────────────────
-const PONENTES: Ponente[] = [
-  {
-    nombre: 'José Serrano Serna',
-    cargo:  'CEO-Presidente',
-    org:    'Awaq ONGD',
-    pais:   'España / Colombia',
-    flag:   '🇪🇸',
-    img:    'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80',
-    li:     '#',
-  },
-  {
-    nombre: 'Laura Cifuentes',
-    cargo:  'Directora de Biodiversidad',
-    org:    'Fundación Verde',
-    pais:   'Colombia',
-    flag:   '🇨🇴',
-    img:    'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80',
-    li:     '#',
-  },
-  {
-    nombre: 'Rolando Evelio Pérez',
-    cargo:  'Profesor Planta',
-    org:    'Tec de Monterrey',
-    pais:   'México',
-    flag:   '🇲🇽',
-    img:    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80',
-    li:     '#',
-  },
-  {
-    nombre: 'Begoña de la Hera',
-    cargo:  'Directora Programa TED',
-    org:    'Awaq ONGD',
-    pais:   'España',
-    flag:   '🇪🇸',
-    img:    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80',
-    li:     '#',
-  },
-]
-
-const TIPO_COLOR: Record<Sesion['tipo'], { bg: string; text: string; border: string }> = {
+// ─── COLORES POR TIPO ─────────────────────────────────────────────────────────
+const TIPO_STYLE: Record<TipoSesion, { bg: string; text: string; border: string }> = {
   registro:    { bg: '#E6F3EE', text: '#097589',  border: '#AEE5DA' },
-  apertura:    { bg: '#09344e', text: '#fff',      border: '#09344e' },
+  apertura:    { bg: '#09344e', text: '#ffffff',   border: '#09344e' },
   conferencia: { bg: '#F7F6F3', text: '#12303E',   border: '#097589' },
   taller:      { bg: '#E6F3EE', text: '#004A3B',   border: '#03A383' },
-  pausa:       { bg: '#F7F6F3', text: '#5A6E77',   border: '#D9DEE2' },
+  pausa:       { bg: '#F0F4F7', text: '#5A6E77',   border: '#D9DEE2' },
   panel:       { bg: '#DAEBF2', text: '#1C495C',   border: '#4886B5' },
-  networking:  { bg: '#E0B6CD', text: '#802254',   border: '#B53077' },
-  clausura:    { bg: '#09344e', text: '#fff',      border: '#09344e' },
+  networking:  { bg: '#FDEEF6', text: '#802254',   border: '#B53077' },
+  clausura:    { bg: '#12303E', text: '#ffffff',   border: '#12303E' },
 }
 
+// ─── BANDERA — imagen PNG vía flagcdn.com (compatible con todos los SO) ──────
+// flagcdn.com sirve PNGs pequeños por código ISO 3166-1 alpha-2.
+// No depende del renderizado de emojis del sistema operativo.
+const FLAG_NAMES: Record<string, string> = {
+  co: 'Colombia', es: 'España', mx: 'México', ve: 'Venezuela',
+  ar: 'Argentina', pe: 'Perú', ec: 'Ecuador', cl: 'Chile',
+}
+function Flag({ code }: { code: string }) {
+  return (
+    <img
+      src={`https://flagcdn.com/w20/${code}.png`}
+      srcSet={`https://flagcdn.com/w40/${code}.png 2x`}
+      width={20}
+      height={14}
+      alt={FLAG_NAMES[code] ?? code.toUpperCase()}
+      style={{ display: 'inline-block', borderRadius: 2, flexShrink: 0, marginTop: 2, objectFit: 'cover' }}
+    />
+  )
+}
+
+// ─── PONENTES (4 del 2do ICEO primero, luego los 9 nuevos) ────────────────────
+const PONENTES = [
+  // ─ Del 2do ICEO ─────────────────────────────────────────────────────────
+  {
+    foto:     '/icons/jose_serrano.svg',
+    nombre:   'José Serrano Serna',
+    pais:     'es',   // español
+    org:      'Awaq ONGD',
+    rol:      'Director Ejecutivo Presidente',
+    ponencia: 'Presentación Resultados parciales del Proyecto APF 2019 · Mapa de Ruta 2030–2027',
+    linkedin: 'https://www.linkedin.com/in/jsserna5575/',
+  },
+  {
+    foto:     '/icons/luis_alfonso.svg',
+    nombre:   'Luis Alfonso Aguirre',
+    pais:     'co',
+    org:      'PWF Colombia',
+    rol:      'Gerente de Programa',
+    ponencia: 'Perspectivas de la cooperación internacional en biodiversidad y cambio climático',
+    linkedin: 'https://www.linkedin.com/in/luis-alfonso-aguirre-montealegre-0770a91a/',
+  },
+  {
+    foto:     '/icons/begona_hera.svg',
+    nombre:   'Begoña de la Hera',
+    pais:     'es',
+    org:      'Awaq ONGD',
+    rol:      'Directora Programa TED',
+    ponencia: 'Experiencias TED en organizaciones ambientales de Latinoamérica',
+    linkedin: 'https://www.linkedin.com/in/bego%C3%B1a-de-la-hera-25ba801a/',
+  },
+  {
+    foto:     '/icons/rolando_evelio.jpg',
+    nombre:   'Rolando Evelio Pérez',
+    pais:     'mx',
+    org:      'Tecnológico de Monterrey',
+    rol:      'Profesor Planta',
+    ponencia: 'Innovación académica para la sostenibilidad ambiental en el contexto latinoamericano',
+    linkedin: 'https://www.linkedin.com/in/rolando-evelio-p%C3%A9rez-vers%C3%B3n-4137a8264/',
+  },
+  // ─ Nuevos ────────────────────────────────────────────────────────────────
+  {
+    foto:     '/images/ponentes_Santiago_Granados.jpg',
+    nombre:   'Santiago Granados Guitierrez',
+    pais:     'co',
+    org:      'CEPAL-ONU',
+    rol:      'Consultor',
+    ponencia: 'Legados y desafíos de la COP16',
+    linkedin: '#',
+  },
+  {
+    foto:     '/images/ponentes_Magda_Lorena_Pineda.jpeg',
+    nombre:   'Magda Lorena Pineda Rodríguez',
+    pais:     'co',
+    org:      'Fund. Universitaria Juan de Castellanos',
+    rol:      'Líder Desarrollo Tecnológico',
+    ponencia: 'Alianza Universidad Juan de Castellanos | Proyecto ABT',
+    linkedin: '#',
+  },
+  {
+    foto:     '/images/ponente_Cristhian_Utopía.jpeg',
+    nombre:   'John Cristhian Fernández Lizarazo',
+    pais:     'co',
+    org:      'Fund. Universitaria Juan de Castellanos',
+    rol:      'Líder Desarrollo Tecnológico',
+    ponencia: 'Alianza Universidad Juan de Castellanos | Proyecto ABT',
+    linkedin: '#',
+  },
+  {
+    foto:     '/images/ponentes_Nasly_Vidales.jpeg',
+    nombre:   'Nasly Fernandea Gonzales Vidales',
+    pais:     'co',
+    org:      'Secretaría de Ambiente del Valle del Cauca',
+    rol:      'Subsecretaria de Desarrollo Sostenible',
+    ponencia: 'El papel de las mujeres en el cambio climático',
+    linkedin: '#',
+  },
+  {
+    foto:     '/images/ponentes_Jhonatan_Alexander_Becerra.jpeg',
+    nombre:   'Jhonatan Alexander Becerra Duitama',
+    pais:     'co',
+    org:      'Fund. Universitaria Juan de Castellanos',
+    rol:      'Líder Desarrollo Tecnológico',
+    ponencia: 'Alianza Universidad Juan de Castellanos | Proyecto ABT',
+    linkedin: '#',
+  },
+  {
+    foto:     '/images/ponentes_William_Fernando_Bernal.jpeg',
+    nombre:   'William Fernando Bernal Suárez',
+    pais:     'co',
+    org:      'Fund. Universitaria Juan de Castellanos',
+    rol:      'Líder Desarrollo Tecnológico',
+    ponencia: 'Alianza Universidad Juan de Castellanos | Proyecto ABT',
+    linkedin: '#',
+  },
+  {
+    foto:     '/images/ponentes_Camilo_Andrés_Aguilar.jpeg',
+    nombre:   'Hno. Camilo Andrés Aguilar Gómez',
+    pais:     'co',
+    org:      'Universidad de La Salle',
+    rol:      'Coordinador de Utopía',
+    ponencia: 'UTOPÍA: Un horizonte educativo para el cuidado, la sostenibilidad y la ecología integra',
+    linkedin: '#',
+  },
+  {
+    foto:     '/images/ponentes_Gustavo_Herrera.jpeg',
+    nombre:   'Mtro. Gustavo Herrera Caballero',
+    pais:     'co',
+    org:      'SELA',
+    rol:      'Coordinador Desarrollo Social',
+    ponencia: 'La experiencia del SELA en la implementación de la Agenda 2030',
+    linkedin: '#',
+  },
+  {
+    foto:     '/images/ponentes_Liza_Rodriguez_Galvis.jpeg',
+    nombre:   'Liza Rodríguez Galvis',
+    pais:     'co',
+    rol:      'Secretaria General',
+    ponencia: 'Mujeres en biodiversidad y fortalecimiento institucional: un camino para transformar realidades',
+    linkedin: '#',
+  },
+]
+
+// ─── PROGRAMA ─────────────────────────────────────────────────────────────────
 const DIAS: DiaAgenda[] = [
   {
-    id:         'martes',
-    diaSemana:  'MARTES',
-    diaNum:     '17',
-    mes:        'FEBRERO',
-    temaTitulo: 'Análisis de los resultados de la COP 16.',
-    temaDesc:   'Un día dedicado al análisis de los acuerdos globales y su impacto en las organizaciones ambientales de Latinoamérica.',
+    id: 'martes', diaSemana: 'MARTES', diaNum: '17', mes: 'FEBRERO',
+    tema: 'Análisis de los resultados de la COP 16',
+    colorAccent: '#097589',
     manana: [
-      { hora: '07:00 – 08:00', titulo: 'Registro de asistentes',                                                tipo: 'registro' },
-      { hora: '08:00 – 09:00', titulo: 'Apertura y bienvenida',                                                tipo: 'apertura', highlight: true },
-      { hora: '09:00 – 10:00', titulo: 'Legados de la COP16',                                                  tipo: 'conferencia' },
-      { hora: '10:00 – 10:30', titulo: 'Pausa para café',                                                       tipo: 'pausa' },
-      { hora: '10:30 – 12:00', titulo: 'Política pública de la ley de tránisito · Política pública de equidad de género · Mujeres en biodiversidad y fortalecimiento institucional', tipo: 'taller' },
+      { hora: '09:00 – 09:30', titulo: 'Registro de asistentes',                                             tipo: 'registro'    },
+      { hora: '09:30 – 09:45', titulo: 'Apertura y Bienvenida',                                              tipo: 'apertura'    },
+      { hora: '09:45 – 10:45', titulo: 'Legados y desafíos de la COP16', ponente: 'Santiago Granados · CEPAL-ONU', tipo: 'conferencia', highlight: true },
+      { hora: '10:45 – 11:00', titulo: 'Pausa',                                                               tipo: 'pausa'       },
+      { hora: '11:00 – 12:30', titulo: 'La experiencia del SELA en la implementación de la Agenda 2030', ponente: 'Mtro. Gustavo Herrera · SELA', tipo: 'conferencia' },
     ],
     tarde: [
-      { hora: '12:30 – 14:00', titulo: 'Pausa para almuerzo',                                    tipo: 'pausa' },
-      { hora: '14:00 – 16:00', titulo: 'Taller: Proyecto Ley de Iniciativa 315 de 2024 — Medidas ciudadanas de la biodiversidad, fuerza legal para cuidar el territorio', tipo: 'taller', highlight: true },
-      { hora: '14:30 – 03:00', titulo: 'Talleres específicos',                                   tipo: 'taller' },
-      { hora: '15:30 – 17:00', titulo: 'Marketplace & Networking',                               tipo: 'networking' },
+      { hora: '13:00 – 13:45', titulo: 'Pausa para el almuerzo',                                              tipo: 'pausa'       },
+      { hora: '14:00 – 15:30', titulo: 'Mesa de trabajo: Articulación entre gobiernos, academia y sector privado', tipo: 'taller'    },
+      { hora: '15:30 – 16:30', titulo: 'Panel: Compromisos globales en acción local',                        tipo: 'panel'       },
+      { hora: '16:30 – 17:00', titulo: 'Networking y cierre del día',                                        tipo: 'networking'  },
     ],
   },
   {
-    id:         'miercoles',
-    diaSemana:  'MIÉRCOLES',
-    diaNum:     '18',
-    mes:        'FEBRERO',
-    temaTitulo: 'Mujeres líderes en Organizaciones Ambientales.',
-    temaDesc:   'Exploración del liderazgo femenino en el sector ambiental, con énfasis en educación integral y ecología.',
+    id: 'miercoles', diaSemana: 'MIÉRCOLES', diaNum: '18', mes: 'FEBRERO',
+    tema: 'Mujeres líderes en Organizaciones Ambientales',
+    colorAccent: '#B53077',
     manana: [
-      { hora: '07:00 – 08:00', titulo: 'Registro de asistentes',                                       tipo: 'registro' },
-      { hora: '08:00 – 08:45', titulo: 'Apertura Fabio Cardozo Montealegre — Gestor de Paz',           tipo: 'apertura', highlight: true },
-      { hora: '08:45 – 09:30', titulo: 'UTOPÍA: Un horizonte educativa para el cuidado, la sostenibilidad y la ecología integral', tipo: 'conferencia' },
-      { hora: '09:30 – 10:30', titulo: 'Pausa para café',                                               tipo: 'pausa' },
-      { hora: '10:30 – 12:00', titulo: 'El papel de las mujeres en el cambio climático',               tipo: 'panel' },
+      { hora: '09:00 – 09:30', titulo: 'Registro de asistentes',                                             tipo: 'registro'    },
+      { hora: '09:30 – 10:30', titulo: 'El papel de las mujeres en el cambio climático', ponente: 'Nasly Fernandea Gonzales Vidales · Secretaría Ambiente Valle', tipo: 'conferencia', highlight: true },
+      { hora: '10:30 – 11:30', titulo: 'Mujeres en biodiversidad y fortalecimiento institucional', ponente: 'Liza Rodríguez Galvis · Gobernación del Valle del Cauca', tipo: 'conferencia' },
+      { hora: '11:30 – 12:00', titulo: 'Talleres: Comunidades resilientes y género',                         tipo: 'taller'      },
     ],
     tarde: [
-      { hora: '12:30 – 14:00', titulo: 'Pausa para almuerzo',                                tipo: 'pausa' },
-      { hora: '14:00 – 14:30', titulo: 'Rap del Agua y la Montaña',                          tipo: 'clausura', highlight: true },
-      { hora: '14:30 – 15:30', titulo: 'Comunidades resilientes al cambio climático',        tipo: 'taller' },
-      { hora: '15:30 – 17:00', titulo: 'Marketplace & Networking',                           tipo: 'networking' },
+      { hora: '13:00 – 13:45', titulo: 'Pausa para el almuerzo',                                             tipo: 'pausa'       },
+      { hora: '14:00 – 15:30', titulo: 'Panel: Redes de apoyo y soluciones inclusivas en justicia climática', tipo: 'panel'      },
+      { hora: '15:30 – 16:30', titulo: 'Taller: Herramientas de formación para líderes ambientales comunitarias', tipo: 'taller' },
+      { hora: '16:30 – 17:00', titulo: 'Networking y cierre del día',                                        tipo: 'networking'  },
     ],
   },
   {
-    id:         'jueves',
-    diaSemana:  'JUEVES',
-    diaNum:     '19',
-    mes:        'FEBRERO',
-    temaTitulo: 'Tecnología y conservación ambiental.',
-    temaDesc:   'Presentación de proyectos biotecnológicos y estaciones biológicas como herramientas clave para la conservación.',
+    id: 'jueves', diaSemana: 'JUEVES', diaNum: '19', mes: 'FEBRERO',
+    tema: 'Tecnología y conservación ambiental',
+    colorAccent: '#03A383',
     manana: [
-      { hora: '07:00 – 08:00', titulo: 'Registro de asistentes',                          tipo: 'registro' },
-      { hora: '08:00 – 08:30', titulo: 'Presentación José Serna | Awaq ONGD',             tipo: 'apertura', highlight: true },
-      { hora: '08:30 – 09:00', titulo: 'Presentación Angélica | Awaq ONGD LATAM',        tipo: 'conferencia' },
-      { hora: '09:00 – 09:30', titulo: 'Presentación Directoras — Estaciones Biológicas', tipo: 'conferencia' },
-      { hora: '09:30 – 10:15', titulo: 'Pausa para café',                                 tipo: 'pausa' },
-      { hora: '10:15 – 10:45', titulo: 'Presentación Begoña | Awaq ONGD LATAM',          tipo: 'conferencia' },
-      { hora: '10:15 – 12:00', titulo: 'Presentación de Universidades',                   tipo: 'panel' },
+      { hora: '09:00 – 09:30', titulo: 'Registro de asistentes',                                             tipo: 'registro'    },
+      { hora: '09:30 – 10:30', titulo: 'UTOPÍA: Un horizonte educativo para el cuidado y la ecología integra', ponente: 'Hno. Camilo Andrés Aguilar · Univ. La Salle', tipo: 'conferencia', highlight: true },
+      { hora: '10:30 – 12:30', titulo: 'Alianza Universidad Juan de Castellanos | Proyecto ABT', ponente: 'Magda Lorena Pineda · John Cristhian Fernández · Jhonatan Becerra · William Bernal', tipo: 'conferencia' },
     ],
     tarde: [
-      { hora: '12:00 – 13:00', titulo: 'Pausa para almuerzo',                                       tipo: 'pausa' },
-      { hora: '13:00 – 14:30', titulo: 'DEMO de los proyectos ABT y P&R',                           tipo: 'taller', highlight: true },
-      { hora: '14:30 – 15:30', titulo: 'Manifiesto',                                                 tipo: 'panel' },
-      { hora: '11:30 – 17:00', titulo: 'Ceremonia de Clausura y cierre Market Place (salsódromo)',   tipo: 'clausura', highlight: true },
+      { hora: '13:00 – 13:45', titulo: 'Pausa para el almuerzo',                                             tipo: 'pausa'       },
+      { hora: '14:00 – 15:00', titulo: 'Mesa de trabajo: Tecnología para el monitoreo ambiental y la acción colaborativa', tipo: 'taller' },
+      { hora: '15:00 – 16:00', titulo: 'Panel de cierre: Construyendo redes de conocimiento territorial',   tipo: 'panel'       },
+      { hora: '16:00 – 17:00', titulo: 'Clausura del 3ICEO LATAM',                                          tipo: 'clausura'    },
     ],
   },
 ]
+
+const SOCIAL = [
+  { icon: '/icons/icon_instagram.svg', label: 'Instagram', href: '#' },
+  { icon: '/icons/icon_facebook.svg',  label: 'Facebook',  href: '#' },
+  { icon: '/icons/icon_linkedin.svg',  label: 'LinkedIn',  href: '#' },
+]
+
+// ─── PONENTE CARD (carrusel) ──────────────────────────────────────────────────
+function PonenteCard({ p }: { p: typeof PONENTES[0] }) {
+  return (
+    <div style={{
+      backgroundColor: '#F0F4F7',
+      borderRadius: 36,
+      padding: '28px 20px 24px',
+      display: 'flex', flexDirection: 'column', alignItems: 'center',
+      width: 240, flexShrink: 0,
+      boxShadow: '2px 2px 10px rgba(9,52,78,0.08)',
+      transition: 'transform 0.22s, box-shadow 0.22s',
+    }}
+      onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-4px)'; (e.currentTarget as HTMLDivElement).style.boxShadow = '2px 8px 22px rgba(9,52,78,0.14)' }}
+      onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLDivElement).style.boxShadow = '2px 2px 10px rgba(9,52,78,0.08)' }}
+    >
+      {/* Foto */}
+      <div style={{
+        width: 110, height: 110, borderRadius: '50%', overflow: 'hidden',
+        border: '3px solid #fff', boxShadow: '0 2px 10px rgba(9,52,78,0.15)',
+        marginBottom: 16, flexShrink: 0, backgroundColor: '#DDE8EE',
+      }}>
+        <img src={p.foto} alt={p.nombre}
+          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
+      </div>
+
+      {/* Flag + nombre */}
+      <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start', marginBottom: 5, width: '100%', justifyContent: 'center' }}>
+        <Flag code={p.pais} />
+        <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, color: '#09344e', textAlign: 'center', lineHeight: 1.25 }}>
+          {p.nombre}
+        </span>
+      </div>
+
+      {/* Org */}
+      <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, color: '#097589', textAlign: 'center', lineHeight: 1.35, marginBottom: 3 }}>
+        {p.org}
+      </p>
+
+      {/* Rol */}
+      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: '#5A6E77', textAlign: 'center', marginBottom: 12 }}>
+        {p.rol}
+      </p>
+
+      {/* Punteado */}
+      <div style={{ width: '55%', borderTop: '1.5px dashed #BED1DA', marginBottom: 12 }} />
+
+      {/* Ponencia */}
+      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: '#12303E', textAlign: 'center', lineHeight: 1.5, flex: 1, marginBottom: 14 }}>
+        <strong style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600 }}>Ponencia: </strong>
+        {p.ponencia}
+      </p>
+
+      {/* LinkedIn */}
+      <a href={p.linkedin} target="_blank" rel="noopener noreferrer"
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 36, height: 36, borderRadius: 7, backgroundColor: '#fff', boxShadow: '0 1px 5px rgba(9,52,78,0.12)', textDecoration: 'none', transition: 'background-color 0.2s' }}
+        onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#0A66C2')}
+        onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#fff')}
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" stroke="#0A66C2" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+          <rect x="2" y="9" width="4" height="12" stroke="#0A66C2" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+          <circle cx="4" cy="4" r="2" stroke="#0A66C2" strokeWidth="1.8"/>
+        </svg>
+      </a>
+    </div>
+  )
+}
+
+// ─── CARRUSEL DE PONENTES ────────────────────────────────────────────────────
+function PonenteCarousel() {
+  const trackRef = useRef<HTMLDivElement>(null)
+  const [pos, setPos] = useState(0)
+  const CARD_W = 240 + 20 // width + gap
+
+  const scrollTo = useCallback((dir: 1 | -1) => {
+    const el = trackRef.current
+    if (!el) return
+    const next = Math.max(0, Math.min(el.scrollLeft + dir * CARD_W * 3, el.scrollWidth - el.clientWidth))
+    el.scrollTo({ left: next, behavior: 'smooth' })
+  }, [])
+
+  const onScroll = useCallback(() => {
+    if (trackRef.current) setPos(trackRef.current.scrollLeft)
+  }, [])
+
+  const canPrev = pos > 10
+  const canNext = trackRef.current ? pos < trackRef.current.scrollWidth - trackRef.current.clientWidth - 10 : true
+
+  return (
+    <div style={{ position: 'relative' }}>
+      {/* Track */}
+      <div ref={trackRef} onScroll={onScroll} style={{
+        display: 'flex', gap: 20, overflowX: 'auto', paddingBottom: 8,
+        scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch',
+        paddingInline: 4,
+      }}>
+        {PONENTES.map(p => <PonenteCard key={p.nombre} p={p} />)}
+      </div>
+
+      {/* Prev */}
+      {canPrev && (
+        <button onClick={() => scrollTo(-1)} aria-label="Anterior" style={{
+          position: 'absolute', top: '50%', left: -20, transform: 'translateY(-50%)',
+          width: 40, height: 40, borderRadius: '50%', border: '1.5px solid #D9DEE2',
+          backgroundColor: '#fff', boxShadow: '2px 2px 8px rgba(9,52,78,0.12)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          cursor: 'pointer', zIndex: 2, transition: 'border-color 0.2s',
+        }}
+          onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.borderColor = '#097589'}
+          onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.borderColor = '#D9DEE2'}
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M10 3L6 8l4 5" stroke="#09344e" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+      )}
+
+      {/* Next */}
+      {canNext && (
+        <button onClick={() => scrollTo(1)} aria-label="Siguiente" style={{
+          position: 'absolute', top: '50%', right: -20, transform: 'translateY(-50%)',
+          width: 40, height: 40, borderRadius: '50%', border: '1.5px solid #D9DEE2',
+          backgroundColor: '#fff', boxShadow: '2px 2px 8px rgba(9,52,78,0.12)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          cursor: 'pointer', zIndex: 2, transition: 'border-color 0.2s',
+        }}
+          onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.borderColor = '#097589'}
+          onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.borderColor = '#D9DEE2'}
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M6 3l4 5-4 5" stroke="#09344e" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+      )}
+      <style suppressHydrationWarning>{`div::-webkit-scrollbar{display:none}`}</style>
+    </div>
+  )
+}
+
+// ─── SESION ROW ───────────────────────────────────────────────────────────────
+function SesionRow({ s }: { s: Sesion }) {
+  const st = TIPO_STYLE[s.tipo]
+  return (
+    <div style={{
+      backgroundColor: st.bg,
+      borderLeft: `3px solid ${st.border}`,
+      borderRadius: 6,
+      padding: '8px 12px',
+      marginBottom: 6,
+    }}>
+      <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 600, color: st.border, marginBottom: 2, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+        {s.hora}
+      </div>
+      <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 600, color: s.tipo === 'apertura' || s.tipo === 'clausura' ? '#fff' : '#09344e', lineHeight: 1.35 }}>
+        {s.titulo}
+      </div>
+      {s.ponente && (
+        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: s.tipo === 'apertura' || s.tipo === 'clausura' ? 'rgba(255,255,255,0.7)' : '#5A6E77', marginTop: 2, lineHeight: 1.3 }}>
+          {s.ponente}
+        </div>
+      )}
+    </div>
+  )
+}
 
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
 export default function AgendaPage() {
-  const [diaActivo, setDiaActivo] = useState<string>('martes')
-  const diaData = DIAS.find(d => d.id === diaActivo)!
+  const [diaActivo, setDiaActivo] = useState(0)
 
   return (
-    <div style={{ backgroundColor: '#fff', minHeight: '100vh' }}>
+    <div style={{ backgroundColor: '#ffffff', minHeight: '100vh' }}>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          HERO
-      ══════════════════════════════════════════════════════════════════ */}
+      {/* ════════════════════════════════════════════════════════════════════
+          1. HERO — exacto al Figma (Image 1)
+          Fondo oscuro #0D2D3E, título grande Gloock/Georgia, botón rosa,
+          imagen panelistas derecha, tabs calendario en la parte inferior.
+      ════════════════════════════════════════════════════════════════════ */}
       <section style={{
-        backgroundColor: '#09344e',
-        paddingTop: 120,
+        backgroundColor: '#1C495C',   /* --navy-medium / --blue-700 (oficial) */
+        paddingTop: 80,
         paddingBottom: 0,
         position: 'relative',
         overflow: 'hidden',
       }}>
-        {/* Blobs decorativos */}
+        {/* Sutil patrón de puntos decorativo */}
         <div style={{
-          position: 'absolute', top: -60, right: -60, width: 380, height: 380,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle,rgba(9,117,137,0.22) 0%,transparent 70%)',
-          pointerEvents: 'none',
-        }} />
-        <div style={{
-          position: 'absolute', bottom: 40, left: -40, width: 280, height: 280,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle,rgba(72,134,181,0.18) 0%,transparent 70%)',
+          position: 'absolute', inset: 0, opacity: 0.04,
+          backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)',
+          backgroundSize: '28px 28px',
           pointerEvents: 'none',
         }} />
 
-        <div className="container-brand" style={{ padding: '0 48px 0' }}>
-          <div style={{
-            display: 'grid', gridTemplateColumns: '1fr 1fr',
-            gap: 56, alignItems: 'center',
-          }} className="hero-agenda-grid">
-
-            {/* Texto */}
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '56px 48px 0', position: 'relative' }}>
+          <div className="hero-grid" style={{
+            display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, alignItems: 'center',
+          }}>
+            {/* ── Texto izquierda ── */}
             <motion.div
-              initial={{ opacity: 0, x: -28 }}
+              initial={{ opacity: 0, x: -24 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             >
+              {/* Eyebrow badge */}
               <div style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
-                backgroundColor: 'rgba(9,117,137,0.18)',
-                border: '1px solid rgba(9,117,137,0.4)',
-                borderRadius: 999, padding: '6px 16px', marginBottom: 20,
+                border: '1px solid rgba(255,255,255,0.25)', borderRadius: 999,
+                padding: '5px 14px', marginBottom: 20,
               }}>
                 <span style={{
-                  fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 600,
-                  color: '#AEE5DA', textTransform: 'uppercase', letterSpacing: '0.1em',
+                  fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600,
+                  color: '#74B4A7', letterSpacing: '0.1em', textTransform: 'uppercase',
                 }}>
-                  3° Edición · Cali, Colombia
+                  3ª EDICIÓN · CALI, COLOMBIA
                 </span>
               </div>
 
+              {/* H1 — idéntico al Figma: Georgia, muy grande, blanco */}
               <h1 style={{
-                fontFamily: 'Gloock, Georgia, serif',
-                fontSize: 'clamp(30px, 4vw, 52px)',
-                fontWeight: 400, color: '#fff',
-                lineHeight: 1.15, marginBottom: 18,
+                fontFamily: 'Georgia, "Times New Roman", serif',
+                fontSize: 'clamp(36px, 4.8vw, 60px)',
+                fontWeight: 700,
+                color: '#ffffff',
+                lineHeight: 1.08,
+                marginBottom: 22,
+                letterSpacing: '-0.01em',
               }}>
-                Agenda del <span style={{ color: '#AEE5DA' }}>3° Congreso</span> Internacional de Organizaciones Ambientales
+                Agenda del{' '}
+                <span style={{ color: '#74B4A7' }}>3°</span>{' '}
+                Congreso Internacional de Organizaciones Ambientales
               </h1>
 
               <p style={{
                 fontFamily: 'Inter, sans-serif', fontSize: 15,
-                color: 'rgba(255,255,255,0.72)', lineHeight: 1.75,
-                marginBottom: 32, maxWidth: 420,
+                color: 'rgba(255,255,255,0.65)', lineHeight: 1.7,
+                maxWidth: 400, marginBottom: 32,
               }}>
                 Solicita tu asistencia para no quedarte sin plaza. El aforo es limitado.
               </p>
 
-              <Link href="/marketing/registro" style={{
-                display: 'inline-flex', alignItems: 'center', gap: 8,
-                backgroundColor: '#B53077', color: '#fff',
-                fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700,
-                padding: '13px 32px', borderRadius: 999, textDecoration: 'none',
-                letterSpacing: '0.04em', textTransform: 'uppercase',
-                boxShadow: '0 4px 20px rgba(181,48,119,0.35)',
-              }}>
-                Quiero Asistir →
+              <Link
+                href="/marketing/registro"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 8,
+                  backgroundColor: '#B53077', color: '#fff',
+                  fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700,
+                  padding: '13px 30px', borderRadius: 999, textDecoration: 'none',
+                  letterSpacing: '0.06em', boxShadow: '0 2px 18px rgba(181,48,119,0.45)',
+                  transition: 'background-color 0.2s, transform 0.15s',
+                }}
+                onMouseEnter={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.backgroundColor = '#802254'; el.style.transform = 'translateY(-1px)' }}
+                onMouseLeave={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.backgroundColor = '#B53077'; el.style.transform = 'translateY(0)' }}
+              >
+                QUIERO ASISTIR →
               </Link>
             </motion.div>
 
-            {/* Imagen hero */}
+            {/* ── Imagen panelistas derecha ── */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.94 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.12 }}
-              style={{ position: 'relative' }}
+              transition={{ duration: 0.65, delay: 0.1 }}
             >
               <div style={{
-                position: 'absolute', top: -12, right: -12,
-                width: '100%', height: '100%',
-                border: '2px solid rgba(174,229,218,0.2)',
-                borderRadius: 16, zIndex: 0,
-              }} />
-              <div style={{
-                position: 'relative', zIndex: 1,
-                borderRadius: 14, overflow: 'hidden',
+                borderRadius: 20, overflow: 'hidden',
+                boxShadow: '0 8px 40px rgba(0,0,0,0.35)',
+                backgroundColor: '#1B3E52',
                 aspectRatio: '4/3',
-                boxShadow: '8px 8px 40px rgba(0,0,0,0.4)',
               }}>
-                {/* Reemplaza con <Image> en producción */}
                 <img
-                  src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80"
-                  alt="Congreso ICEO"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  src="/icons/panelistas.svg"
+                  alt="Panelistas del 3ICEO"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                 />
-                <div style={{
-                  position: 'absolute', inset: 0,
-                  background: 'linear-gradient(180deg,transparent 50%,rgba(9,52,78,0.6) 100%)',
-                }} />
               </div>
             </motion.div>
           </div>
         </div>
 
-        {/* ── TABS DE DÍAS ── */}
+        {/* ── TABS CALENDARIO — en la base del hero, centrados ── */}
         <div style={{
-          marginTop: 48,
-          display: 'flex', justifyContent: 'center', gap: 0,
-          paddingBottom: 0,
+          display: 'flex', justifyContent: 'center', gap: 8,
+          padding: '48px 48px 0',
+          position: 'relative',
         }}>
-          {DIAS.map((dia) => {
-            const activo = diaActivo === dia.id
+          {DIAS.map((d, i) => {
+            const active = diaActivo === i
             return (
               <button
-                key={dia.id}
-                onClick={() => setDiaActivo(dia.id)}
+                key={d.id}
+                onClick={() => { setDiaActivo(i); document.getElementById('programa')?.scrollIntoView({ behavior: 'smooth' }) }}
                 style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontSize: 13, fontWeight: activo ? 700 : 500,
-                  padding: '14px 36px',
-                  backgroundColor: activo ? '#fff' : 'rgba(255,255,255,0.10)',
-                  color:           activo ? '#09344e' : 'rgba(255,255,255,0.70)',
-                  border: 'none', cursor: 'pointer',
-                  borderRadius: activo ? '10px 10px 0 0' : '10px 10px 0 0',
-                  transition: 'all .2s',
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
+                  width: 130, padding: '14px 12px 16px',
+                  backgroundColor: active ? '#ffffff' : 'rgba(255,255,255,0.12)',
+                  border: 'none', borderRadius: '10px 10px 0 0',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  textAlign: 'center',
                 }}
+                onMouseEnter={e => { if (!active) (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(255,255,255,0.2)' }}
+                onMouseLeave={e => { if (!active) (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(255,255,255,0.12)' }}
               >
-                <span style={{ fontSize: 10, letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 600 }}>
-                  {dia.diaSemana}
-                </span>
-                <span style={{
-                  fontSize: activo ? 26 : 20, fontWeight: 800, lineHeight: 1,
-                  color: activo ? '#097589' : 'inherit',
+                <div style={{
+                  fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700,
+                  color: active ? '#5A6E77' : 'rgba(255,255,255,0.55)',
+                  letterSpacing: '0.1em', marginBottom: 4,
                 }}>
-                  {dia.diaNum}
-                </span>
-                <span style={{ fontSize: 10, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
-                  {dia.mes}
-                </span>
+                  {d.diaSemana}
+                </div>
+                <div style={{
+                  fontFamily: 'Poppins, sans-serif', fontSize: 32, fontWeight: 700,
+                  color: active ? d.colorAccent : 'rgba(255,255,255,0.75)',
+                  lineHeight: 1,
+                }}>
+                  {d.diaNum}
+                </div>
+                <div style={{
+                  fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 600,
+                  color: active ? '#5A6E77' : 'rgba(255,255,255,0.5)',
+                  letterSpacing: '0.1em', marginTop: 4,
+                }}>
+                  {d.mes}
+                </div>
               </button>
             )
           })}
         </div>
-
-        {/* Wave */}
-        <div style={{ lineHeight: 0 }}>
-          <svg viewBox="0 0 1440 40" preserveAspectRatio="none" style={{ width: '100%', height: 40, display: 'block' }}>
-            <path d="M0,20 C480,40 960,0 1440,20 L1440,40 L0,40 Z" fill="#F7F6F3" />
-          </svg>
-        </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          HORARIOS DEL DÍA SELECCIONADO
-      ══════════════════════════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#F7F6F3', padding: '60px 0 80px' }}>
-        <div className="container-brand" style={{ padding: '0 48px' }}>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={diaActivo}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            >
-              {/* Título del día */}
-              <div style={{
-                display: 'flex', alignItems: 'flex-start', gap: 28,
-                marginBottom: 40,
-              }}>
-                {/* Date pill */}
-                <div style={{
-                  background: '#09344e', borderRadius: 12,
-                  padding: '16px 20px', textAlign: 'center',
-                  minWidth: 90, flexShrink: 0,
-                  boxShadow: '2px 2px 8px rgba(9,52,78,0.2)',
-                }}>
-                  <div style={{
-                    fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700,
-                    color: '#AEE5DA', letterSpacing: '0.1em', textTransform: 'uppercase',
-                  }}>
-                    {diaData.diaSemana}
-                  </div>
-                  <div style={{
-                    fontFamily: 'Poppins, sans-serif', fontSize: 38, fontWeight: 800,
-                    color: '#fff', lineHeight: 1,
-                  }}>
-                    {diaData.diaNum}
-                  </div>
-                  <div style={{
-                    fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 600,
-                    color: '#AEE5DA', letterSpacing: '0.08em', textTransform: 'uppercase',
-                    marginTop: 2,
-                  }}>
-                    {diaData.mes}
-                  </div>
-                </div>
-
-                <div style={{ paddingTop: 4 }}>
-                  <h2 style={{
-                    fontFamily: 'Poppins, sans-serif', fontSize: 22, fontWeight: 700,
-                    color: '#09344e', marginBottom: 8, lineHeight: 1.25,
-                  }}>
-                    {diaData.temaTitulo}
-                  </h2>
-                  <p style={{
-                    fontFamily: 'Inter, sans-serif', fontSize: 14,
-                    color: '#5A6E77', lineHeight: 1.7, maxWidth: 600,
-                  }}>
-                    {diaData.temaDesc}
-                  </p>
-                </div>
-              </div>
-
-              {/* Horario MAÑANA / TARDE */}
-              <div style={{
-                display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24,
-              }} className="horario-grid">
-
-                {/* MAÑANA */}
-                <div>
-                  <div style={{
-                    display: 'inline-flex', alignItems: 'center', gap: 8,
-                    fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 700,
-                    color: '#097589', letterSpacing: '0.1em', textTransform: 'uppercase',
-                    marginBottom: 14,
-                  }}>
-                    ☀️ MAÑANA
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {diaData.manana.map((s, i) => (
-                      <SesionRow key={i} sesion={s} />
-                    ))}
-                  </div>
-                </div>
-
-                {/* TARDE */}
-                <div>
-                  <div style={{
-                    display: 'inline-flex', alignItems: 'center', gap: 8,
-                    fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 700,
-                    color: '#B53077', letterSpacing: '0.1em', textTransform: 'uppercase',
-                    marginBottom: 14,
-                  }}>
-                    🌤️ TARDE
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {diaData.tarde.map((s, i) => (
-                      <SesionRow key={i} sesion={s} />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </AnimatePresence>
-
-          {/* CTAs Agenda */}
-          <FadeIn style={{ marginTop: 48, display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-            <a href="#" style={{
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-              backgroundColor: '#097589', color: '#fff',
-              fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700,
-              padding: '13px 28px', borderRadius: 999, textDecoration: 'none',
-              letterSpacing: '0.04em', textTransform: 'uppercase',
-            }}>
-              ↓ Descargar horarios PDF
-            </a>
-            <Link href="/marketing/lineas-tematicas" style={{
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-              backgroundColor: 'transparent', color: '#097589',
-              border: '2px solid #097589',
-              fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700,
-              padding: '11px 28px', borderRadius: 999, textDecoration: 'none',
-              letterSpacing: '0.04em', textTransform: 'uppercase',
-            }}>
-              Ver líneas temáticas →
-            </Link>
-          </FadeIn>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════════════
-          PONENTES DESTACADOS
-      ══════════════════════════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#fff', padding: '80px 0' }}>
-        <div className="container-brand" style={{ padding: '0 48px' }}>
-
+      {/* ════════════════════════════════════════════════════════════════════
+          2. PONENTES — "Conoce a nuestros ponentes"
+          Fondo #F0F4F7. Carrusel horizontal con flechas y scroll.
+      ════════════════════════════════════════════════════════════════════ */}
+      <section style={{ backgroundColor: '#F0F4F7', padding: '72px 48px 80px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <FadeIn>
-            <div style={{ textAlign: 'center', marginBottom: 12 }}>
-              <span style={{
-                fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600,
-                color: '#097589', letterSpacing: '0.12em', textTransform: 'uppercase',
-              }}>
-                PONENTES
-              </span>
-            </div>
             <h2 style={{
-              fontFamily: 'Poppins, sans-serif', fontSize: 28, fontWeight: 600,
-              color: '#09344e', textAlign: 'center', marginBottom: 48,
+              fontFamily: 'Poppins, sans-serif', fontSize: 'clamp(22px, 2.5vw, 30px)',
+              fontWeight: 700, color: '#09344e', textAlign: 'center', marginBottom: 44,
             }}>
               Conoce a nuestros ponentes
             </h2>
           </FadeIn>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: 24,
-          }} className="ponentes-grid">
-            {PONENTES.map((p, i) => (
-              <FadeIn key={i} delay={i * 0.08}>
-                <div
-                  style={{
-                    backgroundColor: '#fff', borderRadius: 14, overflow: 'hidden',
-                    boxShadow: '2px 2px 8px rgba(9,52,78,0.08)',
-                    transition: 'transform .2s, box-shadow .2s',
-                    display: 'flex', flexDirection: 'column',
-                  }}
-                  onMouseEnter={e => {
-                    (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-6px)'
-                    ;(e.currentTarget as HTMLDivElement).style.boxShadow = '4px 12px 28px rgba(9,52,78,0.15)'
-                  }}
-                  onMouseLeave={e => {
-                    (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'
-                    ;(e.currentTarget as HTMLDivElement).style.boxShadow = '2px 2px 8px rgba(9,52,78,0.08)'
-                  }}
-                >
-                  {/* Foto */}
-                  <div style={{ height: 200, overflow: 'hidden', position: 'relative' }}>
-                    <img
-                      src={p.img}
-                      alt={p.nombre}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    />
-                    {/* Gradient overlay */}
-                    <div style={{
-                      position: 'absolute', bottom: 0, left: 0, right: 0, height: 60,
-                      background: 'linear-gradient(0deg,rgba(9,52,78,0.7) 0%,transparent 100%)',
-                    }} />
-                    {/* Flag */}
-                    <div style={{
-                      position: 'absolute', bottom: 10, left: 14,
-                      fontSize: 18, lineHeight: 1,
-                    }}>
-                      {p.flag}
-                    </div>
-                  </div>
+          <div style={{ padding: '0 24px', position: 'relative' }}>
+            <PonenteCarousel />
+          </div>
+        </div>
+      </section>
 
-                  {/* Info */}
-                  <div style={{ padding: '16px 18px 20px', flex: 1 }}>
-                    <div style={{
-                      fontFamily: 'Poppins, sans-serif', fontWeight: 700,
-                      fontSize: 15, color: '#09344e', marginBottom: 2,
-                    }}>
-                      {p.nombre}
-                    </div>
-                    <div style={{
-                      fontFamily: 'Poppins, sans-serif', fontSize: 12,
-                      color: '#097589', fontWeight: 600, marginBottom: 2,
-                    }}>
-                      {p.cargo}
-                    </div>
-                    <div style={{
-                      fontFamily: 'Inter, sans-serif', fontSize: 12,
-                      color: '#5A6E77', marginBottom: 14,
-                    }}>
-                      {p.org}
-                    </div>
+      {/* ════════════════════════════════════════════════════════════════════
+          3. TALLERES Y HORARIOS — "Talleres y horarios"
+          Botones filtro + días apilados verticalmente (MAÑANA / TARDE).
+      ════════════════════════════════════════════════════════════════════ */}
+      <section id="programa" style={{ backgroundColor: '#ffffff', padding: '72px 48px 88px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
 
-                    <Link href={p.li} style={{
-                      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                      width: 32, height: 32, borderRadius: '50%',
-                      backgroundColor: '#0A66C2', color: '#fff',
-                    }}>
-                      <IconLinkedin size={15} color="white" />
-                    </Link>
-                  </div>
-                </div>
-              </FadeIn>
-            ))}
+          <FadeIn>
+            <h2 style={{
+              fontFamily: 'Poppins, sans-serif', fontSize: 'clamp(22px, 2.5vw, 30px)',
+              fontWeight: 700, color: '#09344e', textAlign: 'center', marginBottom: 32,
+            }}>
+              Talleres y horarios
+            </h2>
+          </FadeIn>
+
+          {/* Botones de filtro de día */}
+          <FadeIn delay={0.05}>
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginBottom: 48, flexWrap: 'wrap' }}>
+              {DIAS.map((d, i) => {
+                const active = diaActivo === i
+                return (
+                  <button
+                    key={d.id}
+                    onClick={() => setDiaActivo(i)}
+                    style={{
+                      fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600,
+                      padding: '10px 22px', borderRadius: 999, border: 'none', cursor: 'pointer',
+                      backgroundColor: active ? '#09344e' : '#F0F4F7',
+                      color: active ? '#ffffff' : '#5A6E77',
+                      transition: 'all 0.2s',
+                      letterSpacing: '0.03em',
+                    }}
+                    onMouseEnter={e => { if (!active) { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#E0E8EC'; (e.currentTarget as HTMLButtonElement).style.color = '#09344e' } }}
+                    onMouseLeave={e => { if (!active) { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#F0F4F7'; (e.currentTarget as HTMLButtonElement).style.color = '#5A6E77' } }}
+                  >
+                    {active ? 'Programa' : 'Agenda'} {d.diaSemana.charAt(0) + d.diaSemana.slice(1).toLowerCase()}
+                  </button>
+                )
+              })}
+            </div>
+          </FadeIn>
+
+          {/* Días apilados verticalmente */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+            {DIAS.map((dia, i) => {
+              const show = diaActivo === i
+              return (
+                <AnimatePresence key={dia.id} mode="wait">
+                  {show && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '160px 1fr 1fr',
+                        gap: 20,
+                        alignItems: 'flex-start',
+                      }}
+                      className="dia-row"
+                    >
+                      {/* Tarjeta de día — fiel al Figma */}
+                      <div style={{
+                        backgroundColor: dia.colorAccent,
+                        borderRadius: 16,
+                        padding: '28px 16px',
+                        textAlign: 'center',
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                        minHeight: 200,
+                        position: 'sticky', top: 100,
+                      }}>
+                        <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, color: 'rgba(255,255,255,0.85)', letterSpacing: '0.1em', marginBottom: 8 }}>
+                          {dia.diaSemana}
+                        </div>
+                        <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 52, fontWeight: 700, color: '#ffffff', lineHeight: 1 }}>
+                          {dia.diaNum}
+                        </div>
+                        <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.85)', letterSpacing: '0.1em', marginTop: 8 }}>
+                          {dia.mes}
+                        </div>
+                      </div>
+
+                      {/* MAÑANA */}
+                      <div>
+                        <div style={{
+                          fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 700,
+                          color: '#09344e', letterSpacing: '0.12em', textTransform: 'uppercase',
+                          marginBottom: 12, paddingBottom: 8,
+                          borderBottom: '2px solid #F0F4F7',
+                        }}>
+                          MAÑANA
+                        </div>
+                        {dia.manana.map((s, j) => <SesionRow key={j} s={s} />)}
+                      </div>
+
+                      {/* TARDE */}
+                      <div>
+                        <div style={{
+                          fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 700,
+                          color: '#09344e', letterSpacing: '0.12em', textTransform: 'uppercase',
+                          marginBottom: 12, paddingBottom: 8,
+                          borderBottom: '2px solid #F0F4F7',
+                        }}>
+                          TARDE
+                        </div>
+                        {dia.tarde.map((s, j) => <SesionRow key={j} s={s} />)}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              )
+            })}
           </div>
 
-          {/* Paginación decorativa */}
-          <FadeIn style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 32 }}>
-            {[0, 1, 2, 3].map(i => (
-              <div key={i} style={{
-                width: i === 0 ? 24 : 8, height: 8, borderRadius: 999,
-                backgroundColor: i === 0 ? '#097589' : '#D9DEE2',
-                transition: 'all .2s',
-              }} />
-            ))}
+          {/* Botones de acción al pie */}
+          <FadeIn delay={0.2}>
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 40, flexWrap: 'wrap' }}>
+              <a href="#" style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                backgroundColor: '#097589', color: '#fff',
+                fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 700,
+                padding: '11px 22px', borderRadius: 999, textDecoration: 'none',
+                letterSpacing: '0.05em', transition: 'background-color 0.2s',
+              }}
+                onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#074954')}
+                onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#097589')}
+              >
+                DESCARGAR HORARIO
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                  <path d="M8 3v8M5 9l3 2 3-2M3 13h10" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </a>
+              <Link href="/marketing/lineas-tematicas" style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                backgroundColor: '#03A383', color: '#fff',
+                fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 700,
+                padding: '11px 22px', borderRadius: 999, textDecoration: 'none',
+                letterSpacing: '0.05em', transition: 'background-color 0.2s',
+              }}
+                onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#007A63')}
+                onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#03A383')}
+              >
+                VER LÍNEAS TEMÁTICAS
+              </Link>
+            </div>
           </FadeIn>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          DONACIÓN
-      ══════════════════════════════════════════════════════════════════ */}
-      <section style={{
-        background: 'linear-gradient(135deg,#09344e 0%,#1C495C 100%)',
-        padding: '80px 0',
-        position: 'relative', overflow: 'hidden',
-      }}>
-        <div style={{
-          position: 'absolute', top: -80, right: -80, width: 360, height: 360,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle,rgba(9,117,137,0.18) 0%,transparent 70%)',
-          pointerEvents: 'none',
-        }} />
-        <div className="container-brand" style={{ padding: '0 48px' }}>
-          <div style={{
-            display: 'grid', gridTemplateColumns: '1fr 1fr',
-            gap: 60, alignItems: 'center',
-          }} className="donacion-grid">
+      {/* Wave blanca → aqua pálido */}
+      <div style={{ lineHeight: 0 }}>
+        <svg viewBox="0 0 1440 48" preserveAspectRatio="none" style={{ width: '100%', height: 48, display: 'block' }}>
+          <path d="M0,0 C360,48 720,0 1080,36 C1260,48 1380,12 1440,28 L1440,48 L0,48 Z" fill="#E6F3EE"/>
+        </svg>
+      </div>
+
+      {/* ════════════════════════════════════════════════════════════════════
+          4. DONACIÓN — exacto al Figma (Image 2)
+          Fondo aqua pálido. Texto izquierda + planta_donacion.svg derecha.
+      ════════════════════════════════════════════════════════════════════ */}
+      <section style={{ backgroundColor: '#E6F3EE', padding: '72px 48px 80px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div className="donacion-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center' }}>
+
+            {/* Texto izquierda */}
             <FadeIn>
               <h2 style={{
-                fontFamily: 'Poppins, sans-serif', fontSize: 32, fontWeight: 700,
-                color: '#fff', marginBottom: 14, lineHeight: 1.25,
+                fontFamily: 'Poppins, sans-serif', fontSize: 'clamp(24px, 3vw, 38px)',
+                fontWeight: 700, color: '#09344e', lineHeight: 1.2, marginBottom: 18,
               }}>
                 ¡Gracias a tu donación, nadie se queda fuera!
               </h2>
-              <p style={{
-                fontFamily: 'Inter, sans-serif', fontSize: 15,
-                color: 'rgba(255,255,255,0.75)', lineHeight: 1.75, marginBottom: 12,
-              }}>
-                Tu ayuda permite que organizaciones ambientales sin recursos puedan
-                asistir al 3° ICEO y formar parte de un espacio de aprendizaje,
-                conexión y colaboración único.
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 15, color: '#12303E', lineHeight: 1.7, marginBottom: 14 }}>
+                Tu ayuda permitirá que organizaciones ambientales que no cuenten con recursos puedan
+                asistir al 3ICEO y formar parte de un espacio de aprendizaje, conexión y colaboración única.
               </p>
-              <p style={{
-                fontFamily: 'Inter, sans-serif', fontSize: 13,
-                color: 'rgba(255,255,255,0.5)', lineHeight: 1.6, marginBottom: 28,
-              }}>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 15, color: '#12303E', lineHeight: 1.7, marginBottom: 32 }}>
                 El importe irá íntegramente destinado a cubrir alojamiento, transporte y dietas.
               </p>
-              <Link href="/marketing/donaciones" style={{
-                display: 'inline-flex', alignItems: 'center', gap: 8,
-                backgroundColor: '#B53077', color: '#fff',
-                fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700,
-                padding: '13px 32px', borderRadius: 999, textDecoration: 'none',
-                letterSpacing: '0.04em', textTransform: 'uppercase',
-                boxShadow: '0 4px 20px rgba(181,48,119,0.35)',
-              }}>
-                Dona ahora →
+              <Link
+                href="/marketing/donaciones"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 8,
+                  backgroundColor: '#B53077', color: '#fff',
+                  fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700,
+                  padding: '13px 30px', borderRadius: 999, textDecoration: 'none',
+                  letterSpacing: '0.05em', boxShadow: '0 2px 16px rgba(181,48,119,0.28)',
+                  transition: 'background-color 0.2s, transform 0.15s',
+                }}
+                onMouseEnter={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.backgroundColor = '#802254'; el.style.transform = 'translateY(-1px)' }}
+                onMouseLeave={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.backgroundColor = '#B53077'; el.style.transform = 'translateY(0)' }}
+              >
+                DONA AHORA
               </Link>
             </FadeIn>
 
-            <FadeIn delay={0.15}>
-              <div style={{
-                borderRadius: 14, overflow: 'hidden',
-                boxShadow: '8px 8px 40px rgba(0,0,0,0.35)',
-                aspectRatio: '4/3',
-              }}>
-                <img
-                  src="https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800&q=80"
-                  alt="Donación"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
+            {/* Imagen derecha con acento aqua detrás */}
+            <FadeIn delay={0.14}>
+              <div style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
+                <div style={{
+                  position: 'absolute', top: 16, right: -10,
+                  width: '88%', height: '88%', borderRadius: 16,
+                  backgroundColor: '#AEE5DA', zIndex: 0,
+                }} />
+                <div style={{
+                  position: 'relative', zIndex: 1, borderRadius: 16,
+                  overflow: 'hidden', boxShadow: '4px 4px 24px rgba(9,52,78,0.14)',
+                  maxWidth: 480, width: '100%',
+                }}>
+                  <img src="/icons/planta_donacion.svg" alt="Donación"
+                    style={{ width: '100%', height: 'auto', display: 'block' }} />
+                </div>
               </div>
             </FadeIn>
           </div>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          REDES SOCIALES
-      ══════════════════════════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#F7F6F3', padding: '80px 0' }}>
-        <div className="container-brand" style={{ padding: '0 48px' }}>
-          <div style={{
-            display: 'grid', gridTemplateColumns: '1fr 1fr',
-            gap: 48, alignItems: 'center',
-          }} className="follow-grid">
+      {/* Wave aqua → blanca */}
+      <div style={{ lineHeight: 0, backgroundColor: '#E6F3EE' }}>
+        <svg viewBox="0 0 1440 48" preserveAspectRatio="none" style={{ width: '100%', height: 48, display: 'block' }}>
+          <path d="M0,48 C360,0 720,48 1080,20 C1260,8 1380,40 1440,28 L1440,48 L0,48 Z" fill="#ffffff"/>
+        </svg>
+      </div>
 
+      {/* ════════════════════════════════════════════════════════════════════
+          5. FOLLOW — fondo blanco
+      ════════════════════════════════════════════════════════════════════ */}
+      <section style={{ backgroundColor: '#ffffff', padding: '72px 48px 80px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <div className="follow-grid" style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 64, alignItems: 'center' }}>
             <FadeIn>
-              <div style={{
-                background: 'linear-gradient(135deg,#74B4A7 0%,#097589 100%)',
-                borderRadius: 20, padding: '40px 36px',
-                textAlign: 'center', color: '#fff',
-                boxShadow: '4px 4px 24px rgba(9,117,137,0.25)',
-              }}>
-                <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 36, fontWeight: 800, letterSpacing: '0.04em', marginBottom: 4 }}>
-                  FOLLOW US!
-                </div>
-                <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 600, opacity: 0.85, marginBottom: 4 }}>
-                  ON SOCIAL MEDIA
-                </div>
-                <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, opacity: 0.65, marginBottom: 24 }}>
-                  @awaqong
-                </div>
-                <div style={{ display: 'flex', gap: 14, justifyContent: 'center' }}>
-                  {['instagram', 'facebook', 'linkedin'].map(net => (
-                    <Link key={net} href="#" style={{
-                      width: 42, height: 42, borderRadius: '50%',
-                      border: '2px solid rgba(255,255,255,0.6)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      color: '#fff', textDecoration: 'none',
-                      fontFamily: 'Poppins, sans-serif', fontSize: 16, fontWeight: 700,
-                    }}>
-                      {net === 'instagram' ? '📷' : net === 'facebook' ? '👥' : '💼'}
-                    </Link>
+              <img src="/icons/follow.svg" alt="Follow us on social media"
+                style={{ width: 260, height: 'auto', display: 'block', flexShrink: 0,
+                  filter: 'drop-shadow(0 4px 16px rgba(9,52,78,0.12))' }} />
+            </FadeIn>
+            <FadeIn delay={0.12}>
+              <div>
+                <h3 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 700, fontSize: 'clamp(22px, 2.5vw, 30px)', color: '#09344e', lineHeight: 1.2, marginBottom: 14 }}>
+                  ¡Pásate por nuestras Redes Sociales y síguenos!
+                </h3>
+                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 15, color: '#5A6E77', lineHeight: 1.7, marginBottom: 28, maxWidth: 460 }}>
+                  Publicamos contenido acerca de la labor que hacemos, podrás conocer nuestros proyectos y a nosotros más a fondo.
+                </p>
+                <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap', alignItems: 'center' }}>
+                  {SOCIAL.map(s => (
+                    <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer"
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'Inter, sans-serif', fontSize: 15, fontWeight: 500, color: '#09344e', textDecoration: 'none', transition: 'color 0.2s' }}
+                      onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.color = '#097589')}
+                      onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.color = '#09344e')}
+                    >
+                      <img src={s.icon} alt="" width={20} height={20} style={{ display: 'block' }} />
+                      {s.label}
+                    </a>
                   ))}
                 </div>
               </div>
             </FadeIn>
-
-            <FadeIn delay={0.15}>
-              <h3 style={{
-                fontFamily: 'Poppins, sans-serif', fontSize: 22, fontWeight: 600,
-                color: '#09344e', marginBottom: 12,
-              }}>
-                ¡Pásate por nuestras Redes Sociales y síguenos!
-              </h3>
-              <p style={{
-                fontFamily: 'Inter, sans-serif', fontSize: 15,
-                color: '#5A6E77', lineHeight: 1.75, marginBottom: 24,
-              }}>
-                Publicamos contenido acerca de la labor que hacemos, podrás conocer
-                proyectos y a nosotros más a fondo.
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {[
-                  { label: 'Instagram', bg: '#E1306C', icon: '📸' },
-                  { label: 'Facebook',  bg: '#1877F2', icon: '👍' },
-                  { label: 'LinkedIn',  bg: '#0A66C2', icon: '💼' },
-                ].map(({ label, bg, icon }) => (
-                  <Link key={label} href="#" style={{
-                    display: 'flex', alignItems: 'center', gap: 12,
-                    backgroundColor: '#fff', border: '1.5px solid #D9DEE2',
-                    borderRadius: 10, padding: '12px 18px',
-                    textDecoration: 'none', color: '#12303E',
-                    fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 600,
-                    transition: 'border-color .2s',
-                    boxShadow: '2px 2px 8px rgba(9,52,78,0.06)',
-                  }}>
-                    <div style={{
-                      width: 36, height: 36, borderRadius: 8,
-                      backgroundColor: bg,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 18, flexShrink: 0,
-                    }}>
-                      {icon}
-                    </div>
-                    {label}
-                    <span style={{ marginLeft: 'auto', color: '#097589', fontSize: 12 }}>→</span>
-                  </Link>
-                ))}
-              </div>
-            </FadeIn>
           </div>
         </div>
       </section>
 
-      {/* ── RESPONSIVE ── */}
+      {/* ── RESPONSIVE ─────────────────────────────────────────────────────── */}
       <style suppressHydrationWarning>{`
-        @media (max-width: 1024px) {
-          .ponentes-grid { grid-template-columns: repeat(2,1fr) !important; }
-        }
         @media (max-width: 900px) {
-          .hero-agenda-grid { grid-template-columns: 1fr !important; }
-          .horario-grid     { grid-template-columns: 1fr !important; }
-          .donacion-grid    { grid-template-columns: 1fr !important; }
-          .follow-grid      { grid-template-columns: 1fr !important; }
-        }
-        @media (max-width: 600px) {
-          .ponentes-grid { grid-template-columns: 1fr 1fr !important; }
+          .hero-grid   { grid-template-columns: 1fr !important; }
+          .hero-grid > div:last-child { display: none !important; }
+          .dia-row     { grid-template-columns: 1fr !important; }
+          .donacion-grid { grid-template-columns: 1fr !important; }
+          .donacion-grid > div:last-child { display: none !important; }
+          .follow-grid { grid-template-columns: 1fr !important; }
+          .follow-grid > div:first-child { display: none !important; }
         }
       `}</style>
-    </div>
-  )
-}
-
-// ─── COMPONENTE FILA DE SESIÓN ─────────────────────────────────────────────────
-function SesionRow({ sesion }: { sesion: Sesion }) {
-  const colors = TIPO_COLOR[sesion.tipo]
-  const isPausa = sesion.tipo === 'pausa'
-
-  return (
-    <div style={{
-      display: 'flex', gap: 12, alignItems: 'flex-start',
-      backgroundColor: sesion.highlight ? colors.bg : '#fff',
-      borderRadius: 10,
-      borderLeft: `3px solid ${colors.border}`,
-      padding: isPausa ? '8px 14px' : '12px 14px',
-      boxShadow: sesion.highlight ? `0 2px 10px ${colors.border}40` : '2px 2px 8px rgba(9,52,78,0.05)',
-      opacity: isPausa ? 0.7 : 1,
-    }}>
-      {/* Hora */}
-      <span style={{
-        fontFamily: 'Poppins, sans-serif', fontWeight: 700,
-        fontSize: 11, color: '#097589',
-        minWidth: 88, flexShrink: 0, paddingTop: 2,
-        lineHeight: 1.4,
-      }}>
-        {sesion.hora}
-      </span>
-
-      {/* Título */}
-      <span style={{
-        fontFamily: 'Inter, sans-serif',
-        fontSize: 13, color: sesion.highlight ? colors.text : '#12303E',
-        lineHeight: 1.5, flex: 1,
-        fontWeight: sesion.highlight ? 600 : 400,
-      }}>
-        {sesion.titulo}
-      </span>
-
-      {/* Badge tipo */}
-      {!isPausa && (
-        <span style={{
-          fontFamily: 'Poppins, sans-serif', fontSize: 9, fontWeight: 700,
-          color: colors.text, backgroundColor: colors.bg,
-          border: `1px solid ${colors.border}`,
-          borderRadius: 999, padding: '3px 8px',
-          textTransform: 'uppercase', letterSpacing: '0.06em',
-          flexShrink: 0, alignSelf: 'flex-start', marginTop: 2,
-          whiteSpace: 'nowrap',
-        }}>
-          {sesion.tipo}
-        </span>
-      )}
     </div>
   )
 }

@@ -4,9 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   TIPOS
-───────────────────────────────────────────────────────────────────────────── */
+//TYPES
 type DonationForm = {
   importe: string
   nombre: string
@@ -15,10 +13,6 @@ type DonationForm = {
   aceptaComunicaciones: boolean
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   HELPER — Icon inline con <img> desde /public/icons/
-   Todos los iconos vienen de /public/icons/ sin excepción.
-───────────────────────────────────────────────────────────────────────────── */
 function Icon({
   src,
   size = 20,
@@ -43,9 +37,7 @@ function Icon({
   )
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   DATOS ESTÁTICOS
-───────────────────────────────────────────────────────────────────────────── */
+//CONSTS
 const TAGS = [
   { label: 'Alojamiento', icon: '/icons/icon_bed.svg'       },
   { label: 'Transporte',  icon: '/icons/icon_transport.svg' },
@@ -105,9 +97,7 @@ const INITIAL: DonationForm = {
   aceptaPrivacidad: false, aceptaComunicaciones: false,
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   FadeIn — envuelve cualquier elemento con entrada suave
-───────────────────────────────────────────────────────────────────────────── */
+//FadeIn
 function FadeIn({
   children,
   delay = 0,
@@ -129,9 +119,7 @@ function FadeIn({
   )
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   COMPONENTE PRINCIPAL
-───────────────────────────────────────────────────────────────────────────── */
+//MAIN
 export default function DonacionesPage() {
   const [form, setForm]             = useState<DonationForm>(INITIAL)
   const [errors, setErrors]         = useState<Record<string, string>>({})

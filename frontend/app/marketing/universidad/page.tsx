@@ -56,20 +56,22 @@ function Ico({
 }
 
 // ─── DATOS ────────────────────────────────────────────────────────────────────
+// ✅ CAMBIO: emojis reemplazados por imágenes oficiales instalaciones_N.svg
 const INSTALACIONES = [
-  { label: 'Auditorio Central',   bg: 'linear-gradient(135deg,#09344e 0%,#1C495C 100%)', emoji: '🏛️' },
-  { label: 'Auditorio 103 B Lago',bg: 'linear-gradient(135deg,#097589 0%,#03A383 100%)', emoji: '🎭' },
-  { label: 'Auditorio 108 Lago',  bg: 'linear-gradient(135deg,#4886B5 0%,#097589 100%)', emoji: '🎓' },
-  { label: 'Auditorio 103 A Lago',bg: 'linear-gradient(135deg,#12303E 0%,#437287 100%)', emoji: '📚' },
+  { label: 'Auditorio Central',    bg: 'linear-gradient(135deg,#09344e 0%,#1C495C 100%)', imgSrc: '/icons/instalaciones_1.svg' },
+  { label: 'Auditorio 103 B Lago', bg: 'linear-gradient(135deg,#097589 0%,#03A383 100%)', imgSrc: '/icons/instalaciones_2.svg' },
+  { label: 'Auditorio 108 Lago',   bg: 'linear-gradient(135deg,#4886B5 0%,#097589 100%)', imgSrc: '/icons/instalaciones_3.svg' },
+  { label: 'Auditorio 103 A Lago', bg: 'linear-gradient(135deg,#12303E 0%,#437287 100%)', imgSrc: '/icons/instalaciones_4.svg' },
 ]
 
+// ✅ CAMBIO: emojis fallback reemplazados por SVGs oficiales de la sede
 const SERVICIOS = [
-  { label: 'Cafetería',          icon: '/icons/icon_cutlery.svg',   fallback: '🍽️' },
-  { label: 'Parking gratuito',   icon: '/icons/icon_parking.svg',   fallback: '🅿️' },
-  { label: 'Equipos multimedia', icon: '/icons/icon_streaming.svg', fallback: '📽️' },
-  { label: 'Accesos adaptados',  icon: '/icons/icon_accesible.svg', fallback: '♿' },
-  { label: 'Wifi gratuito',      icon: '/icons/icon_wifi.svg',      fallback: '📶' },
-  { label: 'Áreas de descanso',  icon: '/icons/icon_bed.svg',       fallback: '🛋️' },
+  { label: 'Cafetería',          icon: '/icons/sede_food.svg'       },
+  { label: 'Parking gratuito',   icon: '/icons/sede_parking.svg'    },
+  { label: 'Equipos multimedia', icon: '/icons/sede_multimedia.svg' },
+  { label: 'Accesos adaptados',  icon: '/icons/sede_wheelchair.svg' },
+  { label: 'Wifi gratuito',      icon: '/icons/sede_wifi.svg'       },
+  { label: 'Áreas de descanso',  icon: '/icons/sede_highway.svg'    },
 ]
 
 const ESPACIOS_MAP = [
@@ -86,9 +88,9 @@ const ESPACIOS_MAP = [
 ]
 
 const SOCIAL = [
-  { Icon: IconInstagram, href: 'https://instagram.com/awaqong',          label: 'Instagram' },
-  { Icon: IconFacebook,  href: 'https://facebook.com/awaqong',           label: 'Facebook'  },
-  { Icon: IconLinkedin,  href: 'https://linkedin.com/company/awaq-ong',  label: 'LinkedIn'  },
+  { Icon: IconInstagram, href: 'https://instagram.com/awaqong',          label: 'Instagram', iconSrc: '/icons/icon_instagram.svg' },
+  { Icon: IconFacebook,  href: 'https://facebook.com/awaqong',           label: 'Facebook',  iconSrc: '/icons/icon_facebook.svg'  },
+  { Icon: IconLinkedin,  href: 'https://linkedin.com/company/awaq-ong',  label: 'LinkedIn',  iconSrc: '/icons/icon_linkedin.svg'  },
 ]
 
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
@@ -98,25 +100,28 @@ export default function UniversidadPage() {
 
       {/* ══════════════════════════════════════════════════════════════════
           HERO
+          ✅ CAMBIO 1: imagen más visible — opacity subida de 0.22 → 0.55
+                       overlay más suave de 0.92/0.4 → 0.55/0.15
       ══════════════════════════════════════════════════════════════════ */}
       <section style={{ position: 'relative', minHeight: 420, overflow: 'hidden' }}>
-        {/* Imagen de fondo — en prod usa <Image priority /> */}
+        {/* Imagen de fondo — más visible ahora */}
         <div style={{
           position: 'absolute', inset: 0,
           background: 'linear-gradient(135deg,#09344e 0%,#1C495C 60%,#437287 100%)',
         }}>
-          {/* Reemplaza con: <Image src="/images/san-buenaventura-hero.jpg" fill style={{objectFit:'cover',opacity:.35}} alt="" /> */}
+          {/* Reemplaza con: <Image src="/images/san-buenaventura-hero.jpg" fill style={{objectFit:'cover',opacity:.55}} alt="" /> */}
           <div style={{
             position: 'absolute', inset: 0,
             background: 'url(https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?w=1400&q=75) center/cover',
-            opacity: 0.22,
+            opacity: 0.55, /* ← era 0.22, ahora se ve bien la imagen */
           }} />
         </div>
 
-        {/* Overlay degradado para legibilidad */}
+        {/* Overlay degradado para legibilidad — más suave para que se vea la imagen */}
         <div style={{
           position: 'absolute', inset: 0,
-          background: 'linear-gradient(90deg,rgba(9,52,78,0.92) 45%,rgba(9,52,78,0.4) 100%)',
+          background: 'linear-gradient(90deg,rgba(9,52,78,0.55) 45%,rgba(9,52,78,0.15) 100%)',
+          /* ← era rgba(9,52,78,0.92) y rgba(9,52,78,0.4) — ahora la imagen se ve */
         }} />
 
         <div className="container-brand" style={{
@@ -185,6 +190,7 @@ export default function UniversidadPage() {
 
       {/* ══════════════════════════════════════════════════════════════════
           LAS INSTALACIONES
+          ✅ CAMBIO: emojis 🏛️🎭🎓📚 → instalaciones_1-4.svg
       ══════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#fff', padding: '72px 0 64px' }}>
         <div className="container-brand" style={{ padding: '0 48px' }}>
@@ -227,13 +233,17 @@ export default function UniversidadPage() {
                     ;(e.currentTarget as HTMLDivElement).style.boxShadow = '2px 2px 8px rgba(9,52,78,0.10)'
                   }}
                 >
+                  {/* ✅ imagen SVG oficial en lugar de emoji */}
                   <div style={{
                     background: inst.bg, aspectRatio: '4/3',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 48,
+                    overflow: 'hidden',
                   }}>
-                    {/* Reemplaza con <Image src="/images/auditorio-X.jpg" fill objectFit="cover" /> */}
-                    {inst.emoji}
+                    <img
+                      src={inst.imgSrc}
+                      alt={inst.label}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                    />
                   </div>
                 </div>
               </FadeIn>
@@ -254,6 +264,7 @@ export default function UniversidadPage() {
 
       {/* ══════════════════════════════════════════════════════════════════
           SERVICIOS DISPONIBLES
+          ✅ CAMBIO: emojis 🍽️🅿️📽️♿📶🛋️ → SVGs oficiales sede_*.svg
       ══════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#F7F6F3', padding: '72px 0' }}>
         <div className="container-brand" style={{ padding: '0 48px' }}>
@@ -298,13 +309,19 @@ export default function UniversidadPage() {
                     boxShadow: '2px 2px 8px rgba(9,52,78,0.07)',
                     border: '1px solid #D9DEE2',
                   }}>
-                    {/* Icono — usa img si existe en /public/icons, fallback emoji */}
+                    {/* ✅ SVG oficial en lugar de emoji */}
                     <div style={{
                       width: 44, height: 44, borderRadius: 10,
                       backgroundColor: '#E6F3EE',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>
-                      <span style={{ fontSize: 20 }}>{svc.fallback}</span>
+                      <img
+                        src={svc.icon}
+                        alt=""
+                        width={24}
+                        height={24}
+                        style={{ display: 'block', objectFit: 'contain' }}
+                      />
                     </div>
                     <span style={{
                       fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 600,
@@ -322,6 +339,7 @@ export default function UniversidadPage() {
 
       {/* ══════════════════════════════════════════════════════════════════
           MARKETPLACE / EXHIBICIÓN
+          ✅ CAMBIO: emoji 🌿 → market_ex.svg
       ══════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#fff', padding: '72px 0' }}>
         <div className="container-brand" style={{ padding: '0 48px' }}>
@@ -330,17 +348,17 @@ export default function UniversidadPage() {
             gap: 60, alignItems: 'center',
           }} className="marketplace-grid">
 
-            {/* Imagen */}
+            {/* ✅ Imagen marketplace_ex.svg oficial */}
             <FadeIn>
               <div style={{
                 borderRadius: 14, overflow: 'hidden', aspectRatio: '4/3',
                 boxShadow: '4px 4px 24px rgba(9,52,78,0.12)',
-                background: 'linear-gradient(135deg,#AEE5DA 0%,#097589 60%,#09344e 100%)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 64, opacity: 0.8,
               }}>
-                🌿
-                {/* Reemplaza con <Image src="/images/marketplace-universidad.jpg" fill objectFit="cover" /> */}
+                <img
+                  src="/icons/market_ex.svg"
+                  alt="Marketplace del congreso"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                />
               </div>
             </FadeIn>
 
@@ -390,6 +408,7 @@ export default function UniversidadPage() {
 
       {/* ══════════════════════════════════════════════════════════════════
           CONOCE EL LUGAR — Universidad + Video
+          ✅ CAMBIO: video placeholder → iframe YouTube real
       ══════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#09344e', padding: '72px 0' }}>
         <div className="container-brand" style={{ padding: '0 48px' }}>
@@ -433,44 +452,25 @@ export default function UniversidadPage() {
               </Link>
             </FadeIn>
 
-            {/* Video placeholder */}
+            {/* ✅ Video real de YouTube en lugar del placeholder con play button */}
             <FadeIn delay={0.12}>
               <div style={{
                 borderRadius: 14, overflow: 'hidden',
                 aspectRatio: '16/9',
-                backgroundColor: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.12)',
-                display: 'flex', flexDirection: 'column',
-                alignItems: 'center', justifyContent: 'center',
-                gap: 12,
                 boxShadow: '8px 8px 32px rgba(0,0,0,0.3)',
-                cursor: 'pointer',
                 position: 'relative',
               }}>
-                {/* Play button */}
-                <div style={{
-                  width: 64, height: 64, borderRadius: '50%',
-                  backgroundColor: 'rgba(255,255,255,0.15)',
-                  border: '2px solid rgba(255,255,255,0.4)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-                    <path d="M8 5.14v14l11-7-11-7z" />
-                  </svg>
-                </div>
-                <span style={{
-                  fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600,
-                  color: 'rgba(255,255,255,0.6)',
-                }}>
-                  Ver video del campus
-                </span>
-                <p style={{
-                  fontFamily: 'Inter, sans-serif', fontSize: 11,
-                  color: 'rgba(255,255,255,0.35)', textAlign: 'center',
-                  maxWidth: 260, margin: 0,
-                }}>
-                  Conoce las instalaciones donde se celebrará el 3° ICEO LATAM
-                </p>
+                <iframe
+                  src="https://www.youtube.com/embed/4mfOQ3PeFvI"
+                  title="Universidad de San Buenaventura — Sede del 3° ICEO LATAM"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  style={{
+                    position: 'absolute', top: 0, left: 0,
+                    width: '100%', height: '100%',
+                    border: 'none', display: 'block',
+                  }}
+                />
               </div>
             </FadeIn>
           </div>
@@ -487,6 +487,7 @@ export default function UniversidadPage() {
 
       {/* ══════════════════════════════════════════════════════════════════
           UBICACIÓN
+          ✅ CAMBIO: emoji 🏔️ → ubicacion.svg | emoji 🎓 → logo_uni.svg
       ══════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#F7F6F3', padding: '72px 0' }}>
         <div className="container-brand" style={{ padding: '0 48px' }}>
@@ -495,35 +496,34 @@ export default function UniversidadPage() {
             gap: 60, alignItems: 'center',
           }} className="ubicacion-grid">
 
-            {/* Imagen campus */}
+            {/* ✅ ubicacion.svg en lugar de emoji 🏔️ */}
             <FadeIn>
               <div style={{
                 borderRadius: 14, overflow: 'hidden', aspectRatio: '4/3',
                 boxShadow: '4px 4px 24px rgba(9,52,78,0.12)',
-                background: 'linear-gradient(135deg,#1C495C 0%,#74B4A7 100%)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 72, opacity: 0.7,
               }}>
-                🏔️
-                {/* Reemplaza con <Image src="/images/campus-exterior.jpg" fill objectFit="cover" /> */}
+                <img
+                  src="/icons/ubicacion.svg"
+                  alt="Mapa de ubicación Universidad de San Buenaventura"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                />
               </div>
             </FadeIn>
 
             <FadeIn delay={0.12}>
-              {/* Logo San Buenaventura — badge */}
+              {/* ✅ logo_uni.svg en lugar de emoji 🎓 */}
               <div style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
                 backgroundColor: '#fff', border: '1px solid #D9DEE2',
                 borderRadius: 8, padding: '6px 14px', marginBottom: 20,
                 boxShadow: '2px 2px 8px rgba(9,52,78,0.07)',
               }}>
-                <span style={{ fontSize: 14 }}>🎓</span>
-                <span style={{
-                  fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 700,
-                  color: '#09344e', letterSpacing: '0.04em',
-                }}>
-                  UNIVERSIDAD DE SAN BUENAVENTURA
-                </span>
+                <img
+                  src="/icons/logo_uni_USB.svg"
+                  alt="Universidad de San Buenaventura"
+                  height={20}
+                  style={{ display: 'block', objectFit: 'contain', maxWidth: 120 }}
+                />
               </div>
 
               <h2 style={{
@@ -594,6 +594,7 @@ export default function UniversidadPage() {
 
       {/* ══════════════════════════════════════════════════════════════════
           PLANO DEL ESPACIO
+          ✅ CAMBIO: SVG placeholder → ubicacion.svg | PDF → mapa_uni.pdf
       ══════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#fff', padding: '72px 0' }}>
         <div className="container-brand" style={{ padding: '0 48px' }}>
@@ -642,8 +643,8 @@ export default function UniversidadPage() {
               </div>
 
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                {/* Descarga el PDF del plano real */}
-                <a href="/icons/icon_PDF.svg" download style={{
+                {/* ✅ PDF real mapa_uni.pdf */}
+                <a href="/icons/mapa_uni.pdf" target="_blank" rel="noopener noreferrer" style={{
                   display: 'inline-flex', alignItems: 'center', gap: 8,
                   border: '1.5px solid #D9DEE2', color: '#12303E',
                   fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 700,
@@ -653,77 +654,35 @@ export default function UniversidadPage() {
                   <IconPDF size={16} color="#097589" />
                   Descargar Plano PDF
                 </a>
-                <button style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 8,
-                  backgroundColor: '#097589', color: '#fff', border: 'none',
-                  fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 700,
-                  padding: '10px 20px', borderRadius: 999, cursor: 'pointer',
-                  letterSpacing: '0.04em', textTransform: 'uppercase',
-                }}>
+                <a
+                  href="/icons/mapa_uni.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 8,
+                    backgroundColor: '#097589', color: '#fff',
+                    fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 700,
+                    padding: '10px 20px', borderRadius: 999, textDecoration: 'none',
+                    letterSpacing: '0.04em', textTransform: 'uppercase',
+                  }}
+                >
                   Ver Plano
-                </button>
+                </a>
               </div>
             </FadeIn>
 
-            {/* Plano del campus */}
+            {/* ✅ ubicacion.svg en lugar del SVG mapa placeholder */}
             <FadeIn delay={0.12}>
               <div style={{
                 borderRadius: 14, overflow: 'hidden',
                 boxShadow: '4px 8px 32px rgba(9,52,78,0.12)',
                 border: '1px solid #D9DEE2',
               }}>
-                {/*
-                  Usa la imagen real:
-                  <Image
-                    src="/images/Mapa-SanBue.png"
-                    width={700} height={900}
-                    alt="Plano Universidad de San Buenaventura Cali"
-                    style={{ width:'100%', height:'auto', display:'block' }}
-                  />
-                  — Mueve el archivo a: frontend/public/images/Mapa-SanBue.png
-                */}
-                <div style={{
-                  background: 'linear-gradient(145deg,#F0EDE4 0%,#E8E0C8 40%,#C8D4A8 70%,#A8C080 100%)',
-                  aspectRatio: '3/4',
-                  display: 'flex', flexDirection: 'column',
-                  alignItems: 'center', justifyContent: 'center',
-                  gap: 12, padding: 24,
-                }}>
-                  {/* Representación simplificada del campus */}
-                  <svg width="100%" height="100%" viewBox="0 0 300 380" style={{ maxHeight: 360 }}>
-                    {/* Área verde */}
-                    <rect x="20" y="20" width="260" height="340" rx="8" fill="#C8D4A8" opacity="0.6"/>
-                    {/* Edificios */}
-                    <rect x="80" y="60" width="60" height="40" rx="4" fill="#437287" opacity="0.8"/>
-                    <rect x="60" y="130" width="50" height="35" rx="4" fill="#09344e" opacity="0.85"/>
-                    <rect x="130" y="100" width="70" height="50" rx="4" fill="#097589" opacity="0.8"/>
-                    <rect x="170" y="170" width="55" height="40" rx="4" fill="#4886B5" opacity="0.75"/>
-                    {/* Lago */}
-                    <ellipse cx="155" cy="240" rx="50" ry="35" fill="#76E2CC" opacity="0.7"/>
-                    {/* Cancha */}
-                    <rect x="55" y="220" width="55" height="38" rx="6" fill="#4CAF50" opacity="0.7"/>
-                    {/* Parqueadero */}
-                    <rect x="110" y="290" width="120" height="50" rx="4" fill="#B0BEC5" opacity="0.6"/>
-                    {/* Texto */}
-                    <text x="150" y="370" textAnchor="middle" fontFamily="Inter,sans-serif" fontSize="11" fill="#09344e" opacity="0.6">
-                      Plano Campus USB Cali
-                    </text>
-                    {/* Pins */}
-                    {[
-                      { x: 110, y: 75,  label: '1' },
-                      { x: 85,  y: 145, label: '3' },
-                      { x: 165, y: 120, label: '2' },
-                      { x: 197, y: 185, label: '7' },
-                      { x: 155, y: 240, label: '15'},
-                    ].map(p => (
-                      <g key={p.label} transform={`translate(${p.x},${p.y})`}>
-                        <circle r="10" fill="#E85040" opacity="0.9"/>
-                        <text textAnchor="middle" dy="4" fontFamily="Poppins,sans-serif"
-                          fontSize="8" fontWeight="700" fill="white">{p.label}</text>
-                      </g>
-                    ))}
-                  </svg>
-                </div>
+                <img
+                  src="/icons/sede_vista_acortada.svg"
+                  alt="Plano Universidad de San Buenaventura Cali"
+                  style={{ width: '100%', height: 'auto', display: 'block' }}
+                />
               </div>
             </FadeIn>
           </div>
@@ -732,6 +691,7 @@ export default function UniversidadPage() {
 
       {/* ══════════════════════════════════════════════════════════════════
           DONACIÓN
+          ✅ CAMBIO: emoji 🌱 → market_ex.svg
       ══════════════════════════════════════════════════════════════════ */}
       <section style={{
         background: 'linear-gradient(135deg,#09344e 0%,#1C495C 100%)',
@@ -782,15 +742,17 @@ export default function UniversidadPage() {
               </Link>
             </FadeIn>
 
+            {/* ✅ market_ex.svg en lugar de emoji 🌱 */}
             <FadeIn delay={0.15}>
               <div style={{
                 borderRadius: 14, overflow: 'hidden', aspectRatio: '4/3',
                 boxShadow: '8px 8px 40px rgba(0,0,0,0.3)',
-                background: 'linear-gradient(135deg,#C0FFF2 0%,#AEE5DA 50%,#76E2CC 100%)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 80, opacity: 0.75,
               }}>
-                🌱
+                <img
+                  src="/icons/planta_donacion.svg"
+                  alt=""
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                />
               </div>
             </FadeIn>
           </div>
@@ -799,6 +761,8 @@ export default function UniversidadPage() {
 
       {/* ══════════════════════════════════════════════════════════════════
           REDES SOCIALES
+          ✅ CAMBIO 1: emojis 📸👍💼 → icon_instagram/facebook/linkedin.svg
+          ✅ CAMBIO 2: texto "FOLLOW US!" eliminado → follow.svg ya lo tiene
       ══════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#F7F6F3', padding: '80px 0' }}>
         <div className="container-brand" style={{ padding: '0 48px' }}>
@@ -823,11 +787,11 @@ export default function UniversidadPage() {
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 300 }}>
                 {[
-                  { label: 'Instagram', bg: '#E1306C' },
-                  { label: 'Facebook',  bg: '#1877F2' },
-                  { label: 'LinkedIn',  bg: '#0A66C2' },
-                ].map(({ label, bg }) => (
-                  <Link key={label} href="#" style={{
+                  { label: 'Instagram', bg: '#E1306C', href: 'https://instagram.com/awaqong',         iconSrc: '/icons/icon_instagram.svg' },
+                  { label: 'Facebook',  bg: '#1877F2', href: 'https://facebook.com/awaqong',          iconSrc: '/icons/icon_facebook.svg'  },
+                  { label: 'LinkedIn',  bg: '#0A66C2', href: 'https://linkedin.com/company/awaq-ong', iconSrc: '/icons/icon_linkedin.svg'  },
+                ].map(({ label, bg, href, iconSrc }) => (
+                  <Link key={label} href={href} target="_blank" rel="noopener noreferrer" style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                     backgroundColor: '#fff', border: '1.5px solid #D9DEE2',
                     borderRadius: 10, padding: '12px 18px',
@@ -835,15 +799,19 @@ export default function UniversidadPage() {
                     boxShadow: '2px 2px 8px rgba(9,52,78,0.06)',
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      {/* ✅ Icono SVG oficial en lugar de emoji */}
                       <div style={{
                         width: 34, height: 34, borderRadius: 8,
                         backgroundColor: bg,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                       }}>
-                        {/* usa <Ico src={`/icons/icon_${label.toLowerCase()}.svg`} size={18} /> */}
-                        <span style={{ fontSize: 16 }}>
-                          {label === 'Instagram' ? '📸' : label === 'Facebook' ? '👍' : '💼'}
-                        </span>
+                        <img
+                          src={iconSrc}
+                          alt={label}
+                          width={18}
+                          height={18}
+                          style={{ display: 'block', filter: 'brightness(0) invert(1)' }}
+                        />
                       </div>
                       <span style={{
                         fontFamily: 'Poppins, sans-serif', fontSize: 14,
@@ -858,34 +826,27 @@ export default function UniversidadPage() {
               </div>
             </FadeIn>
 
+            {/* ✅ CAMBIO 2: follow.svg reemplaza todo el texto "FOLLOW US!" / "ON SOCIAL MEDIA" */}
             <FadeIn delay={0.15}>
               <div style={{
                 background: 'linear-gradient(135deg,#74B4A7 0%,#097589 100%)',
                 borderRadius: 20, padding: '44px 36px',
-                textAlign: 'center', color: '#fff',
+                textAlign: 'center',
                 boxShadow: '4px 4px 24px rgba(9,117,137,0.25)',
+                display: 'flex', flexDirection: 'column',
+                alignItems: 'center', gap: 24,
               }}>
-                <div style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontSize: 36, fontWeight: 800, letterSpacing: '0.04em', marginBottom: 4,
-                }}>
-                  FOLLOW US!
-                </div>
-                <div style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontSize: 14, fontWeight: 600, opacity: 0.85, marginBottom: 4,
-                }}>
-                  ON SOCIAL MEDIA
-                </div>
-                <div style={{
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: 13, opacity: 0.6, marginBottom: 28,
-                }}>
-                  @awaqong
-                </div>
+                {/* follow.svg ya contiene el texto "FOLLOW US!" y "@awaqong" internamente */}
+                <img
+                  src="/icons/follow.svg"
+                  alt="Follow Us on Social Media"
+                  style={{ width: '80%', maxWidth: 260, height: 'auto', display: 'block' }}
+                />
+
+                {/* Iconos sociales con SVGs oficiales */}
                 <div style={{ display: 'flex', gap: 14, justifyContent: 'center' }}>
-                  {SOCIAL.map(({ Icon, href, label }) => (
-                    <Link key={label} href={href} style={{
+                  {SOCIAL.map(({ Icon, href, label, iconSrc }) => (
+                    <Link key={label} href={href} target="_blank" rel="noopener noreferrer" style={{
                       width: 44, height: 44, borderRadius: '50%',
                       border: '2px solid rgba(255,255,255,0.55)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',

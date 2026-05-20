@@ -812,7 +812,7 @@ export default function SegundoIceoPage() {
                 boxShadow: '4px 4px 24px rgba(9,52,78,0.12)',
               }}>
                 <img
-                  src="/icons/2do_icep_donacion.svg"
+                  src="/icons/planta_donacion.svg"
                   alt="Donación 2° ICEO"
                   style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                 />
