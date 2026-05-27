@@ -1,3 +1,5 @@
+frontend/public/videos/*.mp4
+
 # ─── Next.js ──────────────────────────────────────────────────
 .next/
 out/
