@@ -73,125 +73,141 @@ function Flag({ code }: { code: string }) {
   )
 }
 
-// ─── PONENTES (4 del 2do ICEO primero, luego los 9 nuevos) ────────────────────
+// ─── PONENTES (4 del 2do ICEO primero, luego nuevos en orden ponentes_1→2→3) ──
 const PONENTES = [
-  // ─ Del 2do ICEO ─────────────────────────────────────────────────────────
+  // ── 2do ICEO ────────────────────────────────────────────────────────────
   {
-    foto:     '/icons/jose_serrano.svg',
-    nombre:   'José Serrano Serna',
-    pais:     'es',   // español
-    org:      'Awaq ONGD',
-    rol:      'Director Ejecutivo Presidente',
-    ponencia: 'Presentación Resultados parciales del Proyecto APF 2019 · Mapa de Ruta 2030–2027',
-    linkedin: 'https://www.linkedin.com/in/jsserna5575/',
+    foto:       '/icons/jose_serrano.svg',
+    nombre:     'José Serrano Serna',
+    pais:       'es',
+    org:        'Awaq ONGD',
+    rol:        'Director Ejecutivo Presidente',
+    ponencia:   'Presentación Resultados parciales del Proyecto APF 2019 · Mapa de Ruta 2030–2027',
+    social:     'https://www.linkedin.com/in/jsserna5575/',
+    socialType: 'linkedin' as const,
   },
   {
-    foto:     '/icons/luis_alfonso.svg',
-    nombre:   'Luis Alfonso Aguirre',
-    pais:     'co',
-    org:      'PWF Colombia',
-    rol:      'Gerente de Programa',
-    ponencia: 'Perspectivas de la cooperación internacional en biodiversidad y cambio climático',
-    linkedin: 'https://www.linkedin.com/in/luis-alfonso-aguirre-montealegre-0770a91a/',
+    foto:       '/icons/luis_alfonso.svg',
+    nombre:     'Luis Alfonso Aguirre',
+    pais:       'co',
+    org:        'PWF Colombia',
+    rol:        'Gerente de Programa',
+    ponencia:   'Perspectivas de la cooperación internacional en biodiversidad y cambio climático',
+    social:     'https://www.linkedin.com/in/luis-alfonso-aguirre-montealegre-0770a91a/',
+    socialType: 'linkedin' as const,
   },
   {
-    foto:     '/icons/begona_hera.svg',
-    nombre:   'Begoña de la Hera',
-    pais:     'es',
-    org:      'Awaq ONGD',
-    rol:      'Directora Programa TED',
-    ponencia: 'Experiencias TED en organizaciones ambientales de Latinoamérica',
-    linkedin: 'https://www.linkedin.com/in/bego%C3%B1a-de-la-hera-25ba801a/',
+    foto:       '/icons/begona_hera.svg',
+    nombre:     'Begoña de la Hera',
+    pais:       'es',
+    org:        'Awaq ONGD',
+    rol:        'Directora Programa TED',
+    ponencia:   'Experiencias TED en organizaciones ambientales de Latinoamérica',
+    social:     'https://www.linkedin.com/in/bego%C3%B1a-de-la-hera-25ba801a/',
+    socialType: 'linkedin' as const,
   },
   {
-    foto:     '/icons/rolando_evelio.jpg',
-    nombre:   'Rolando Evelio Pérez',
-    pais:     'mx',
-    org:      'Tecnológico de Monterrey',
-    rol:      'Profesor Planta',
-    ponencia: 'Innovación académica para la sostenibilidad ambiental en el contexto latinoamericano',
-    linkedin: 'https://www.linkedin.com/in/rolando-evelio-p%C3%A9rez-vers%C3%B3n-4137a8264/',
+    foto:       '/icons/rolando_evelio.jpg',
+    nombre:     'Rolando Evelio Pérez',
+    pais:       'mx',
+    org:        'Tecnológico de Monterrey',
+    rol:        'Profesor Planta',
+    ponencia:   'Innovación académica para la sostenibilidad ambiental en el contexto latinoamericano',
+    social:     'https://www.linkedin.com/in/rolando-evelio-p%C3%A9rez-vers%C3%B3n-4137a8264/',
+    socialType: 'linkedin' as const,
   },
-  // ─ Nuevos ────────────────────────────────────────────────────────────────
+  // ── ponentes_nuevos_1 ────────────────────────────────────────────────────
   {
-    foto:     '/images/ponentes_Santiago_Granados.jpg',
-    nombre:   'Santiago Granados Guitierrez',
-    pais:     'co',
-    org:      'CEPAL-ONU',
-    rol:      'Consultor',
-    ponencia: 'Legados y desafíos de la COP16',
-    linkedin: '#',
-  },
-  {
-    foto:     '/images/ponentes_Magda_Lorena_Pineda.jpeg',
-    nombre:   'Magda Lorena Pineda Rodríguez',
-    pais:     'co',
-    org:      'Fund. Universitaria Juan de Castellanos',
-    rol:      'Líder Desarrollo Tecnológico',
-    ponencia: 'Alianza Universidad Juan de Castellanos | Proyecto ABT',
-    linkedin: '#',
+    foto:       '/images/ponentes_Magda_Lorena_Pineda.jpeg',
+    nombre:     'Magda Lorena Pineda Rodríguez',
+    pais:       'co',
+    org:        'Fundación Universitaria Juan de Castellanos',
+    rol:        'Líder Desarrollo Tecnológico',
+    ponencia:   'Alianza Universidad Juan de Castellanos | Proyecto ABT',
+    social:     'https://www.linkedin.com/in/magda-pineda-rodriguez/',
+    socialType: 'linkedin' as const,
   },
   {
-    foto:     '/images/ponente_Cristhian_Utopía.jpeg',
-    nombre:   'John Cristhian Fernández Lizarazo',
-    pais:     'co',
-    org:      'Fund. Universitaria Juan de Castellanos',
-    rol:      'Líder Desarrollo Tecnológico',
-    ponencia: 'Alianza Universidad Juan de Castellanos | Proyecto ABT',
-    linkedin: '#',
+    foto:       '/images/ponente_Cristhian_Utopía.jpeg',
+    nombre:     'John Cristhian Fernández Lizarazo',
+    pais:       'co',
+    org:        'Fundación Universitaria Juan de Castellanos',
+    rol:        'Líder Desarrollo Tecnológico',
+    ponencia:   'Alianza Universidad Juan de Castellanos | Proyecto ABT',
+    social:     'https://www.linkedin.com/in/john-cristhian-fernandez-lizarazo-a7230047/',
+    socialType: 'linkedin' as const,
   },
   {
-    foto:     '/images/ponentes_Nasly_Vidales.jpeg',
-    nombre:   'Nasly Fernandea Gonzales Vidales',
-    pais:     'co',
-    org:      'Secretaría de Ambiente del Valle del Cauca',
-    rol:      'Subsecretaria de Desarrollo Sostenible',
-    ponencia: 'El papel de las mujeres en el cambio climático',
-    linkedin: '#',
+    foto:       '/images/ponentes_Santiago_Granados.jpg',
+    nombre:     'Santiago Granados Guitierrez',
+    pais:       'co',
+    org:        'CEPAL-ONU',
+    rol:        'Consultor',
+    ponencia:   'Legados y desafíos de la COP16',
+    social:     'https://www.linkedin.com/in/santiago-granados-guti%C3%A9rrez-94a65a21/',
+    socialType: 'linkedin' as const,
+  },
+  // ── ponentes_nuevos_2 ────────────────────────────────────────────────────
+  {
+    foto:       '/images/ponentes_Nasly_Vidales.jpeg',
+    nombre:     'Nasly Fernandea Gonzales Vidales',
+    pais:       'co',
+    org:        'Secretaría de Ambiente y Desarrollo Sostenible del Valle del Cauca',
+    rol:        'Subsecretaria de Desarrollo Sostenible',
+    ponencia:   'El papel de las mujeres en el cambio climático.',
+    social:     'https://www.linkedin.com/in/nasly-fernanda-vidales-gonz%C3%A1lez-1080b5b6/',
+    socialType: 'linkedin' as const,
   },
   {
-    foto:     '/images/ponentes_Jhonatan_Alexander_Becerra.jpeg',
-    nombre:   'Jhonatan Alexander Becerra Duitama',
-    pais:     'co',
-    org:      'Fund. Universitaria Juan de Castellanos',
-    rol:      'Líder Desarrollo Tecnológico',
-    ponencia: 'Alianza Universidad Juan de Castellanos | Proyecto ABT',
-    linkedin: '#',
+    foto:       '/images/ponentes_Jhonatan_Alexander_Becerra.jpeg',
+    nombre:     'Jhonatan Alexander Becerra Duitama',
+    pais:       'co',
+    org:        'Fundación Universitaria Juan de Castellanos',
+    rol:        'Líder Desarrollo Tecnológico',
+    ponencia:   'Alianza Universidad Juan de Castellanos | Proyecto ABT',
+    social:     'https://www.linkedin.com/in/jhonatan-alexander-becerra-duitama/',
+    socialType: 'linkedin' as const,
   },
   {
-    foto:     '/images/ponentes_William_Fernando_Bernal.jpeg',
-    nombre:   'William Fernando Bernal Suárez',
-    pais:     'co',
-    org:      'Fund. Universitaria Juan de Castellanos',
-    rol:      'Líder Desarrollo Tecnológico',
-    ponencia: 'Alianza Universidad Juan de Castellanos | Proyecto ABT',
-    linkedin: '#',
+    foto:       '/images/ponentes_William_Fernando_Bernal.jpeg',
+    nombre:     'William Fernando Bernal Suárez',
+    pais:       'co',
+    org:        'Fundación Universitaria Juan de Castellanos',
+    rol:        'Líder Desarrollo Tecnológico',
+    ponencia:   'Alianza Universidad Juan de Castellanos | Proyecto ABT',
+    social:     'https://www.linkedin.com/in/william-bernal-13457b60/',
+    socialType: 'linkedin' as const,
+  },
+  // ── ponentes_nuevos_3 ────────────────────────────────────────────────────
+  {
+    foto:       '/images/ponentes_Camilo_Andrés_Aguilar.jpeg',
+    nombre:     'Hno. Camilo Andrés Aguilar Gómez',
+    pais:       'co',
+    org:        'Coordinador Universidad de La Salle',
+    rol:        'Coordinador de Utopía',
+    ponencia:   'UTOPÍA: Un horizonte educativo para el cuidado, la sostenibilidad y la ecología integra',
+    social:     'https://www.linkedin.com/in/camilo-andr%C3%A9s-aguilar-g%C3%B3mez-437a32258/',
+    socialType: 'linkedin' as const,
   },
   {
-    foto:     '/images/ponentes_Camilo_Andrés_Aguilar.jpeg',
-    nombre:   'Hno. Camilo Andrés Aguilar Gómez',
-    pais:     'co',
-    org:      'Universidad de La Salle',
-    rol:      'Coordinador de Utopía',
-    ponencia: 'UTOPÍA: Un horizonte educativo para el cuidado, la sostenibilidad y la ecología integra',
-    linkedin: '#',
+    foto:       '/images/ponentes_Gustavo_Herrera.jpeg',
+    nombre:     'Mtro. Gustavo Herrera Caballero',
+    pais:       'co',
+    org:        'Coordinador SELA',
+    rol:        'Coordinador Desarrollo Social',
+    ponencia:   'La experiencia del SELA en la implementación de la Agenda 2030',
+    social:     'https://www.linkedin.com/in/gustavo-herrera-3528a979/',
+    socialType: 'linkedin' as const,
   },
   {
-    foto:     '/images/ponentes_Gustavo_Herrera.jpeg',
-    nombre:   'Mtro. Gustavo Herrera Caballero',
-    pais:     'co',
-    org:      'SELA',
-    rol:      'Coordinador Desarrollo Social',
-    ponencia: 'La experiencia del SELA en la implementación de la Agenda 2030',
-    linkedin: '#',
-  },
-  {
-    foto:     '/images/ponentes_Liza_Rodriguez_Galvis.jpeg',
-    nombre:   'Liza Rodríguez Galvis',
-    pais:     'co',
-    rol:      'Secretaria General',
-    ponencia: 'Mujeres en biodiversidad y fortalecimiento institucional: un camino para transformar realidades',
-    linkedin: '#',
+    foto:       '/images/ponentes_Liza_Rodriguez_Galvis.jpeg',
+    nombre:     'Liza Rodríguez Galvis',
+    pais:       'co',
+    org:        'Gobernación del Valle del Cauca',
+    rol:        'Secretaria General de la Gobernación del Valle del Cauca',
+    ponencia:   'Mujeres en biodiversidad y fortalecimiento institucional: un camino para transformar realidades',
+    social:     'https://www.instagram.com/lizarodriguez18?igsh=dHYzaml4NG02bGoy',
+    socialType: 'instagram' as const,
   },
 ]
 
@@ -261,10 +277,10 @@ function PonenteCard({ p }: { p: typeof PONENTES[0] }) {
   return (
     <div style={{
       backgroundColor: '#F0F4F7',
-      borderRadius: 36,
-      padding: '28px 20px 24px',
+      borderRadius: 40,
+      padding: '32px 24px 28px',
       display: 'flex', flexDirection: 'column', alignItems: 'center',
-      width: 240, flexShrink: 0,
+      width: 310, flexShrink: 0,
       boxShadow: '2px 2px 10px rgba(9,52,78,0.08)',
       transition: 'transform 0.22s, box-shadow 0.22s',
     }}
@@ -273,53 +289,70 @@ function PonenteCard({ p }: { p: typeof PONENTES[0] }) {
     >
       {/* Foto */}
       <div style={{
-        width: 110, height: 110, borderRadius: '50%', overflow: 'hidden',
-        border: '3px solid #fff', boxShadow: '0 2px 10px rgba(9,52,78,0.15)',
-        marginBottom: 16, flexShrink: 0, backgroundColor: '#DDE8EE',
+        width: 145, height: 145, borderRadius: '50%', overflow: 'hidden',
+        border: '4px solid #fff', boxShadow: '0 2px 14px rgba(9,52,78,0.15)',
+        marginBottom: 20, flexShrink: 0, backgroundColor: '#DDE8EE',
       }}>
         <img src={p.foto} alt={p.nombre}
           style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
       </div>
 
       {/* Flag + nombre */}
-      <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start', marginBottom: 5, width: '100%', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', gap: 7, alignItems: 'flex-start', marginBottom: 6, width: '100%', justifyContent: 'center' }}>
         <Flag code={p.pais} />
-        <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, color: '#09344e', textAlign: 'center', lineHeight: 1.25 }}>
+        <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700, color: '#09344e', textAlign: 'center', lineHeight: 1.25 }}>
           {p.nombre}
         </span>
       </div>
 
       {/* Org */}
-      <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, color: '#097589', textAlign: 'center', lineHeight: 1.35, marginBottom: 3 }}>
+      <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 600, color: '#097589', textAlign: 'center', lineHeight: 1.4, marginBottom: 4 }}>
         {p.org}
       </p>
 
       {/* Rol */}
-      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: '#5A6E77', textAlign: 'center', marginBottom: 12 }}>
+      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: '#5A6E77', textAlign: 'center', lineHeight: 1.35, marginBottom: 14 }}>
         {p.rol}
       </p>
 
       {/* Punteado */}
-      <div style={{ width: '55%', borderTop: '1.5px dashed #BED1DA', marginBottom: 12 }} />
+      <div style={{ width: '55%', borderTop: '1.5px dashed #BED1DA', marginBottom: 14 }} />
 
       {/* Ponencia */}
-      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: '#12303E', textAlign: 'center', lineHeight: 1.5, flex: 1, marginBottom: 14 }}>
+      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: '#12303E', textAlign: 'center', lineHeight: 1.6, flex: 1, marginBottom: 18 }}>
         <strong style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600 }}>Ponencia: </strong>
         {p.ponencia}
       </p>
 
-      {/* LinkedIn */}
-      <a href={p.linkedin} target="_blank" rel="noopener noreferrer"
-        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 36, height: 36, borderRadius: 7, backgroundColor: '#fff', boxShadow: '0 1px 5px rgba(9,52,78,0.12)', textDecoration: 'none', transition: 'background-color 0.2s' }}
-        onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#0A66C2')}
-        onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#fff')}
-      >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-          <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" stroke="#0A66C2" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-          <rect x="2" y="9" width="4" height="12" stroke="#0A66C2" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-          <circle cx="4" cy="4" r="2" stroke="#0A66C2" strokeWidth="1.8"/>
-        </svg>
-      </a>
+      {/* Icono social — LinkedIn o Instagram según socialType */}
+      {p.socialType === 'instagram' ? (
+        <a href={p.social} target="_blank" rel="noopener noreferrer"
+          aria-label={`Instagram de ${p.nombre}`}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40, borderRadius: 8, backgroundColor: '#fff', boxShadow: '0 1px 6px rgba(9,52,78,0.12)', textDecoration: 'none', transition: 'background-color 0.2s' }}
+          onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#E1306C')}
+          onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#fff')}
+        >
+          {/* Instagram icon */}
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <rect x="2" y="2" width="20" height="20" rx="5" stroke="#E1306C" strokeWidth="1.8"/>
+            <circle cx="12" cy="12" r="4" stroke="#E1306C" strokeWidth="1.8"/>
+            <circle cx="17.5" cy="6.5" r="1" fill="#E1306C"/>
+          </svg>
+        </a>
+      ) : (
+        <a href={p.social} target="_blank" rel="noopener noreferrer"
+          aria-label={`LinkedIn de ${p.nombre}`}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40, borderRadius: 8, backgroundColor: '#fff', boxShadow: '0 1px 6px rgba(9,52,78,0.12)', textDecoration: 'none', transition: 'background-color 0.2s' }}
+          onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#0A66C2')}
+          onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#fff')}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" stroke="#0A66C2" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+            <rect x="2" y="9" width="4" height="12" stroke="#0A66C2" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+            <circle cx="4" cy="4" r="2" stroke="#0A66C2" strokeWidth="1.8"/>
+          </svg>
+        </a>
+      )}
     </div>
   )
 }
@@ -328,7 +361,7 @@ function PonenteCard({ p }: { p: typeof PONENTES[0] }) {
 function PonenteCarousel() {
   const trackRef = useRef<HTMLDivElement>(null)
   const [pos, setPos] = useState(0)
-  const CARD_W = 240 + 20 // width + gap
+  const CARD_W = 310 + 24 // width + gap
 
   const scrollTo = useCallback((dir: 1 | -1) => {
     const el = trackRef.current
@@ -348,7 +381,7 @@ function PonenteCarousel() {
     <div style={{ position: 'relative' }}>
       {/* Track */}
       <div ref={trackRef} onScroll={onScroll} style={{
-        display: 'flex', gap: 20, overflowX: 'auto', paddingBottom: 8,
+        display: 'flex', gap: 24, overflowX: 'auto', paddingBottom: 8,
         scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch',
         paddingInline: 4,
       }}>
