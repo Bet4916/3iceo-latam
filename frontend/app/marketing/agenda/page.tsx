@@ -520,6 +520,7 @@ export default function AgendaPage() {
           })}
         </div>
       </section>
+      
 
       {/* ════════════════════════════════════════════════════════════════════
           2. PONENTES
