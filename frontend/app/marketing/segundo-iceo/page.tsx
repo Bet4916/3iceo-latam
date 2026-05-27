@@ -155,10 +155,10 @@ const PERSONALIDADES = [
 ]
 
 const ENTREVISTAS = [
-  { id: 1, label: 'Carolina Acosta',    src: '/videos/entrevista_1.mp4' },
-  { id: 2, label: 'Franklin Corrales',  src: '/videos/entrevista_2.mp4' },
-  { id: 3, label: 'Pablo Javier Rojas', src: '/videos/entrevista_3.mp4' },
-  { id: 4, label: 'Mónica Castillo',    src: '/videos/entrevista_4.mp4' },
+  { id: 1, label: 'Carolina Acosta',    src: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/Carolina%20Acosta%20-%20Negocio%20Verde%20(1).mp4' },
+  { id: 2, label: 'Franklin Corrales',  src: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/Entrevista%20editada_Franklin%20Corrales%20-%20jovenes%20ambientalistas-2o%20ICEO.mp4' },
+  { id: 3, label: 'Pablo Javier Rojas', src: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/Entrevista%20editada_Pablo%20Javier%20Rojas%20-%20USBC--2o%20ICEO.mp4' },
+  { id: 4, label: 'Mónica Castillo',    src: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/Entrevista%20editada_M%C3%B3nica%20Castillo-Parques%20Naturales%20de%20Colombia-2o%20ICEO.mp4' },
 ]
 
 // ─── PERSONALIDADES CAROUSEL ──────────────────────────────────────────────────
