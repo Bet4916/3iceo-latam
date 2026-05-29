@@ -2,6 +2,8 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import SectionDonacion from '@/components/sections/SectionDonacion'
+import SectionRedes from '@/components/sections/SectionRedes'
 
 // ─── ANIMATION HELPER ─────────────────────────────────────────────────────────
 function FadeIn({
@@ -720,82 +722,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      <WaveDown from="#ffffff" to="#09344e" />
-
-      {/* ══════════════════════════════════════════════════════════════════════
-          11. DONACIONES
-      ══════════════════════════════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#09344e', padding: '80px 48px' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center' }} className="donacion-grid">
-            <FadeIn>
-              <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#74B4A7', marginBottom: 16 }}>Nadie se queda fuera</p>
-              <h2 style={{ fontFamily: 'Gloock, Georgia, serif', fontWeight: 400, fontSize: 'clamp(28px,3.5vw,48px)', color: '#ffffff', lineHeight: 1.1, marginBottom: 20 }}>¡Gracias a ti, construimos el futuro ambiental de LATAM!</h2>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 15, color: 'rgba(255,255,255,0.65)', lineHeight: 1.75, marginBottom: 36, maxWidth: 480 }}>
-                Tu donación permite que organizaciones ambientales sin recursos puedan asistir al 3ICEO. El importe irá íntegramente destinado a cubrir alojamiento, transporte y dietas.
-              </p>
-              <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-                <Link href="/marketing/donaciones" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: '#B53077', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700, padding: '14px 34px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.05em', boxShadow: '0 4px 24px rgba(181,48,119,0.45)' }}>DONA AHORA →</Link>
-                <Link href="/marketing/registro" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '2px solid rgba(255,255,255,0.4)', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 600, padding: '14px 30px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em' }}>Inscribirme al congreso</Link>
-              </div>
-            </FadeIn>
-            <FadeIn delay={0.15}>
-              <div style={{ position: 'relative', borderRadius: 20, overflow: 'hidden', boxShadow: '4px 4px 32px rgba(0,0,0,0.3)' }}>
-                <img src="/icons/planta_donacion.svg" alt="Donación — planta en manos" style={{ width: '100%', height: 'auto', display: 'block', maxHeight: 360, objectFit: 'cover' }} />
-              </div>
-            </FadeIn>
-          </div>
-        </div>
-      </section>
-
-      {/* Triple wave navy → white */}
-      <div style={{ position: 'relative', height: 96, overflow: 'hidden', lineHeight: 0, backgroundColor: '#09344e' }}>
-        <svg viewBox="0 0 1440 96" preserveAspectRatio="none" style={{ position: 'absolute', bottom: 0, width: '100%', height: '100%' }}>
-          <path fill="#BED1DA" opacity="0.9" d="M0,55 C200,20 400,85 600,55 C800,25 1000,80 1200,52 C1320,36 1400,68 1440,55 L1440,96 L0,96 Z"/>
-        </svg>
-        <svg viewBox="0 0 1440 96" preserveAspectRatio="none" style={{ position: 'absolute', bottom: 0, width: '100%', height: '100%' }}>
-          <path fill="#4886B5" d="M0,68 C240,40 480,90 720,62 C900,40 1080,82 1260,60 C1360,48 1420,72 1440,62 L1440,96 L0,96 Z"/>
-        </svg>
-        <svg viewBox="0 0 1440 96" preserveAspectRatio="none" style={{ position: 'absolute', bottom: 0, width: '100%', height: '100%' }}>
-          <path fill="#ffffff" d="M0,75 C180,52 360,90 540,70 C720,50 900,88 1080,68 C1230,52 1370,78 1440,68 L1440,96 L0,96 Z"/>
-        </svg>
-      </div>
-
-      {/* ══════════════════════════════════════════════════════════════════════
-          12. REDES SOCIALES — Fondo blanco, sin conflicto con footer
-      ══════════════════════════════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#ffffff', padding: '64px 48px 80px' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center' }} className="follow-grid">
-            <FadeIn>
-              <h2 style={{ fontFamily: 'Gloock, Georgia, serif', fontWeight: 400, fontSize: 'clamp(26px,3vw,38px)', color: '#09344e', lineHeight: 1.2, marginBottom: 12 }}>¡Pásate por nuestras Redes Sociales y síguenos!</h2>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#5A6E77', lineHeight: 1.7, marginBottom: 28 }}>Publicamos contenido acerca de la labor que hacemos, podrás conocer proyectos y a nosotros más a fondo.</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 320 }}>
-                {[
-                  { label: 'Instagram', bg: '#E1306C', href: 'https://instagram.com/awaqongd',      iconSrc: '/icons/icon_instagram.svg' },
-                  { label: 'Facebook',  bg: '#1877F2', href: 'https://facebook.com/somosawaq',       iconSrc: '/icons/icon_facebook.svg'  },
-                  { label: 'LinkedIn',  bg: '#0A66C2', href: 'https://linkedin.com/company/awaq-ong', iconSrc: '/icons/icon_linkedin.svg'  },
-                ].map(({ label, bg, href, iconSrc }) => (
-                  <a key={label} href={href} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#fff', border: '1.5px solid #D9DEE2', borderRadius: 10, padding: '13px 18px', textDecoration: 'none', boxShadow: '2px 2px 8px rgba(9,52,78,0.06)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                      <div style={{ width: 36, height: 36, borderRadius: 8, backgroundColor: bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <img src={iconSrc} alt={label} width={18} height={18} style={{ display: 'block', filter: 'brightness(0) invert(1)' }} />
-                      </div>
-                      <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 600, color: '#12303E' }}>{label}</span>
-                    </div>
-                    <span style={{ color: '#097589', fontSize: 15, fontWeight: 600 }}>→</span>
-                  </a>
-                ))}
-              </div>
-            </FadeIn>
-            <FadeIn delay={0.12}>
-              <div style={{ borderRadius: 20, overflow: 'hidden', backgroundColor: '#74B4A7', padding: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 280, boxShadow: '4px 4px 24px rgba(9,52,78,0.12)' }}>
-                <img src="/icons/follow.svg" alt="Follow us on social media" style={{ width: '100%', maxWidth: 320, height: 'auto', display: 'block' }} />
-              </div>
-            </FadeIn>
-          </div>
-        </div>
-      </section>
+      <SectionDonacion
+    bg="#09344e"
+    theme="dark"
+    showTopWave={true}
+    topWaveFrom="#ffffff"   // ← color de la sección anterior (noticias)
+  />
+    <SectionRedes bg="#ffffff" theme="light" />
 
       {/* ── Responsive ── */}
       <style>{`

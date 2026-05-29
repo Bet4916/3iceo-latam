@@ -218,31 +218,6 @@ export default function Footer() {
                 Youtube →
               </a>
             </div>
-
-            <div>
-              <p style={colTitleStyle}>Redes Sociales</p>
-              <div style={{ display: 'flex', gap: 20, alignItems: 'center', marginTop: 10 }}>
-                {[
-                  { src: '/icons/icon_instagram.svg', href: 'https://instagram.com/awaqong',         label: 'Instagram' },
-                  { src: '/icons/icon_facebook.svg',  href: 'https://facebook.com/awaqong',          label: 'Facebook'  },
-                  { src: '/icons/icon_linkedin.svg',  href: 'https://linkedin.com/company/awaq-ong', label: 'LinkedIn'  },
-                ].map(({ src, href, label }) => (
-                  <a key={label} href={href} target="_blank" rel="noopener noreferrer"
-                    aria-label={label}
-                    style={{ opacity: 0.65, transition: 'opacity .2s', lineHeight: 0, display: 'block' }}
-                    onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.opacity = '1')}
-                    onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.opacity = '0.65')}
-                  >
-                    <img
-                      src={src} alt={label}
-                      width={28} height={28}   // ← más A3D7FFs
-                      style={{ filter: 'brightness(0) invert(1)', display: 'block' }}
-                      onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
-                    />
-                  </a>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
 
