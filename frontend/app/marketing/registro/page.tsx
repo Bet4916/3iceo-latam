@@ -34,6 +34,7 @@ interface Form {
   codigoPais: string
   telefono: string
   ubicacionPaisCode: string
+  ubicacionPaisNombre: string   // ← NUEVO
   ubicacionRegionCode: string
   ubicacionCiudad: string
   mensaje: string
@@ -51,7 +52,6 @@ const TIPOS_ORG: TipoOrg[] = ['Universidad', 'Empresa privada', 'Administración
 const AREAS_TEMATICAS = ['Biodiversidad y ecosistemas', 'Cambio climático y adaptación', 'Economía circular y residuos', 'Energías renovables', 'Agua y saneamiento', 'Educación ambiental', 'Política y legislación ambiental', 'Innovación social verde', 'Comunidades indígenas y territorio', 'Otra área temática']
 const TIPOS_COLABORACION = ['Patrocinio económico', 'Patrocinio en especie', 'Alianza institucional', 'Media partner / difusión', 'Colaboración académica', 'Voluntariado organizativo', 'Otro tipo de colaboración']
 
-// Mapeo de valores internos → valores exactos del picklist de Salesforce
 const TIPO_MAP: Record<string, string> = {
   asistencia:   'Asistente',
   ponente:      'Ponente',
@@ -75,7 +75,9 @@ const INITIAL_FORM: Form = {
   tipoOrgEspecifica: '', nombreOrg: '', puesto: '',
   codigoPais: 'CO',
   telefono: '',
-  ubicacionPaisCode: '', ubicacionRegionCode: '', ubicacionCiudad: '',
+  ubicacionPaisCode: '',
+  ubicacionPaisNombre: '',   // ← NUEVO
+  ubicacionRegionCode: '', ubicacionCiudad: '',
   mensaje: '', aceptaPrivacidad: false, aceptaComunicaciones: false,
 }
 
@@ -92,19 +94,29 @@ function LocationIcon({ size = 14 }: { size?: number }) {
 }
 
 export default function RegistroPage() {
-  const [step, setStep]           = useState<Step>(1)
-  const [errors, setErrors]       = useState<Record<string, string>>({})
+  const [step, setStep]             = useState<Step>(1)
+  const [errors, setErrors]         = useState<Record<string, string>>({})
   const [submitting, setSubmitting] = useState(false)
-  const [submitError, setSubmitError] = useState<string | null>(null)   // ← NUEVO
-  const [form, setForm]           = useState<Form>(INITIAL_FORM)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [form, setForm]             = useState<Form>(INITIAL_FORM)
   const formRef = useRef<HTMLDivElement>(null)
 
   const regions = form.ubicacionPaisCode ? State.getStatesOfCountry(form.ubicacionPaisCode) : []
   const cities  = form.ubicacionPaisCode && form.ubicacionRegionCode
     ? City.getCitiesOfState(form.ubicacionPaisCode, form.ubicacionRegionCode) : []
 
+  // ← CAMBIADO: guarda también el nombre del país
   const handleCountryChange = (isoCode: string) => {
-    setForm(p => ({ ...p, ubicacionPaisCode: isoCode, ubicacionRegionCode: '', ubicacionCiudad: '', codigoPais: isoCode }))
+    const countryData = Country.getCountryByCode(isoCode)
+    const nombre = countryData?.name || isoCode
+    setForm(p => ({
+      ...p,
+      ubicacionPaisCode:   isoCode,
+      ubicacionPaisNombre: nombre,   // ← guarda nombre legible
+      ubicacionRegionCode: '',
+      ubicacionCiudad:     '',
+      codigoPais:          isoCode,
+    }))
   }
 
   const set = (k: keyof Form, v: string | boolean) => {
@@ -143,7 +155,6 @@ export default function RegistroPage() {
     return Object.keys(e).length === 0
   }
 
-  // ── HANDLE SUBMIT — conectado a Salesforce Web-to-Case via /api/registro ──
   const handleSubmit = async () => {
     if (!validateStep2()) return
     setSubmitting(true)
@@ -262,7 +273,6 @@ export default function RegistroPage() {
 
                   <Divider />
 
-                  {/* Campos específicos por tipo */}
                   <AnimatePresence mode="wait">
                     {form.tipoSolicitud === 'asistencia' && (
                       <motion.div key="asistencia-fields" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
@@ -323,7 +333,6 @@ export default function RegistroPage() {
                     )}
                   </AnimatePresence>
 
-                  {/* Datos de contacto */}
                   <h2 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 18, fontWeight: 600, color: '#09344e', marginBottom: 6, textAlign: 'center' }}>Déjanos tus datos de contacto</h2>
                   <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 12, color: '#5A6E77', textAlign: 'center', marginBottom: 24 }}>Para ponernos en contacto contigo</p>
 
@@ -375,7 +384,6 @@ export default function RegistroPage() {
                       {errors.puesto ? <span style={S.error}>{errors.puesto}</span> : <span style={S.hint}>Requerido</span>}
                     </div>
 
-                    {/* Teléfono */}
                     <div style={S.field}>
                       <label style={S.label}>Nº Teléfono *</label>
                       <div style={{ display: 'flex', gap: 8 }}>
@@ -389,21 +397,17 @@ export default function RegistroPage() {
                       {errors.telefono ? <span style={S.error}>{errors.telefono}</span> : <span style={S.hint}>Requerido</span>}
                     </div>
 
-                    {/* Ubicación */}
                     <div style={S.field}>
                       <label style={S.label}>Ubicación</label>
-
                       <CountrySelect
                         value={form.ubicacionPaisCode}
                         onChange={v => handleCountryChange(v)}
                         hasError={false}
                       />
-
                       <AnimatePresence>
                         {form.ubicacionPaisCode && (
                           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
                             style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 8 }}>
-
                             <div>
                               <div style={{ position: 'relative' }}>
                                 <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', zIndex: 1, display: 'flex' }}>
@@ -419,9 +423,8 @@ export default function RegistroPage() {
                                   {regions.map(r => <option key={r.isoCode} value={r.isoCode}>{r.name}</option>)}
                                 </select>
                               </div>
-                              <span style={S.hint}>Requerido</span>
+                              <span style={S.hint}>Opcional</span>
                             </div>
-
                             <div>
                               {form.ubicacionRegionCode ? (
                                 cities.length > 0 ? (
@@ -458,9 +461,8 @@ export default function RegistroPage() {
                                   Primero elige región
                                 </div>
                               )}
-                              <span style={S.hint}>Requerido</span>
+                              <span style={S.hint}>Opcional</span>
                             </div>
-
                           </motion.div>
                         )}
                       </AnimatePresence>
@@ -488,22 +490,9 @@ export default function RegistroPage() {
                       </label>
                     </div>
 
-                    {/* ── ERROR de envío ── */}
                     {submitError && (
-                      <motion.p
-                        initial={{ opacity: 0, y: -4 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        style={{
-                          fontFamily: 'Poppins, sans-serif',
-                          fontSize: 13,
-                          color: '#A7170C',
-                          backgroundColor: '#fff8f7',
-                          border: '1px solid #f5c2c0',
-                          borderRadius: 8,
-                          padding: '10px 14px',
-                          margin: 0,
-                        }}
-                      >
+                      <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
+                        style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, color: '#A7170C', backgroundColor: '#fff8f7', border: '1px solid #f5c2c0', borderRadius: 8, padding: '10px 14px', margin: 0 }}>
                         ⚠️ {submitError}
                       </motion.p>
                     )}
@@ -528,20 +517,14 @@ export default function RegistroPage() {
               </motion.div>
             )}
 
-            {/* ── PASO 3 — Confirmación ── */}
+            {/* ── PASO 3 ── */}
             {step === 3 && (
               <motion.div key="s3" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.4 }}>
                 <Card>
                   <div style={{ textAlign: 'center', padding: '16px 16px 32px' }}>
-
                     <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
-                      <img
-                        src="/icons/drop_hands.svg"
-                        alt="Solicitud recibida"
-                        style={{ width: 120, height: 120, objectFit: 'contain' }}
-                      />
+                      <img src="/icons/drop_hands.svg" alt="Solicitud recibida" style={{ width: 120, height: 120, objectFit: 'contain' }} />
                     </div>
-
                     <h1 style={{ fontFamily: '"Gloock", Georgia, serif', fontSize: 'clamp(22px, 4vw, 34px)', fontWeight: 400, color: '#09344e', marginBottom: 16, lineHeight: 1.25 }}>
                       ¡Solicitud enviada con éxito!
                     </h1>
@@ -549,41 +532,19 @@ export default function RegistroPage() {
                       Hemos recibido tu solicitud de <strong style={{ color: '#09344e' }}>{form.tipoSolicitud === 'asistencia' ? 'asistencia' : form.tipoSolicitud === 'ponente' ? 'ponencia' : 'colaboración'}</strong>.
                     </p>
                     <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 15, color: '#437287', marginBottom: 4 }}>
-                      Te hemos enviado una confirmación a{' '}
-                      <strong style={{ color: '#097589' }}>{form.email}</strong>
+                      Te hemos enviado una confirmación a <strong style={{ color: '#097589' }}>{form.email}</strong>
                     </p>
-                    <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14, color: '#5A6E77', marginBottom: 4 }}>
-                      Te responderemos en un plazo aproximado de 24–48h.
-                    </p>
-                    <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 12, color: '#9EADB4', marginBottom: 32 }}>
-                      Revisa también tu carpeta de spam.
-                    </p>
-
-                    <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 17, fontWeight: 600, color: '#09344e', marginBottom: 20 }}>
-                      Gracias por tu interés y ser parte del 3ICEO
-                    </p>
+                    <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14, color: '#5A6E77', marginBottom: 4 }}>Te responderemos en un plazo aproximado de 24–48h.</p>
+                    <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 12, color: '#9EADB4', marginBottom: 32 }}>Revisa también tu carpeta de spam.</p>
+                    <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 17, fontWeight: 600, color: '#09344e', marginBottom: 20 }}>Gracias por tu interés y ser parte del 3ICEO</p>
                     <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 40 }}>
-                      <Link href="/"
-                        style={{ padding: '12px 24px', borderRadius: 50, border: '1.5px solid #C3DED9', color: '#097589', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 600, textDecoration: 'none', letterSpacing: '0.03em' }}>
-                        Volver al inicio
-                      </Link>
-                      <Link href="/marketing/donaciones"
-                        style={{ padding: '12px 24px', borderRadius: 50, border: 'none', backgroundColor: '#B53077', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700, textDecoration: 'none', letterSpacing: '0.03em', boxShadow: '0 2px 12px rgba(181,48,119,0.3)' }}>
-                        Apoya el congreso
-                      </Link>
+                      <Link href="/" style={{ padding: '12px 24px', borderRadius: 50, border: '1.5px solid #C3DED9', color: '#097589', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 600, textDecoration: 'none', letterSpacing: '0.03em' }}>Volver al inicio</Link>
+                      <Link href="/marketing/donaciones" style={{ padding: '12px 24px', borderRadius: 50, border: 'none', backgroundColor: '#B53077', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700, textDecoration: 'none', letterSpacing: '0.03em', boxShadow: '0 2px 12px rgba(181,48,119,0.3)' }}>Apoya el congreso</Link>
                     </div>
-
                     <div style={{ height: 1, backgroundColor: '#EFF4F7', margin: '0 -32px 32px' }} />
-
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
-                      <img
-                        src="/icons/follow.svg"
-                        alt="Síguenos"
-                        style={{ width: 80, height: 'auto', objectFit: 'contain' }}
-                      />
-                      <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 15, fontWeight: 600, color: '#09344e', margin: 0 }}>
-                        Síguenos en redes para no perderte nada
-                      </p>
+                      <img src="/icons/follow.svg" alt="Síguenos" style={{ width: 80, height: 'auto', objectFit: 'contain' }} />
+                      <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 15, fontWeight: 600, color: '#09344e', margin: 0 }}>Síguenos en redes para no perderte nada</p>
                       <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
                         {[
                           { src: '/icons/icon_instagram.svg', href: 'https://instagram.com/awaqong',         label: 'Instagram' },
@@ -600,29 +561,19 @@ export default function RegistroPage() {
                         ))}
                       </div>
                     </div>
-
                   </div>
                 </Card>
 
-                {/* Banner donación */}
                 <div style={{ marginTop: 24, borderRadius: 12, overflow: 'hidden', backgroundColor: '#fff', display: 'grid', gridTemplateColumns: '1fr 200px', boxShadow: '2px 2px 16px rgba(9,52,78,0.1)' }} className="donation-banner">
                   <div style={{ padding: '36px 32px' }}>
-                    <h3 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 20, fontWeight: 700, color: '#09344e', marginBottom: 14, lineHeight: 1.3 }}>
-                      ¡Gracias a tu donación, nadie se queda fuera!
-                    </h3>
-                    <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14, color: '#437287', marginBottom: 24, lineHeight: 1.7 }}>
-                      El importe irá íntegramente destinado a cubrir alojamiento, transporte y dietas.
-                    </p>
-                    <Link href="/marketing/donaciones"
-                      style={{ display: 'inline-block', padding: '11px 28px', borderRadius: 50, backgroundColor: '#B53077', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700, textDecoration: 'none', letterSpacing: '0.04em' }}>
-                      DONAR
-                    </Link>
+                    <h3 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 20, fontWeight: 700, color: '#09344e', marginBottom: 14, lineHeight: 1.3 }}>¡Gracias a tu donación, nadie se queda fuera!</h3>
+                    <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14, color: '#437287', marginBottom: 24, lineHeight: 1.7 }}>El importe irá íntegramente destinado a cubrir alojamiento, transporte y dietas.</p>
+                    <Link href="/marketing/donaciones" style={{ display: 'inline-block', padding: '11px 28px', borderRadius: 50, backgroundColor: '#B53077', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700, textDecoration: 'none', letterSpacing: '0.04em' }}>DONAR</Link>
                   </div>
                   <div style={{ background: 'linear-gradient(135deg, #AEE5DA 0%, #74B4A7 50%, #097589 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <img src="/icons/drop_hands.svg" alt="" style={{ width: 80, height: 80, objectFit: 'contain', opacity: 0.85 }} />
                   </div>
                 </div>
-
               </motion.div>
             )}
           </AnimatePresence>
