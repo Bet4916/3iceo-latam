@@ -290,7 +290,7 @@ export default function ColaboraPage() {
             { num: '4', label: 'Prensa y Medios',            sub: 'Nuevo',                    color: '#B53077', tipo: 'Medio' },
             { num: '5', label: 'Marketplace Territorial',    sub: 'Recomendado',              color: '#437287', tipo: 'Marketplace / Patrocinador' },
             { num: '6', label: 'Quiero apoyar / Donar',      sub: 'Solo si no hay pasarela',  color: '#09344e', tipo: 'Apoyo / Donación' },
-          ].reduce<(typeof _)[number][][]>((rows, item, i) => {
+          ].reduce<{ num: string; label: string; sub: string; color: string; tipo: string }[][]>((rows, item, i) => {
             if (i % 3 === 0) rows.push([])
             rows[rows.length - 1].push(item)
             return rows
