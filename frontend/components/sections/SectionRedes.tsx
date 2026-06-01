@@ -66,7 +66,7 @@ export default function SectionRedes({
               {[
                 { label: 'Instagram', bg: '#E1306C', href: 'https://instagram.com/awaqongd',       iconSrc: '/icons/icon_instagram.svg' },
                 { label: 'Facebook',  bg: '#1877F2', href: 'https://facebook.com/somosawaq',        iconSrc: '/icons/icon_facebook.svg'  },
-                { label: 'LinkedIn',  bg: '#0A66C2', href: 'https://linkedin.com/company/awaq-ong', iconSrc: '/icons/icon_linkedin.svg'  },
+                { label: 'LinkedIn',  bg: '#0A66C2', href: 'https://www.linkedin.com/company/awaq-ongd/', iconSrc: '/icons/icon_linkedin.svg'  },
               ].map(({ label, bg: redBg, href, iconSrc }) => (
                 <a
                   key={label}

@@ -9,16 +9,28 @@
  *  ┌──────────────┬──────────────────────────────────────────────────────┐
  *  │ badge        │ Texto del chip superior (ej. "3ª Edición · Cali")    │
  *  │ title        │ JSX del h1 — permite spans de color                  │
- *  │ description  │ Párrafo descriptivo                                  │
+ *  │ description  │ H2 descriptivo — acepta JSX con <br /> para corte    │
+ *  │              │ exacto según especificaciones del Excel de copy       │
  *  │ cta          │ { label, href, target? } — botón principal           │
  *  │ ctaSecondary │ { label, href, target? } — botón secundario opcional │
  *  │ image        │ src de la imagen/SVG derecha                         │
  *  │ imageAlt     │ alt de la imagen                                     │
  *  │ imageLabel   │ Texto del chip flotante sobre la imagen              │
+ *  │ imageScale   │ Escala la imagen. Default: 1. Usar 1.40 p/ SVGs     │
  *  │ waveVariant  │ 'default' | 'overlap' | 'sharp' | 'none'            │
  *  │ waveColor    │ Color de relleno de la ola (def: '#ffffff')          │
  *  │ children     │ Slot libre — se renderiza DENTRO de la ola, encima  │
  *  └──────────────┴──────────────────────────────────────────────────────┘
+ *
+ *  USO DEL PROP description (H2 con corte exacto):
+ *  ┌─────────────────────────────────────────────────────────────────────┐
+ *  │  description={                                                      │
+ *  │    <>                                                               │
+ *  │      Colabora como voluntario virtual, aliado o medio de prensa<br />│
+ *  │      y ayuda a impulsar el congreso                                 │
+ *  │    </>                                                              │
+ *  │  }                                                                  │
+ *  └─────────────────────────────────────────────────────────────────────┘
  *
  *  VARIANTES DE OLA:
  *  · 'default' → ola suave estándar (memoria, home…)
@@ -45,7 +57,8 @@ interface CtaProps {
 export interface HeroIceoProps {
   badge?: string
   title: React.ReactNode
-  description: string
+  /** H2 descriptivo. Acepta JSX con <br /> para forzar el corte de línea exacto. */
+  description: React.ReactNode
   cta: CtaProps
   ctaSecondary?: CtaProps
   image: string
@@ -99,7 +112,7 @@ function Wave({ variant, color }: { variant: WaveVariant; color: string }) {
     )
   }
 
-  // default: ola suave original de la página de memoria
+  // default: ola suave estándar
   return (
     <div style={{ lineHeight: 0, marginTop: -2 }}>
       <svg
@@ -182,6 +195,7 @@ export default function HeroIceo({
                 </div>
               )}
 
+              {/* H1 — título corto */}
               <h1
                 style={{
                   fontFamily: 'Gloock, Georgia, serif',
@@ -189,25 +203,28 @@ export default function HeroIceo({
                   fontWeight: 400,
                   color: '#09344e',
                   lineHeight: 1.08,
-                  marginBottom: 24,
+                  marginBottom: 20,
                   letterSpacing: '-0.01em',
                 }}
               >
                 {title}
               </h1>
 
-              <p
+              {/* H2 — descriptivo en dos líneas con corte exacto */}
+              <h2
                 style={{
                   fontFamily: 'Inter, sans-serif',
-                  fontSize: 15,
-                  color: 'rgba(9,52,78,0.72)',
-                  lineHeight: 1.75,
-                  maxWidth: 440,
+                  fontSize: 'clamp(16px, 1.8vw, 20px)',
+                  fontWeight: 400,
+                  color: 'rgba(9,52,78,0.80)',
+                  lineHeight: 1.55,
+                  maxWidth: 480,
                   marginBottom: 36,
+                  letterSpacing: '-0.005em',
                 }}
               >
                 {description}
-              </p>
+              </h2>
 
               {/* CTAs */}
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
