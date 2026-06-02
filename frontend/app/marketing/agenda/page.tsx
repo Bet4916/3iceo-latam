@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import HeroIceo from '@/components/sections/HeroIceo'
 import SectionDonacion from '@/components/sections/SectionDonacion'
 import SectionRedes from '@/components/sections/SectionRedes'
 
@@ -31,20 +32,6 @@ function Flag({ code }: { code: string }) {
   )
 }
 
-// ─── ICONO CALENDARIO SVG (sin emoji) ─────────────────────────────────────────
-function IconCalendar({ size = 16, color = 'currentColor' }: { size?: number; color?: string }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2"
-      strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-      <line x1="16" y1="2" x2="16" y2="6"/>
-      <line x1="8" y1="2" x2="8" y2="6"/>
-      <line x1="3" y1="10" x2="21" y2="10"/>
-    </svg>
-  )
-}
-
-// ─── PONENTES ─────────────────────────────────────────────────────────────────
 const PONENTES = [
   { foto: '/icons/jose_serrano.svg',                          nombre: 'José Serrano Serna',              pais: 'es', org: 'Awaq ONGD',                      rol: 'CEO-Presidente Awaq ONGD',                          social: 'https://www.linkedin.com/in/jsserna5575/', socialType: 'linkedin' as const },
   { foto: '/icons/luis_alfonso.svg',                          nombre: 'Luis Alfonso Aguirre',            pais: 'co', org: 'PMI® Colombia',                  rol: 'Program Manager PMI® Colombia',                    social: 'https://www.linkedin.com/in/luis-alfonso-aguirre-montealegre-0770a91a/', socialType: 'linkedin' as const },
@@ -61,10 +48,10 @@ const PONENTES = [
   { foto: '/images/ponentes_Santiago_Granados.jpg',           nombre: 'Santiago Granados Gutiérrez',     pais: 'co', org: 'CEPAL-ONU',                      rol: 'Consultor',                                         social: 'https://www.linkedin.com/in/santiago-granados-guti%C3%A9rrez-94a65a21/', socialType: 'linkedin' as const },
 ]
 
-// ─── AGENDA — fiel al AGENDA_DRAFT ───────────────────────────────────────────
-// DÍA 1: Agua, territorios vivos y comunidades
-// DÍA 2: Cooperación internacional al desarrollo, innovación y mundo rural
-// DÍA 3: Conclusiones (Jornada de cierre)
+// ─── COLORES POR DÍA ──────────────────────────────────────────────────────────
+// Día 1 Martes  17 → #097589  sombra trasera: #C0EAE0 (verde agua muy claro)
+// Día 2 Miérc.  18 → #09344e  sombra trasera: #B8CDD6 (azul grisáceo claro)
+// Día 3 Jueves  19 → #B58A00  sombra trasera: #E8D9A0 (dorado pálido)
 const DIAS = [
   {
     id: 'martes', diaSemana: 'MARTES', diaNum: '17', mes: 'AGOSTO',
@@ -72,7 +59,7 @@ const DIAS = [
     tema: 'Agua, territorios vivos y comunidades',
     desc: 'Un primer día para comprender la situación actual de las fuentes hídricas, compartir una visión de futuro y explorar qué iniciativas hacen falta para activar soluciones desde los territorios.',
     colorAccent: '#097589',
-    accentShadow: '#ADC6D9',
+    accentShadow: '#C0EAE0',
     bullets: [
       'Apertura institucional y bienvenida',
       'Conferencia magistral: estado actual de las fuentes hídricas',
@@ -101,8 +88,8 @@ const DIAS = [
     label: 'DÍA 2',
     tema: 'Cooperación internacional al desarrollo, innovación y mundo rural',
     desc: 'Un segundo día orientado a conectar cooperación, transferencia de conocimiento e innovación aplicada para impulsar soluciones territoriales, bioeconomía y desarrollo rural sostenible.',
-    colorAccent: '#B53077',
-    accentShadow: '#4886B5',
+    colorAccent: '#09344e',
+    accentShadow: '#B8CDD6',
     bullets: [
       'Apertura del Día 2 y recapitulación',
       'Conferencia magistral: innovación para territorios vivos',
@@ -131,8 +118,8 @@ const DIAS = [
     label: 'DÍA 3 · JORNADA DE CONCLUSIONES',
     tema: 'Conclusiones',
     desc: 'Una jornada más breve para convertir aprendizajes y acuerdos en memoria útil, conclusiones compartidas y una hoja de ruta para futuras alianzas.',
-    colorAccent: '#097589',  // oficial — teal
-    accentShadow: '#74B4A7',
+    colorAccent: '#B58A00',
+    accentShadow: '#E8D9A0',
     bullets: [
       'Apertura breve y recapitulación general',
       'Relatoría y aprendizajes clave del congreso',
@@ -171,19 +158,16 @@ const TIPO_STYLE: Record<TipoSesion, { bg: string; textColor: string; border: st
   clausura:    { bg: '#12303E', textColor: '#ffffff',   border: '#12303E' },
 }
 
-// ─── SESION ROW ───────────────────────────────────────────────────────────────
 function SesionRow({ s }: { s: { hora: string; titulo: string; tipo: TipoSesion } }) {
   const st = TIPO_STYLE[s.tipo]
   const isDark = s.tipo === 'apertura' || s.tipo === 'clausura'
   return (
     <div style={{ display: 'flex', gap: 0, marginBottom: 6, alignItems: 'stretch' }}>
-      {/* Hora */}
       <div style={{ width: 110, flexShrink: 0, paddingRight: 12, paddingTop: 12, textAlign: 'right' }}>
         <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 600, color: '#5A6E77', whiteSpace: 'nowrap' }}>
           {s.hora}
         </span>
       </div>
-      {/* Contenido */}
       <div style={{ flex: 1, backgroundColor: st.bg, borderLeft: `4px solid ${st.border}`, borderRadius: '0 8px 8px 0', padding: '11px 16px' }}>
         <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14.5, fontWeight: 600, color: isDark ? '#fff' : '#09344e', lineHeight: 1.4, display: 'block' }}>
           {s.titulo}
@@ -193,7 +177,6 @@ function SesionRow({ s }: { s: { hora: string; titulo: string; tipo: TipoSesion 
   )
 }
 
-// ─── PONENTE CARD ─────────────────────────────────────────────────────────────
 function PonenteCard({ p }: { p: typeof PONENTES[0] }) {
   return (
     <div style={{ backgroundColor: '#F0F4F7', borderRadius: 40, padding: '32px 24px 28px', display: 'flex', flexDirection: 'column', alignItems: 'center', width: 310, flexShrink: 0, boxShadow: '2px 2px 10px rgba(9,52,78,0.08)', transition: 'transform 0.22s, box-shadow 0.22s' }}
@@ -246,136 +229,98 @@ function PonenteCarousel() {
   )
 }
 
-// ─── PAGE ─────────────────────────────────────────────────────────────────────
 export default function AgendaPage() {
   const [diaActivo, setDiaActivo] = useState(0)
 
   return (
     <div style={{ backgroundColor: '#ffffff', minHeight: '100vh' }}>
 
-      {/* ══ 1. HERO COMPLETO — días integrados, ola encima de ellos ═══════════
-          La ola tiene z-index > 0 y los botones de días están DEBAJO,
-          creando el efecto de que la ola los "cubre" naturalmente.
-          No hay sección separada — todo es parte del teal.
-      ════════════════════════════════════════════════════════════════════════ */}
-      <section style={{
-        backgroundColor: '#74B4A7',
-        paddingTop: 120,
-        paddingBottom: 0,
-        position: 'relative',
-        overflow: 'hidden',
-      }}>
-        {/* Efectos de fondo */}
-        <div style={{ position: 'absolute', inset: 0, opacity: 0.05, backgroundImage: 'radial-gradient(circle, rgba(9,52,78,0.9) 1px, transparent 1px)', backgroundSize: '26px 26px', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', top: -80, right: -80, width: 420, height: 420, borderRadius: '50%', background: 'radial-gradient(circle, rgba(9,52,78,0.18) 0%, transparent 70%)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', bottom: 60, left: -60, width: 320, height: 320, borderRadius: '50%', background: 'radial-gradient(circle, rgba(9,52,78,0.12) 0%, transparent 70%)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', top: -120, left: '-5%', width: '65%', height: '85%', background: 'linear-gradient(118deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.04) 40%, transparent 65%)', transform: 'rotate(-6deg)', pointerEvents: 'none', borderRadius: '50%' }} />
-        <div style={{ position: 'absolute', bottom: 0, right: '-5%', width: '50%', height: '70%', background: 'linear-gradient(305deg, rgba(255,255,255,0.09) 0%, transparent 55%)', pointerEvents: 'none', borderRadius: '50%' }} />
-        <div style={{ position: 'absolute', top: '10%', left: '30%', width: '40%', height: '60%', background: 'radial-gradient(ellipse at 50% 40%, rgba(255,255,255,0.10) 0%, transparent 65%)', pointerEvents: 'none' }} />
-
-        {/* ── Contenido grid ── */}
-        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 48px', position: 'relative', zIndex: 1 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center', paddingBottom: 48 }} className="hero-grid">
-
-            {/* Texto izquierda */}
-            <motion.div initial={{ opacity: 0, x: -32 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: 'rgba(9,52,78,0.14)', border: '1px solid rgba(9,52,78,0.22)', borderRadius: 999, padding: '6px 16px', marginBottom: 24 }}>
-                <span style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#09344e', opacity: 0.65, flexShrink: 0, display: 'inline-block' }} />
-                <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, color: '#09344e', letterSpacing: '0.10em', textTransform: 'uppercase' }}>3ª Edición · Cali, Colombia</span>
-              </div>
-              <h1 style={{ fontFamily: 'Gloock, Georgia, serif', fontSize: 'clamp(42px, 5.5vw, 72px)', fontWeight: 400, color: '#09344e', lineHeight: 1.08, marginBottom: 24, letterSpacing: '-0.01em' }}>
-                Agenda del <span style={{ color: '#ffffff' }}>3°</span> Congreso Internacional de Organizaciones Ambientales
-              </h1>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 15, color: 'rgba(9,52,78,0.72)', lineHeight: 1.75, maxWidth: 440, marginBottom: 36 }}>
-                Solicita tu asistencia para no quedarte sin plaza. El aforo es limitado.
-              </p>
-              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                <Link href="/marketing/registro" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: '#09344e', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, padding: '13px 30px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.05em', textTransform: 'uppercase', boxShadow: '0 4px 22px rgba(9,52,78,0.38)', transition: 'background-color 0.2s, transform 0.15s' }}
-                  onMouseEnter={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.backgroundColor = '#1C495C'; el.style.transform = 'translateY(-1px)' }}
-                  onMouseLeave={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.backgroundColor = '#09344e'; el.style.transform = 'translateY(0)' }}
-                >QUIERO ASISTIR →</Link>
-
-                {/* Botón VER AGENDA con icono SVG profesional */}
-                <a href="#programa" onClick={e => { e.preventDefault(); document.getElementById('programa')?.scrollIntoView({ behavior: 'smooth' }) }}
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: 'rgba(9,52,78,0.10)', color: '#09344e', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600, padding: '12px 28px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.05em', textTransform: 'uppercase', border: '1.5px solid rgba(9,52,78,0.25)', transition: 'background-color 0.2s', cursor: 'pointer' }}
-                  onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = 'rgba(9,52,78,0.18)')}
-                  onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = 'rgba(9,52,78,0.10)')}
-                >
-                  <IconCalendar size={15} color="#09344e" />
-                  VER AGENDA
-                </a>
-              </div>
-            </motion.div>
-
-            {/* Imagen stacked cards */}
-            <motion.div initial={{ opacity: 0, x: 32 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1], delay: 0.12 }}
-              style={{ position: 'relative', padding: '14px 18px 22px 13px', cursor: 'default' }}>
-              <div style={{ position: 'absolute', inset: 0, backgroundColor: '#09344e', borderRadius: 20, transform: 'rotate(5deg) scale(1.01)', zIndex: 0, boxShadow: '4px 14px 48px rgba(9,52,78,0.60)', overflow: 'hidden' }}>
-                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 40%, transparent 65%)', pointerEvents: 'none' }} />
-              </div>
-              <div style={{ position: 'absolute', inset: 0, backgroundColor: '#ADD2D9', borderRadius: 16, transform: 'rotate(-3deg) scale(1.005)', zIndex: 1, overflow: 'hidden' }}>
-                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(118deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.15) 35%, transparent 60%)', pointerEvents: 'none' }} />
-              </div>
-              <div style={{ position: 'relative', zIndex: 2, borderRadius: 14, overflow: 'hidden', transform: 'rotate(-1.5deg)', boxShadow: '0 16px 56px rgba(0,0,0,0.38)', backgroundColor: '#000', minHeight: 300 }}>
-                <img src="/icons/panelistas.svg" alt="Panelistas 3ICEO" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transform: 'scale(1.30)' }} />
-              </div>
-              <div style={{ position: 'absolute', bottom: 10, left: 18, zIndex: 3, display: 'flex', alignItems: 'center', gap: 6, backgroundColor: 'rgba(9,52,78,0.82)', backdropFilter: 'blur(8px)', borderRadius: 999, padding: '4px 12px', border: '1px solid rgba(72,134,181,0.45)' }}>
-                <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700, color: '#AEE5DA', letterSpacing: '0.1em', textTransform: 'uppercase' }}>3° ICEO · 17-19 Ago · Cali</span>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* ── DÍAS: parte del hero, justo antes de la ola ──
-              Botones en z-index 1, la ola en z-index 2 (encima) → efecto natural
-          ── */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 0, position: 'relative', zIndex: 1 }}>
+      {/* ══ 1. HERO — usando HeroIceo unificado, igual que el resto de páginas ══ */}
+      <HeroIceo
+        badge="3ª Edición · Cali, Colombia"
+        title={<>Programa · <span style={{ color: '#ffffff' }}>3ICEO</span></>}
+        description={<>Tres días de conferencias, paneles, talleres<br />y experiencias para activar soluciones hídricas</>}
+        cta={{ label: 'QUIERO ASISTIR →', href: '/marketing/registro' }}
+        ctaSecondary={{ label: 'VER AGENDA', href: '#programa' }}
+        image="/icons/panelistas.svg"
+        imageAlt="Panelistas 3ICEO"
+        imageLabel="3° ICEO · 17-19 Ago · Cali"
+        imageScale={1.30}
+        waveVariant="overlap"
+        waveColor="#F0F4F7"
+      >
+        {/* Selector de días — pill unificado, redondeado */}
+        <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 20, paddingBottom: 0 }}>
+          <div style={{
+            display: 'inline-flex',
+            backgroundColor: 'rgba(255,255,255,0.95)',
+            borderRadius: 20,
+            boxShadow: '0 8px 32px rgba(9,52,78,0.20)',
+            overflow: 'hidden',
+          }}>
             {DIAS.map((d, i) => {
               const active = diaActivo === i
               return (
-                <button
+                <div
                   key={d.id}
-                  onClick={() => { setDiaActivo(i); setTimeout(() => document.getElementById('programa')?.scrollIntoView({ behavior: 'smooth' }), 100) }}
-                  style={{
-                    width: 170, padding: '20px 12px 26px',
-                    backgroundColor: active ? '#ffffff' : 'rgba(255,255,255,0.20)',
-                    border: 'none',
-                    borderBottom: active ? `4px solid ${d.colorAccent}` : '4px solid transparent',
-                    borderRadius: '12px 12px 0 0',
-                    cursor: 'pointer', transition: 'all 0.25s', textAlign: 'center',
-                    boxShadow: active ? '0 -4px 20px rgba(9,52,78,0.12)' : 'none',
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => {
+                    setDiaActivo(i)
+                    setTimeout(() => document.getElementById('programa')?.scrollIntoView({ behavior: 'smooth' }), 100)
                   }}
-                  onMouseEnter={e => { if (!active) (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(255,255,255,0.35)' }}
-                  onMouseLeave={e => { if (!active) (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(255,255,255,0.20)' }}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      setDiaActivo(i)
+                      setTimeout(() => document.getElementById('programa')?.scrollIntoView({ behavior: 'smooth' }), 100)
+                    }
+                  }}
+                  style={{
+                    width: 155,
+                    paddingTop: 14, paddingBottom: 14, paddingLeft: 12, paddingRight: 12,
+                    backgroundColor: active ? '#ffffff' : 'transparent',
+                    borderTop: `3px solid ${active ? d.colorAccent : 'transparent'}`,
+                    borderRight: i < DIAS.length - 1 ? '1px solid rgba(9,52,78,0.08)' : 'none',
+                    cursor: 'pointer',
+                    transition: 'all 0.22s',
+                    textAlign: 'center',
+                    userSelect: 'none',
+                    outline: 'none',
+                    opacity: active ? 1 : 0.75,
+                  }}
+                  onMouseEnter={e => {
+                    if (!active) {
+                      const el = e.currentTarget as HTMLDivElement
+                      el.style.opacity = '1'
+                      el.style.backgroundColor = 'rgba(9,52,78,0.04)'
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    if (!active) {
+                      const el = e.currentTarget as HTMLDivElement
+                      el.style.opacity = '0.75'
+                      el.style.backgroundColor = 'transparent'
+                    }
+                  }}
                 >
-                  <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 9, fontWeight: 700, color: active ? '#5A6E77' : 'rgba(9,52,78,0.55)', letterSpacing: '0.14em', marginBottom: 6 }}>
+                  <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 9, fontWeight: 700, color: '#5A6E77', letterSpacing: '0.14em', marginBottom: 3 }}>
                     {d.mes}
                   </div>
-                  <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 42, fontWeight: 700, color: active ? d.colorAccent : 'rgba(9,52,78,0.40)', lineHeight: 1 }}>
+                  <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 34, fontWeight: 700, color: d.colorAccent, lineHeight: 1 }}>
                     {d.diaNum}
                   </div>
-                  <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600, color: active ? '#09344e' : 'rgba(9,52,78,0.50)', marginTop: 6 }}>
+                  <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 700, color: d.colorAccent, marginTop: 3, letterSpacing: '0.06em' }}>
                     {d.diaSemana}
                   </div>
-                </button>
+                </div>
               )
             })}
           </div>
         </div>
-
-        {/* ── OLA en z-index 2 — pasa POR ENCIMA de los botones de días ──
-            La ola "cubre" la parte inferior de los botones de forma natural,
-            sin que se vean flotando. El fondo de la ola es el mismo que ponentes.
-        ── */}
-        {/* Ola con marginTop negativo grande para cubrir la parte inferior de los botones */}
-        <div style={{ lineHeight: 0, position: 'relative', zIndex: 2, marginTop: -52 }}>
-          <svg viewBox="0 0 1440 96" preserveAspectRatio="none" style={{ width: '100%', height: 96, display: 'block' }}>
-            <path d="M0,48 C360,96 720,12 1080,56 C1260,72 1380,32 1440,48 L1440,96 L0,96 Z" fill="#F0F4F7" />
-          </svg>
-        </div>
-      </section>
+      </HeroIceo>
 
       {/* ══ 2. PONENTES ════════════════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#F0F4F7', padding: '72px 48px 80px' }}>
+      <section id="ponentes" style={{ backgroundColor: '#F0F4F7', padding: '48px 48px 80px', marginTop: -2 }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <FadeIn>
             <h2 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 'clamp(22px, 2.5vw, 30px)', fontWeight: 700, color: '#09344e', textAlign: 'center', marginBottom: 44 }}>
@@ -395,14 +340,7 @@ export default function AgendaPage() {
         </svg>
       </div>
 
-      {/* ══ 3. PROGRAMA ═══════════════════════════════════════════════════════
-          Selector pill holder arriba.
-          Cada día: columna de fecha con diseño de HOJA ASIMÉTRICA
-          (border-radius: 48px 8px 48px 8px + sombra de color desplazada)
-          → igual que Organizadores y Momentos del 2° ICEO.
-          Todo más grande (fuentes, paddings, columna fecha más ancha).
-          Caja de tema del día proporcionalmente más pequeña que el número.
-      ════════════════════════════════════════════════════════════════════════ */}
+      {/* ══ 3. PROGRAMA ═══════════════════════════════════════════════════════ */}
       <section id="programa" style={{ backgroundColor: '#ffffff', padding: '72px 48px 88px' }}>
         <div style={{ maxWidth: 1400, margin: '0 auto' }}>
           <FadeIn>
@@ -414,7 +352,7 @@ export default function AgendaPage() {
             </p>
           </FadeIn>
 
-          {/* ── Selector pill holder ── */}
+          {/* Selector pill */}
           <FadeIn delay={0.05}>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 52 }}>
               <div style={{ display: 'flex', gap: 4, backgroundColor: '#E8EDF1', borderRadius: 999, padding: '4px', boxShadow: 'inset 0 2px 6px rgba(9,52,78,0.08)' }}>
@@ -441,7 +379,7 @@ export default function AgendaPage() {
             </div>
           </FadeIn>
 
-          {/* ── Días en columna vertical ── */}
+          {/* Días en columna vertical */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
             {DIAS.map((dia, i) => {
               const active = diaActivo === i
@@ -462,17 +400,17 @@ export default function AgendaPage() {
                   onMouseEnter={e => { if (!active) (e.currentTarget as HTMLDivElement).style.opacity = '0.75' }}
                   onMouseLeave={e => { if (!active) (e.currentTarget as HTMLDivElement).style.opacity = '0.50' }}
                 >
-                  {/* ── Columna fecha — hoja asimétrica del Figma ── */}
+                  {/* Columna fecha */}
                   <div style={{ position: 'relative', paddingRight: 16, paddingBottom: 16 }}>
-                    {/* Sombra de color desplazada */}
+                    {/* Tarjeta trasera — color claro distinto al colorAccent */}
                     <div style={{
                       position: 'absolute', inset: 0,
                       borderRadius: '48px 8px 48px 8px',
-                      backgroundColor: active ? dia.accentShadow : '#C8D8E0',
+                      backgroundColor: active ? dia.accentShadow : '#D9E6EC',
                       transform: 'translate(10px, 10px)',
                       zIndex: 0,
                     }} />
-                    {/* Tarjeta fecha */}
+                    {/* Tarjeta delantera — colorAccent del día */}
                     <div style={{
                       position: 'relative', zIndex: 1,
                       borderRadius: '48px 8px 48px 8px',
@@ -485,25 +423,16 @@ export default function AgendaPage() {
                       boxSizing: 'border-box',
                       minHeight: 280,
                     }}>
-                      {/* Label día */}
                       <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.70)', letterSpacing: '0.14em', marginBottom: 4, textTransform: 'uppercase' }}>
                         {dia.diaSemana}
                       </div>
-                      {/* Número grande */}
                       <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 96, fontWeight: 700, color: '#ffffff', lineHeight: 1, marginBottom: 4 }}>
                         {dia.diaNum}
                       </div>
-                      {/* Mes */}
                       <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.75)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 20 }}>
                         {dia.mes}
                       </div>
-                      {/* Caja tema — PROPORCIONALMENTE más pequeña que el número */}
-                      <div style={{
-                        padding: '8px 12px',
-                        backgroundColor: 'rgba(255,255,255,0.18)',
-                        borderRadius: 10,
-                        width: '100%',
-                      }}>
+                      <div style={{ padding: '8px 12px', backgroundColor: 'rgba(255,255,255,0.18)', borderRadius: 10, width: '100%' }}>
                         <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,0.60)', letterSpacing: '0.10em', textTransform: 'uppercase', marginBottom: 4 }}>
                           {dia.label}
                         </div>

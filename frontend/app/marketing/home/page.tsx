@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import SectionDonacion from '@/components/sections/SectionDonacion'
@@ -31,7 +32,7 @@ function FadeIn({
   )
 }
 
-// ─── INLINE ICON HELPERS ──────────────────────────────────────────────────────
+// ─── ICON HELPERS ─────────────────────────────────────────────────────────────
 function IconCalendar({ size = 16, color = 'currentColor' }: { size?: number; color?: string }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2"
@@ -43,6 +44,40 @@ function IconCalendar({ size = 16, color = 'currentColor' }: { size?: number; co
       <line x1="8" y1="14" x2="8.01" y2="14" strokeWidth="2.5"/>
       <line x1="12" y1="14" x2="12.01" y2="14" strokeWidth="2.5"/>
       <line x1="16" y1="14" x2="16.01" y2="14" strokeWidth="2.5"/>
+    </svg>
+  )
+}
+
+function IconOrganizations({ size = 22 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+    </svg>
+  )
+}
+function IconDays({ size = 22 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+      <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+      <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/>
+    </svg>
+  )
+}
+function IconGlobe({ size = 22 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+    </svg>
+  )
+}
+function IconRecycle({ size = 22 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/>
+      <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
     </svg>
   )
 }
@@ -67,34 +102,68 @@ const WaveUp = ({ from, to, height = 72 }: { from: string; to: string; height?: 
 
 // ─── DATOS ────────────────────────────────────────────────────────────────────
 
+// STATS — 6 recuadros del Legado 2°ICEO con imagen R2 en lugar de ícono SVG.
+// Imagen pequeña centrada arriba (40×40, border-radius 10, objectFit cover),
+// número grande y label debajo — mismo diseño de tarjeta que antes.
 const STATS = [
-  { num: '1.209+', label: 'Asistentes',        icon: '/icons/icon_asistentes.svg'       },
-  { num: '192',    label: 'Organizaciones',     icon: '/icons/icon_organizaciones.svg'   },
-  { num: '30',     label: 'Panelistas',         icon: '/icons/panelistas.svg'            },
-  { num: '17',     label: 'Entidades aliadas',  icon: '/icons/ent_aliados.svg'           },
-  { num: '14',     label: 'Conferencias',       icon: '/icons/conferencias.svg'          },
-  { num: '28',     label: 'Stands Marketplace', icon: '/icons/org_marletplace.svg'       },
+  { num: '1.209+', label: 'Asistentes',        image: '/icons/talleres.svg'       },
+  { num: '192',    label: 'Organizaciones',     image: '/icons/convenios.svg'       },
+  { num: '30',     label: 'Panelistas',         image: '/icons/panelistas.svg'    },
+  { num: '17',     label: 'Entidades aliadas',  image: '/icons/ent_aliados.svg'   },
+  { num: '14',     label: 'Conferencias',       image: '/icons/conferencias.svg'  },
+  { num: '28',     label: 'Stands Marketplace', image: '/icons/org_marletplace.svg'     },
 ]
 
-const MOMENTOS = [
-  { num: '30', label: 'Panelistas',                        image: '/icons/panelistas.svg',              bg: 'linear-gradient(135deg,#09344e 0%,#1C495C 100%)' },
-  { num: '14', label: 'Conferencias',                      image: '/icons/conferencias.svg',            bg: 'linear-gradient(135deg,#097589 0%,#09344e 100%)' },
-  { num: '02', label: 'Conversatorios',                    image: '/icons/conversatorios.svg',          bg: 'linear-gradient(135deg,#4886B5 0%,#12303E 100%)' },
-  { num: '28', label: 'Organizaciones en el Marketplace',  image: '/icons/org_marletplace.svg',         bg: 'linear-gradient(135deg,#03A383 0%,#09344e 100%)' },
-  { num: '02', label: 'Convenios',                         image: '/icons/convenios.svg',               bg: 'linear-gradient(135deg,#1C495C 0%,#097589 100%)' },
-  { num: '05', label: 'Talleres',                          image: '/icons/talleres.svg',                bg: 'linear-gradient(135deg,#12303E 0%,#4886B5 100%)' },
-  { num: '17', label: 'Entidades aliadas',                 image: '/icons/ent_aliados.svg',             bg: 'linear-gradient(135deg,#09344e 0%,#03A383 100%)' },
-  { num: '03', label: 'Días de Marketplace',               image: '/icons/dias_marletplace.svg',        bg: 'linear-gradient(135deg,#097589 0%,#4886B5 100%)' },
-  { num: '09', label: 'Universidades aliadas',             image: '/icons/uni_aliadas.svg',             bg: 'linear-gradient(135deg,#1C495C 0%,#09344e 100%)' },
-]
-
+// ────────────────────────────────────────────────────────────────────────────
+// AGENDA — 3 días mismo formato.
+// Día 19: sin badge "etiqueta", texto de jornada va en la descripción.
+// Colores: #097589 (teal oficial), #09344e (navy oficial), #B58A00 (dorado).
+// ────────────────────────────────────────────────────────────────────────────
 const AGENDA_DIAS = [
-  { dia: '17', mes: 'FEB', diasemana: 'Martes',    tema: 'Análisis de la COP', color: '#097589',
-    desc: 'Resultados, legados y desafíos de la última COP desde la perspectiva latinoamericana.', sesiones: 6 },
-  { dia: '18', mes: 'FEB', diasemana: 'Miércoles', tema: 'Agua y Territorios', color: '#09344e',
-    desc: 'Protección de fuentes hídricas, cuencas vivas, biodiversidad y comunidades.', sesiones: 7 },
-  { dia: '19', mes: 'FEB', diasemana: 'Jueves',    tema: 'Cooperación e Innovación', color: '#4886B5',
-    desc: 'Alianzas Europa–LATAM, transferencia tecnológica y modelos rurales sostenibles.', sesiones: 5 },
+  {
+    dia: '17', mes: 'FEB', diasemana: 'Martes',
+    tema: 'Agua, territorios vivos y comunidades',
+    color: '#097589',
+    desc: 'Un primer día para comprender la situación actual de las fuentes hídricas, compartir una visión de futuro y explorar qué iniciativas hacen falta para activar soluciones desde los territorios.',
+    sesiones: [
+      'Apertura institucional y bienvenida',
+      'Conferencia magistral: estado actual de las fuentes hídricas',
+      'Panel: comunidades, biodiversidad y cultura territorial',
+      'Espacio de networking y articulación',
+      'Mesas o sesiones temáticas por retos del territorio',
+      'Taller colaborativo: visión compartida y prioridades de acción',
+      'Síntesis del Día 1',
+    ],
+  },
+  {
+    dia: '18', mes: 'FEB', diasemana: 'Miércoles',
+    tema: 'Cooperación internacional al desarrollo, innovación y mundo rural',
+    color: '#09344e',
+    desc: 'Un segundo día orientado a conectar cooperación, transferencia de conocimiento e innovación aplicada para impulsar soluciones territoriales, bioeconomía y desarrollo rural sostenible.',
+    sesiones: [
+      'Apertura del Día 2 y recapitulación',
+      'Conferencia magistral: innovación para territorios vivos',
+      'Panel: cooperación al desarrollo y alianzas Europa–LATAM',
+      'Espacio de presentaciones, proyectos o pitches',
+      'Mesas temáticas: universidad, territorio y tecnología aplicada',
+      'Rueda de articulación y colaboración institucional',
+      'Síntesis del Día 2',
+    ],
+  },
+  {
+    dia: '19', mes: 'FEB', diasemana: 'Jueves',
+    tema: 'Conclusiones',
+    color: '#B58A00',
+    // ← CAMBIO 2: sin etiqueta badge; texto integrado en la descripción
+    desc: 'Jornada de conclusiones: una jornada más breve para convertir aprendizajes y acuerdos en memoria útil, conclusiones compartidas y una hoja de ruta para futuras alianzas.',
+    sesiones: [
+      'Apertura breve y recapitulación general',
+      'Relatoría y aprendizajes clave del congreso',
+      'Mesa de conclusiones y acuerdos',
+      'Construcción de hoja de ruta compartida',
+      'Cierre institucional y próximos pasos',
+    ],
+  },
 ]
 
 const LINEAS = [
@@ -142,71 +211,120 @@ const NOTICIAS = [
     desc: 'Presentamos el marco conceptual que guiará los tres días del congreso: de los resultados de COP a los territorios vivos.', fecha: 'Feb 2027', href: '/marketing/comunicaciones', img: '/icons/conferencias.svg' },
 ]
 
+const ENTREVISTAS = [
+  {
+    id: 1, label: 'Carolina Acosta', org: 'Emprendimiento Linsalde',
+    src: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/Carolina%20Acosta%20-%20Negocio%20Verde%20(1).mp4',
+    quote: '"Estamos rodeados de naturaleza, de un ambiente muy natural… Es un espacio muy importante para las mujeres y para todos en general, de poder visibilizar cada uno de los esfuerzos y proyectos que tenemos para ayudar a mantener el medio ambiente."',
+    texto: 'Carolina transforma envases plásticos en bolsos artesanales, conectando recicladores, artesanos y economía circular en una sola iniciativa.',
+  },
+  {
+    id: 2, label: 'Franklin Corrales', org: 'Mesa Amplia de Jóvenes Ambientalistas',
+    src: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/Entrevista%20editada_Franklin%20Corrales%20-%20jovenes%20ambientalistas-2o%20ICEO.mp4',
+    quote: '"Desde la academia se puede seguir construyendo y dando conocimiento a todo el mundo de qué es lo que estamos haciendo en nuestros territorios para replicar estos casos de éxito."',
+    texto: 'Franklin representa a la juventud ambientalista del Valle del Cauca, convencido de que el territorio sostenible también genera ingresos y procesos sociales.',
+  },
+  {
+    id: 3, label: 'Pablo Javier Rojas', org: 'Universidad San Buenaventura Cali',
+    src: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/Entrevista%20editada_Pablo%20Javier%20Rojas%20-%20USBC--2o%20ICEO.mp4',
+    quote: '"Ese compartir de experiencias y de saberes es muy importante para lograr impulsar el territorio, involucrando a una serie de actores, de tecnologías, de experiencias."',
+    texto: 'Pablo trabaja en el Centro Interdisciplinario de Estudios Humanísticos de la USB Cali, tejiendo alianzas entre academia, sociedad civil y territorios.',
+  },
+  {
+    id: 4, label: 'Mónica Castillo', org: 'Parques Nacionales Naturales de Colombia',
+    src: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/Entrevista%20editada_M%C3%B3nica%20Castillo-Parques%20Naturales%20de%20Colombia-2o%20ICEO.mp4',
+    quote: '"Este congreso es muy importante porque logra unir esas iniciativas comunitarias pero también institucionales en un espacio académico que es fundamental."',
+    texto: 'Parques Nacionales administra 65 áreas estratégicas en todo Colombia. Mónica destaca cómo el ICEO conecta lo institucional con lo comunitario.',
+  },
+]
+
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
 export default function HomePage() {
+  const [activeVideo, setActiveVideo] = useState(0)
+
   return (
     <div style={{ backgroundColor: '#fff', minHeight: '100vh' }}>
 
       {/* ══════════════════════════════════════════════════════════════════════
           1. HERO
       ══════════════════════════════════════════════════════════════════════ */}
-      <section style={{ position: 'relative', minHeight: 680, overflow: 'hidden', display: 'flex', alignItems: 'center' }}>
+      <section style={{
+        position: 'relative',
+        height: '100vh',
+        maxHeight: 720,
+        minHeight: 560,
+        overflow: 'hidden',
+        display: 'flex',
+        alignItems: 'center',
+      }}>
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg,#09344e 0%,#1C495C 55%,#437287 100%)' }} />
         <div style={{
           position: 'absolute', inset: 0,
           backgroundImage: 'url(/icons/ubicacion_home.jpg)',
           backgroundSize: 'cover', backgroundPosition: 'center 45%', opacity: 0.55,
         }} />
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(100deg,rgba(9,52,78,0.80) 0%,rgba(9,52,78,0.50) 55%,rgba(9,52,78,0.15) 100%)' }} />
-        <div style={{ position: 'absolute', top: 60, right: '10%', width: 360, height: 360, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.05)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', top: 20, right: '6%',  width: 520, height: 520, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.03)', pointerEvents: 'none' }} />
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(95deg, rgba(9,52,78,0.92) 0%, rgba(9,52,78,0.80) 38%, rgba(9,52,78,0.30) 62%, rgba(9,52,78,0.05) 100%)',
+        }} />
+        <div style={{ position: 'absolute', top: 40, right: '8%',  width: 380, height: 380, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.05)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: -10, right: '4%', width: 540, height: 540, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.03)', pointerEvents: 'none' }} />
 
-        <div style={{ position: 'relative', zIndex: 2, maxWidth: 1280, margin: '0 auto', padding: '120px 48px 100px', width: '100%' }}>
-          <div style={{ maxWidth: 720 }}>
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: 'rgba(255,255,255,0.10)', border: '1px solid rgba(192,255,242,0.30)', borderRadius: 999, padding: '6px 18px', marginBottom: 28 }}>
-                <img src="/icons/icon-location.svg" alt="" width={13} height={13} style={{ filter: 'brightness(0) invert(1)', opacity: 0.8 }} />
-                <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, color: '#C0FFF2', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+        <div style={{ position: 'relative', zIndex: 2, maxWidth: 1280, margin: '0 auto', padding: '0 48px', width: '100%' }}>
+          <div style={{ maxWidth: 660 }}>
+            <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: 'rgba(255,255,255,0.10)', border: '1px solid rgba(192,255,242,0.30)', borderRadius: 999, padding: '5px 16px', marginBottom: 20 }}>
+                <img src="/icons/icon-location.svg" alt="" width={12} height={12} style={{ filter: 'brightness(0) invert(1)', opacity: 0.8 }} />
+                <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 600, color: '#C0FFF2', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
                   Universidad San Buenaventura · Cali, Colombia
                 </span>
               </div>
             </motion.div>
 
-            <motion.h1 initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              style={{ fontFamily: 'Gloock, Georgia, serif', fontSize: 'clamp(44px, 6vw, 82px)', fontWeight: 400, color: '#ffffff', lineHeight: 1.04, marginBottom: 24, letterSpacing: '-0.01em' }}>
+            <motion.h1
+              initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.65, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              style={{ fontFamily: 'Gloock, Georgia, serif', fontSize: 'clamp(36px, 5.2vw, 70px)', fontWeight: 400, color: '#ffffff', lineHeight: 1.04, marginBottom: 18, letterSpacing: '-0.01em' }}
+            >
               3er Congreso<br />
               <span style={{ color: '#AEE5DA' }}>Internacional</span> de<br />
               Organizaciones Ambientales
             </motion.h1>
 
-            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.35 }}
-              style={{ fontFamily: 'Inter, sans-serif', fontSize: 17, color: 'rgba(255,255,255,0.78)', lineHeight: 1.7, maxWidth: 520, marginBottom: 40 }}>
+            <motion.p
+              initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.32 }}
+              style={{ fontFamily: 'Inter, sans-serif', fontSize: 15, color: 'rgba(255,255,255,0.80)', lineHeight: 1.65, maxWidth: 480, marginBottom: 28 }}
+            >
               El mayor encuentro anual del ecosistema ambiental latinoamericano.
               Aprendizaje, conexión y colaboración entre organizaciones, universidades y comunidades.
             </motion.p>
 
-            <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.42 }}
-              style={{ display: 'flex', gap: 10, marginBottom: 40, flexWrap: 'wrap' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, backgroundColor: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.18)', borderRadius: 999, padding: '7px 16px', fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 500, color: 'rgba(255,255,255,0.90)' }}>
-                <IconCalendar size={14} color="rgba(255,255,255,0.85)" />
-                17–19 Febrero 2027
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, backgroundColor: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.18)', borderRadius: 999, padding: '7px 16px', fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 500, color: 'rgba(255,255,255,0.90)' }}>
-                <img src="/icons/icon-location.svg" alt="" width={13} height={13} style={{ filter: 'brightness(0) invert(1)', opacity: 0.85 }} />
-                Cali · Colombia
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, backgroundColor: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.18)', borderRadius: 999, padding: '7px 16px', fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 500, color: 'rgba(255,255,255,0.90)' }}>
-                <img src="/icons/icon-streaming.svg" alt="" width={14} height={14} style={{ filter: 'brightness(0) invert(1)', opacity: 0.85 }} />
-                Presencial + Virtual
-              </div>
+            <motion.div
+              initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.40 }}
+              style={{ display: 'flex', gap: 8, marginBottom: 32, flexWrap: 'wrap' }}
+            >
+              {[
+                { icon: <IconCalendar size={13} color="rgba(255,255,255,0.85)" />, label: '17–19 Febrero 2027' },
+                { icon: <img src="/icons/icon-location.svg" alt="" width={12} height={12} style={{ filter: 'brightness(0) invert(1)', opacity: 0.85 }} />, label: 'Cali · Colombia' },
+                { icon: <img src="/icons/icon-streaming.svg" alt="" width={13} height={13} style={{ filter: 'brightness(0) invert(1)', opacity: 0.85 }} />, label: 'Presencial + Virtual' },
+              ].map(c => (
+                <div key={c.label} style={{ display: 'flex', alignItems: 'center', gap: 7, backgroundColor: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.18)', borderRadius: 999, padding: '6px 14px', fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 500, color: 'rgba(255,255,255,0.90)' }}>
+                  {c.icon}{c.label}
+                </div>
+              ))}
             </motion.div>
 
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 0.5 }}
-              style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-              <Link href="/marketing/registro" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: '#B53077', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700, padding: '14px 34px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.05em', boxShadow: '0 4px 24px rgba(181,48,119,0.45)' }}>
+            <motion.div
+              initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, delay: 0.48 }}
+              style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}
+            >
+              <Link href="/marketing/registro" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: '#B53077', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, padding: '13px 30px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.05em', boxShadow: '0 4px 24px rgba(181,48,119,0.45)' }}>
                 QUIERO ASISTIR →
               </Link>
-              <Link href="/marketing/agenda" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: 'transparent', border: '2px solid rgba(255,255,255,0.5)', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 600, padding: '14px 32px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em' }}>
+              <Link href="/marketing/agenda" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: 'transparent', border: '2px solid rgba(255,255,255,0.45)', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600, padding: '12px 28px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em' }}>
                 Ver programa
               </Link>
             </motion.div>
@@ -214,118 +332,56 @@ export default function HomePage() {
         </div>
 
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, lineHeight: 0, zIndex: 3 }}>
-          <svg viewBox="0 0 1440 80" preserveAspectRatio="none" style={{ width: '100%', height: 80, display: 'block' }}>
-            <path d="M0,40 C360,80 720,10 1080,55 C1260,70 1380,30 1440,45 L1440,80 L0,80 Z" fill="#E6F3EE" />
+          <svg viewBox="0 0 1440 64" preserveAspectRatio="none" style={{ width: '100%', height: 64, display: 'block' }}>
+            <path d="M0,40 C360,64 720,10 1080,48 C1260,62 1380,28 1440,40 L1440,64 L0,64 Z" fill="#ffffff" />
           </svg>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════════
-          2. STATS BAR
-      ══════════════════════════════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#E6F3EE', padding: '20px 48px 60px' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <FadeIn delay={0.05}>
-            <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, color: '#097589', letterSpacing: '0.14em', textTransform: 'uppercase', textAlign: 'center', marginBottom: 28 }}>
-              Legado del 2° ICEO · Cali 2026
-            </p>
-          </FadeIn>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12 }} className="stats-grid">
-            {STATS.map((s, i) => (
-              <FadeIn key={s.label} delay={i * 0.07}>
-                <div style={{ textAlign: 'center', padding: '22px 12px', borderRadius: 14, backgroundColor: '#ffffff', border: '1.5px solid rgba(9,117,137,0.12)', boxShadow: '2px 2px 8px rgba(9,52,78,0.06)' }}>
-                  <div style={{ width: 40, height: 40, borderRadius: 10, background: 'linear-gradient(135deg,#E6F3EE 0%,#AEE5DA 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 10px' }}>
-                    <img src={s.icon} alt="" width={20} height={20} style={{ display: 'block' }} />
-                  </div>
-                  <div style={{ fontFamily: 'Gloock, Georgia, serif', fontSize: 26, fontWeight: 400, color: '#097589', lineHeight: 1, marginBottom: 4 }}>{s.num}</div>
-                  <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: '#5A6E77', lineHeight: 1.35 }}>{s.label}</div>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-          <FadeIn delay={0.55}>
-            <div style={{ textAlign: 'center', marginTop: 28 }}>
-              <Link href="/marketing/segundo-iceo" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600, color: '#097589', textDecoration: 'none', border: '1.5px solid rgba(9,117,137,0.45)', borderRadius: 999, padding: '8px 22px' }}>
-                Ver memoria del 2° ICEO →
-              </Link>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
-
-      <WaveDown from="#E6F3EE" to="#ffffff" />
-
-      {/* ══════════════════════════════════════════════════════════════════════
-          3. MOMENTOS 2° ICEO
+          2. AGENDA OFICIAL — primera sección después del hero
+          CAMBIO 1: era sección 3, ahora es la primera después del hero.
+          CAMBIO 2: día 19 sin badge "etiqueta", mismo formato que los 3.
       ══════════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#ffffff', padding: '72px 48px 80px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <FadeIn>
             <div style={{ textAlign: 'center', marginBottom: 52 }}>
-              <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#097589', marginBottom: 12 }}>
-                Edición 2026 · Cali, Colombia
-              </p>
-              <h2 style={{ fontFamily: 'Gloock, Georgia, serif', fontWeight: 400, fontSize: 'clamp(28px,3.5vw,44px)', color: '#09344e', lineHeight: 1.1, marginBottom: 16 }}>
-                Momentos que definieron el 2° ICEO
-              </h2>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 15, color: '#5A6E77', lineHeight: 1.7, maxWidth: 480, margin: '0 auto' }}>
-                Revive el impacto del congreso anterior y conoce lo que el 3ICEO tiene preparado para superar esos números.
-              </p>
-            </div>
-          </FadeIn>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }} className="momentos-grid">
-            {MOMENTOS.map((m, i) => (
-              <FadeIn key={i} delay={i * 0.05}>
-                <div style={{ borderRadius: 14, overflow: 'hidden', position: 'relative', aspectRatio: '4/3', boxShadow: '2px 2px 8px rgba(18,48,62,0.15)' }}>
-                  <div style={{ position: 'absolute', inset: 0, background: m.bg }} />
-                  <img src={m.image} alt={m.label} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block', opacity: 0.35 }} />
-                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(0deg,rgba(9,52,78,0.92) 0%,transparent 100%)', padding: '32px 18px 16px', display: 'flex', alignItems: 'flex-end', gap: 10 }}>
-                    <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 42, fontWeight: 700, color: '#fff', lineHeight: 1 }}>{m.num}</span>
-                    <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.88)', lineHeight: 1.35, paddingBottom: 5, maxWidth: 110 }}>{m.label}</span>
-                  </div>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-          <FadeIn delay={0.5}>
-            <div style={{ textAlign: 'center', marginTop: 36 }}>
-              <Link href="/marketing/segundo-iceo" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: '#09344e', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 600, padding: '12px 30px', borderRadius: 999, textDecoration: 'none', boxShadow: '0 2px 16px rgba(9,52,78,0.25)' }}>
-                Ver memoria completa del 2° ICEO →
-              </Link>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
-
-      <WaveDown from="#ffffff" to="#F7F6F3" />
-
-      {/* ══════════════════════════════════════════════════════════════════════
-          4. AGENDA
-      ══════════════════════════════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#F7F6F3', padding: '72px 48px 80px' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <FadeIn>
-            <div style={{ textAlign: 'center', marginBottom: 52 }}>
               <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#097589', marginBottom: 12 }}>Programa Oficial · 3ICEO 2027</p>
-              <h2 style={{ fontFamily: 'Gloock, Georgia, serif', fontWeight: 400, fontSize: 'clamp(28px,3.5vw,44px)', color: '#09344e', lineHeight: 1.1, marginBottom: 16 }}>Tres días que transforman</h2>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 15, color: '#5A6E77', lineHeight: 1.7, maxWidth: 480, margin: '0 auto' }}>Del análisis de la COP a los territorios vivos: un programa construido desde y para Latinoamérica.</p>
+              <h2 style={{ fontFamily: 'Gloock, Georgia, serif', fontWeight: 400, fontSize: 'clamp(28px,3.5vw,44px)', color: '#09344e', lineHeight: 1.1, marginBottom: 12 }}>
+                Tres días para escuchar los territorios,<br />construir soluciones y aterrizar conclusiones
+              </h2>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#5A6E77', maxWidth: 560, margin: '0 auto', lineHeight: 1.6 }}>
+                Agenda preliminar basada en las líneas temáticas. El copy final podrá ajustarse más adelante.
+              </p>
             </div>
           </FadeIn>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }} className="agenda-grid">
             {AGENDA_DIAS.map((dia, i) => (
               <FadeIn key={dia.dia} delay={i * 0.12}>
-                <div style={{ borderRadius: 16, overflow: 'hidden', boxShadow: '2px 2px 16px rgba(9,52,78,0.10)', border: '1px solid rgba(9,52,78,0.07)' }}>
-                  <div style={{ backgroundColor: dia.color, padding: '28px 28px 24px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-                    <div>
-                      <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.65)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 6 }}>{dia.diasemana}</div>
-                      <div style={{ fontFamily: 'Gloock, Georgia, serif', fontSize: 52, fontWeight: 400, color: '#fff', lineHeight: 1 }}>{dia.dia}</div>
-                      <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.75)', marginTop: 2 }}>{dia.mes} 2027</div>
+                <div style={{ borderRadius: 16, overflow: 'hidden', boxShadow: '2px 2px 16px rgba(9,52,78,0.10)', border: '1px solid rgba(9,52,78,0.07)', display: 'flex', flexDirection: 'column', height: '100%' }}>
+                  {/* Header coloreado — mismo formato los 3, sin badge */}
+                  <div style={{ backgroundColor: dia.color, padding: '24px 24px 20px', flexShrink: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8 }}>
+                      <div>
+                        <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.65)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 4 }}>{dia.diasemana}</div>
+                        <div style={{ fontFamily: 'Gloock, Georgia, serif', fontSize: 46, fontWeight: 400, color: '#fff', lineHeight: 1 }}>{dia.dia}</div>
+                        <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.75)', marginTop: 2 }}>{dia.mes} 2027</div>
+                      </div>
                     </div>
-                    <div style={{ backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 8, padding: '6px 12px', marginTop: 4, fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, color: '#fff' }}>{dia.sesiones} sesiones</div>
+                    <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, color: '#fff', lineHeight: 1.3, marginTop: 4 }}>{dia.tema}</div>
                   </div>
-                  <div style={{ backgroundColor: '#fff', padding: '24px 28px' }}>
-                    <div style={{ display: 'inline-block', backgroundColor: `${dia.color}18`, borderRadius: 999, padding: '3px 12px', marginBottom: 12, fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700, color: dia.color, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{dia.tema}</div>
-                    <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#5A6E77', lineHeight: 1.65 }}>{dia.desc}</p>
+                  {/* Cuerpo blanco */}
+                  <div style={{ backgroundColor: '#fff', padding: '20px 24px', flex: 1, display: 'flex', flexDirection: 'column', gap: 14 }}>
+                    <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#5A6E77', lineHeight: 1.65 }}>{dia.desc}</p>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 7 }}>
+                      {dia.sesiones.map((s, si) => (
+                        <li key={si} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                          <span style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: dia.color, flexShrink: 0, marginTop: 5 }} />
+                          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: '#3A4E58', lineHeight: 1.5 }}>{s}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
               </FadeIn>
@@ -333,16 +389,19 @@ export default function HomePage() {
           </div>
           <FadeIn delay={0.5}>
             <div style={{ textAlign: 'center', marginTop: 36 }}>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: '#5A6E77', marginBottom: 16, maxWidth: 560, margin: '0 auto 20px', lineHeight: 1.6 }}>
+                Nota: mantener agenda en nivel alto, alineada con las líneas temáticas. No cerrar todavía ponentes, horarios definitivos ni financiadores específicos.
+              </p>
               <Link href="/marketing/agenda" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '2px solid #097589', color: '#097589', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 600, padding: '12px 30px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em' }}>Ver agenda completa →</Link>
             </div>
           </FadeIn>
         </div>
       </section>
 
-      <WaveDown from="#F7F6F3" to="#09344e" />
+      <WaveDown from="#ffffff" to="#09344e" />
 
       {/* ══════════════════════════════════════════════════════════════════════
-          5. LÍNEAS TEMÁTICAS
+          3. LÍNEAS TEMÁTICAS
       ══════════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#09344e', padding: '72px 48px 80px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
@@ -353,18 +412,18 @@ export default function HomePage() {
               <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 15, color: 'rgba(255,255,255,0.60)', lineHeight: 1.7, maxWidth: 480, margin: '0 auto' }}>Cinco marcos de conversación que ordenan el conocimiento y las alianzas del congreso.</p>
             </div>
           </FadeIn>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 16 }} className="lineas-grid">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 16, alignItems: 'stretch' }} className="lineas-grid">
             {LINEAS.map((l, i) => (
-              <FadeIn key={l.num} delay={i * 0.09}>
-                <Link href="/marketing/lineas-tematicas" style={{ textDecoration: 'none' }}>
-                  <div style={{ borderRadius: 16, overflow: 'hidden', boxShadow: '2px 2px 16px rgba(0,0,0,0.20)' }}>
-                    <div style={{ backgroundColor: l.color, padding: '28px 20px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <FadeIn key={l.num} delay={i * 0.09} style={{ display: 'flex' }}>
+                <Link href="/marketing/lineas-tematicas" style={{ textDecoration: 'none', display: 'flex', width: '100%' }}>
+                  <div style={{ borderRadius: 16, overflow: 'hidden', boxShadow: '2px 2px 16px rgba(0,0,0,0.20)', width: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ backgroundColor: l.color, padding: '28px 20px 20px', display: 'flex', flexDirection: 'column', gap: 12, minHeight: 120 }}>
                       <div style={{ width: 48, height: 48, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{l.icon}</div>
                       <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.55)', letterSpacing: '0.1em' }}>{l.num}</div>
                     </div>
-                    <div style={{ backgroundColor: 'rgba(255,255,255,0.06)', padding: '18px', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
-                      <h3 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, color: '#fff', lineHeight: 1.3, marginBottom: 8 }}>{l.title}</h3>
-                      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.55)', lineHeight: 1.6 }}>{l.desc}</p>
+                    <div style={{ backgroundColor: 'rgba(255,255,255,0.06)', padding: '18px', borderTop: '1px solid rgba(255,255,255,0.07)', flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      <h3 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, color: '#fff', lineHeight: 1.3 }}>{l.title}</h3>
+                      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.55)', lineHeight: 1.6, margin: 0 }}>{l.desc}</p>
                     </div>
                   </div>
                 </Link>
@@ -382,7 +441,8 @@ export default function HomePage() {
       <WaveUp from="#09344e" to="#ffffff" />
 
       {/* ══════════════════════════════════════════════════════════════════════
-          6. PONENTES DESTACADOS
+          4. PONENTES DESTACADOS
+          CAMBIO 4: botón "Ver todos los ponentes" → /marketing/agenda#ponentes
       ══════════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#ffffff', padding: '72px 48px 80px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
@@ -412,7 +472,8 @@ export default function HomePage() {
           </div>
           <FadeIn delay={0.55}>
             <div style={{ textAlign: 'center', marginTop: 36 }}>
-              <Link href="/marketing/agenda" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '2px solid #097589', color: '#097589', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 600, padding: '12px 30px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em' }}>Ver todos los ponentes →</Link>
+              {/* CAMBIO 4: lleva a /marketing/agenda#ponentes para bajar a la sección de ponentes */}
+              <Link href="/marketing/agenda#ponentes" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '2px solid #097589', color: '#097589', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 600, padding: '12px 30px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em' }}>Ver todos los ponentes →</Link>
             </div>
           </FadeIn>
         </div>
@@ -421,7 +482,7 @@ export default function HomePage() {
       <WaveDown from="#ffffff" to="#F0F4F7" />
 
       {/* ══════════════════════════════════════════════════════════════════════
-          7. ALIADOS
+          5. ALIADOS
       ══════════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#F0F4F7', padding: '72px 48px 80px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
@@ -452,7 +513,7 @@ export default function HomePage() {
       <WaveUp from="#F0F4F7" to="#ffffff" />
 
       {/* ══════════════════════════════════════════════════════════════════════
-          8. MARKETPLACE
+          6. MARKETPLACE
       ══════════════════════════════════════════════════════════════════════ */}
       <section style={{ position: 'relative', overflow: 'hidden', minHeight: 480, display: 'flex', alignItems: 'center' }}>
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg,#09344e 0%,#1C495C 60%,#097589 100%)' }} />
@@ -477,14 +538,14 @@ export default function HomePage() {
             <FadeIn delay={0.15}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
                 {[
-                  { num: '28', label: 'Organizaciones', icon: '/icons/org_marletplace.svg' },
-                  { num: '03', label: 'Días de feria',  icon: '/icons/dias_marletplace.svg' },
-                  { num: '9',  label: 'Países representados', icon: '/icons/uni_aliadas.svg' },
-                  { num: '100%', label: 'Economía circular', icon: '/icons/conferencias.svg' },
+                  { num: '28',   label: 'Organizaciones',      Icon: IconOrganizations },
+                  { num: '03',   label: 'Días de feria',       Icon: IconDays          },
+                  { num: '9',    label: 'Países representados', Icon: IconGlobe         },
+                  { num: '100%', label: 'Economía circular',   Icon: IconRecycle       },
                 ].map(s => (
                   <div key={s.label} style={{ backgroundColor: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 14, padding: '20px', display: 'flex', alignItems: 'center', gap: 14 }}>
-                    <div style={{ width: 40, height: 40, borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <img src={s.icon} alt="" width={20} height={20} style={{ display: 'block', filter: 'brightness(0) invert(1)', opacity: 0.85 }} />
+                    <div style={{ width: 44, height: 44, borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: '#AEE5DA' }}>
+                      <s.Icon size={22} />
                     </div>
                     <div>
                       <div style={{ fontFamily: 'Gloock, Georgia, serif', fontSize: 26, fontWeight: 400, color: '#fff', lineHeight: 1 }}>{s.num}</div>
@@ -499,180 +560,71 @@ export default function HomePage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════════
-          9. SEDE DEL EVENTO — ✅ ACTUALIZADO
-             Card izquierda: imagen universidad con overlay (estilo screenshot 1)
-             Card derecha: logo USB + ubicación + dirección + botones
-             Sin instalaciones ni servicios (simplificado al máximo)
+          7. SEDE DEL EVENTO
       ══════════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#E6F3EE', padding: '72px 48px 80px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-
-          {/* Título de sección */}
           <FadeIn>
             <div style={{ textAlign: 'center', marginBottom: 52 }}>
-              <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#097589', marginBottom: 12 }}>
-                Sede del evento · 3ICEO 2027
-              </p>
-              <h2 style={{ fontFamily: 'Gloock, Georgia, serif', fontWeight: 400, fontSize: 'clamp(28px,3.5vw,44px)', color: '#09344e', lineHeight: 1.1 }}>
-                Universidad de San Buenaventura · Cali
-              </h2>
+              <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#097589', marginBottom: 12 }}>Sede del evento · 3ICEO 2027</p>
+              <h2 style={{ fontFamily: 'Gloock, Georgia, serif', fontWeight: 400, fontSize: 'clamp(28px,3.5vw,44px)', color: '#09344e', lineHeight: 1.1 }}>Universidad de San Buenaventura · Cali</h2>
             </div>
           </FadeIn>
-
-          {/* Grid 2 columnas: imagen (izq) + info (der) */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 28, alignItems: 'stretch' }} className="sede-grid">
-
-            {/* ── IZQUIERDA: card con imagen de la universidad + overlay ── */}
             <FadeIn>
-              <div style={{
-                position: 'relative',
-                borderRadius: 20, overflow: 'hidden',
-                minHeight: 400,
-                background: 'linear-gradient(135deg,#09344e 0%,#1C495C 60%,#437287 100%)',
-                boxShadow: '4px 4px 28px rgba(9,52,78,0.18)',
-              }}>
-                {/* Foto del campus */}
-                <div style={{
-                  position: 'absolute', inset: 0,
-                  backgroundImage: 'url(https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?w=900&q=80)',
-                  backgroundSize: 'cover', backgroundPosition: 'center',
-                  opacity: 0.55,
-                }} />
-                {/* Overlay degradado inferior para legibilidad del texto */}
-                <div style={{
-                  position: 'absolute', inset: 0,
-                  background: 'linear-gradient(180deg,rgba(9,52,78,0.10) 0%,rgba(9,52,78,0.80) 100%)',
-                }} />
-
-                {/* Contenido sobre la imagen */}
+              <div style={{ position: 'relative', borderRadius: 20, overflow: 'hidden', minHeight: 400, background: 'linear-gradient(135deg,#09344e 0%,#1C495C 60%,#437287 100%)', boxShadow: '4px 4px 28px rgba(9,52,78,0.18)' }}>
+                <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?w=900&q=80)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.55 }} />
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg,rgba(9,52,78,0.10) 0%,rgba(9,52,78,0.80) 100%)' }} />
                 <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '32px' }}>
-                  {/* Badge "CALI, COLOMBIA" */}
-                  <div style={{
-                    display: 'inline-flex', alignItems: 'center', gap: 6,
-                    backgroundColor: 'rgba(255,255,255,0.18)',
-                    border: '1px solid rgba(255,255,255,0.28)',
-                    backdropFilter: 'blur(6px)',
-                    borderRadius: 999, padding: '5px 14px', marginBottom: 16,
-                  }}>
-                    <img src="/icons/icon-location.svg" alt="" width={11} height={11}
-                      style={{ filter: 'brightness(0) invert(1)', opacity: 0.9 }} />
-                    <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700, color: '#ffffff', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
-                      Cali, Colombia
-                    </span>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255,255,255,0.18)', border: '1px solid rgba(255,255,255,0.28)', backdropFilter: 'blur(6px)', borderRadius: 999, padding: '5px 14px', marginBottom: 16 }}>
+                    <img src="/icons/icon-location.svg" alt="" width={11} height={11} style={{ filter: 'brightness(0) invert(1)', opacity: 0.9 }} />
+                    <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700, color: '#ffffff', letterSpacing: '0.12em', textTransform: 'uppercase' }}>Cali, Colombia</span>
                   </div>
-
-                  <h3 style={{
-                    fontFamily: 'Gloock, Georgia, serif', fontSize: 'clamp(22px,2.5vw,30px)',
-                    fontWeight: 400, color: '#ffffff', lineHeight: 1.2, marginBottom: 10,
-                  }}>
-                    Sede del evento
-                  </h3>
-                  <p style={{
-                    fontFamily: 'Inter, sans-serif', fontSize: 14,
-                    color: 'rgba(255,255,255,0.78)', lineHeight: 1.6, maxWidth: 380,
-                  }}>
-                    Conoce el entorno e instalaciones de la universidad donde nos reuniremos para celebrar este encuentro.
-                  </p>
+                  <h3 style={{ fontFamily: 'Gloock, Georgia, serif', fontSize: 'clamp(22px,2.5vw,30px)', fontWeight: 400, color: '#ffffff', lineHeight: 1.2, marginBottom: 10 }}>Sede del evento</h3>
+                  <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 14, color: 'rgba(255,255,255,0.78)', lineHeight: 1.6, maxWidth: 380 }}>Conoce el entorno e instalaciones de la universidad donde nos reuniremos para celebrar este encuentro.</p>
                 </div>
               </div>
             </FadeIn>
-
-            {/* ── DERECHA: logo USB + ubicación + dirección + botones ── */}
             <FadeIn delay={0.12}>
-              <div style={{
-                backgroundColor: '#ffffff',
-                borderRadius: 20, padding: '36px',
-                boxShadow: '2px 2px 16px rgba(9,52,78,0.08)',
-                border: '1.5px solid rgba(9,117,137,0.12)',
-                display: 'flex', flexDirection: 'column', justifyContent: 'center',
-                height: '100%',
-              }}>
-
-                {/* Logo USB */}
-                <div style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 12,
-                  backgroundColor: '#F7F6F3', borderRadius: 12,
-                  padding: '12px 18px', marginBottom: 28,
-                  border: '1.5px solid #D9DEE2',
-                  alignSelf: 'flex-start',
-                }}>
-                  <img src="/icons/logo_uni_USB.svg" alt="USB Cali" height={36}
-                    style={{ display: 'block', objectFit: 'contain' }} />
-                  <div style={{
-                    fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700,
-                    color: '#09344e', lineHeight: 1.35, textTransform: 'uppercase', letterSpacing: '0.04em',
-                  }}>
-                    Universidad de San<br />Buenaventura
-                  </div>
+              <div style={{ backgroundColor: '#ffffff', borderRadius: 20, padding: '36px', boxShadow: '2px 2px 16px rgba(9,52,78,0.08)', border: '1.5px solid rgba(9,117,137,0.12)', display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 12, backgroundColor: '#F7F6F3', borderRadius: 12, padding: '12px 18px', marginBottom: 28, border: '1.5px solid #D9DEE2', alignSelf: 'flex-start' }}>
+                  <img src="/icons/logo_uni_USB.svg" alt="USB Cali" height={36} style={{ display: 'block', objectFit: 'contain' }} />
+                  <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700, color: '#09344e', lineHeight: 1.35, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Universidad de San<br />Buenaventura</div>
                 </div>
-
-                {/* Título Ubicación */}
-                <h3 style={{
-                  fontFamily: 'Poppins, sans-serif', fontSize: 20, fontWeight: 700,
-                  color: '#09344e', marginBottom: 12,
-                }}>
-                  Ubicación
-                </h3>
-
-                {/* Descripción */}
-                <p style={{
-                  fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#5A6E77',
-                  lineHeight: 1.75, marginBottom: 22,
-                }}>
-                  Universidad de San Buenaventura, Cali — Ubicada en una zona céntrica y de fácil acceso, donde podrás llegar desde las avenidas principales de la ciudad, como la Carrera 122 y la Calle 10, en la zona universitaria de la Avenida Cañasgordas.
-                </p>
-
-                {/* Dirección con ícono */}
-                <div style={{
-                  display: 'flex', alignItems: 'center', gap: 8, marginBottom: 32,
-                }}>
-                  <img src="/icons/icon-location.svg" alt="" width={15} height={15}
-                    style={{ display: 'block', flexShrink: 0 }} />
-                  <span style={{
-                    fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600, color: '#097589',
-                  }}>
-                    C/ Doctor Torres Navas 35, Cali 76110
-                  </span>
+                <h3 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 20, fontWeight: 700, color: '#09344e', marginBottom: 12 }}>Ubicación</h3>
+                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#5A6E77', lineHeight: 1.75, marginBottom: 22 }}>Universidad de San Buenaventura, Cali — Ubicada en zona céntrica de fácil acceso desde las avenidas principales de la ciudad, en la zona universitaria de la Avenida Cañasgordas.</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 32 }}>
+                  <img src="/icons/icon-location.svg" alt="" width={15} height={15} style={{ display: 'block', flexShrink: 0 }} />
+                  <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600, color: '#097589' }}>C/ Doctor Torres Navas 35, Cali 76110</span>
                 </div>
-
-                {/* Botones */}
                 <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                  <a href="https://maps.google.com/?q=Universidad+San+Buenaventura+Cali"
-                    target="_blank" rel="noopener noreferrer"
-                    style={{
-                      display: 'inline-flex', alignItems: 'center', gap: 8,
-                      backgroundColor: '#097589', color: '#fff',
-                      fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700,
-                      padding: '12px 22px', borderRadius: 999, textDecoration: 'none',
-                      boxShadow: '0 2px 12px rgba(9,117,137,0.30)',
-                    }}>
-                    <img src="/icons/icon-location.svg" alt="" width={13} height={13}
-                      style={{ filter: 'brightness(0) invert(1)' }} />
+                  <a href="https://maps.google.com/?q=Universidad+San+Buenaventura+Cali" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: '#097589', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, padding: '12px 22px', borderRadius: 999, textDecoration: 'none', boxShadow: '0 2px 12px rgba(9,117,137,0.30)' }}>
+                    <img src="/icons/icon-location.svg" alt="" width={13} height={13} style={{ filter: 'brightness(0) invert(1)' }} />
                     Ver en el mapa
                   </a>
-
-                  <Link href="/marketing/universidad" style={{
-                    display: 'inline-flex', alignItems: 'center', gap: 6,
-                    border: '1.5px solid #097589', color: '#097589',
-                    fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600,
-                    padding: '12px 20px', borderRadius: 999, textDecoration: 'none',
-                  }}>
-                    Ir al sitio de la universidad ↗
-                  </Link>
+                  <a
+                  href="https://usbcali.edu.co/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    border: '1.5px solid #097589',
+                    color: '#097589',
+                    fontFamily: 'Poppins, sans-serif',
+                    fontSize: 13,
+                    fontWeight: 600,
+                    padding: '12px 20px',
+                    borderRadius: 999,
+                    textDecoration: 'none'
+                  }}
+                >
+                  Ir al sitio de la universidad ↗
+                </a>
                 </div>
-
-                {/* Separador */}
                 <div style={{ borderTop: '1.5px solid #E6F3EE', margin: '28px 0' }} />
-
-                {/* CTA principal QUIERO ASISTIR */}
-                <Link href="/marketing/registro" style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 8,
-                  backgroundColor: '#09344e', color: '#fff',
-                  fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700,
-                  padding: '13px 28px', borderRadius: 999, textDecoration: 'none',
-                  letterSpacing: '0.04em', alignSelf: 'flex-start',
-                  boxShadow: '0 2px 16px rgba(9,52,78,0.25)',
-                }}>
+                <Link href="/marketing/registro" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: '#09344e', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700, padding: '13px 28px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em', alignSelf: 'flex-start', boxShadow: '0 2px 16px rgba(9,52,78,0.25)' }}>
                   QUIERO ASISTIR →
                 </Link>
               </div>
@@ -681,10 +633,177 @@ export default function HomePage() {
         </div>
       </section>
 
-      <WaveUp from="#E6F3EE" to="#ffffff" />
+      {/* Ola separadora: Sede (#E6F3EE) → Legado (#ffffff) */}
+      <WaveDown from="#E6F3EE" to="#ffffff" />
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          8. LEGADO DEL 2° ICEO
+             6 tarjetas: imagen ocupa TODO el card (full-cover),
+             overlay degradado abajo, número grande + label encima.
+             Fondo blanco para diferenciarse de Sede (#E6F3EE).
+      ══════════════════════════════════════════════════════════════════════ */}
+      <section style={{ backgroundColor: '#ffffff', padding: '20px 48px 60px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <FadeIn delay={0.05}>
+            <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, color: '#097589', letterSpacing: '0.14em', textTransform: 'uppercase', textAlign: 'center', marginBottom: 28 }}>
+              Legado del 2° ICEO · Cali 2026
+            </p>
+          </FadeIn>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12 }} className="stats-grid">
+            {STATS.map((s, i) => (
+              <FadeIn key={s.label} delay={i * 0.07}>
+                {/* Tarjeta: imagen full-cover, overlay suave abajo, número + label superpuestos */}
+                <div style={{
+                  position: 'relative',
+                  borderRadius: 14,
+                  overflow: 'hidden',
+                  aspectRatio: '3/4',
+                  boxShadow: '2px 2px 12px rgba(9,52,78,0.12)',
+                  backgroundColor: '#09344e',
+                }}>
+                  {/* Imagen ocupa todo el card */}
+                  <img
+                    src={s.image}
+                    alt={s.label}
+                    style={{
+                      position: 'absolute', inset: 0,
+                      width: '100%', height: '100%',
+                      objectFit: 'cover',
+                      objectPosition: 'center',
+                      display: 'block',
+                    }}
+                  />
+                  {/* Overlay degradado de abajo para legibilidad del texto */}
+                  <div style={{
+                    position: 'absolute', inset: 0,
+                    background: 'linear-gradient(to top, rgba(9,52,78,0.88) 0%, rgba(9,52,78,0.40) 50%, rgba(9,52,78,0.08) 100%)',
+                  }} />
+                  {/* Número + label en la parte inferior */}
+                  <div style={{
+                    position: 'absolute', bottom: 0, left: 0, right: 0,
+                    padding: '14px 14px 16px',
+                    textAlign: 'center',
+                  }}>
+                    <div style={{
+                      fontFamily: 'Gloock, Georgia, serif',
+                      fontSize: 'clamp(24px, 2.5vw, 32px)',
+                      fontWeight: 400,
+                      color: '#ffffff',
+                      lineHeight: 1,
+                      marginBottom: 4,
+                      textShadow: '0 1px 6px rgba(0,0,0,0.4)',
+                    }}>
+                      {s.num}
+                    </div>
+                    <div style={{
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: 11,
+                      fontWeight: 500,
+                      color: 'rgba(255,255,255,0.88)',
+                      lineHeight: 1.3,
+                      textShadow: '0 1px 4px rgba(0,0,0,0.4)',
+                    }}>
+                      {s.label}
+                    </div>
+                  </div>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+          <FadeIn delay={0.55}>
+            <div style={{ textAlign: 'center', marginTop: 28 }}>
+              <Link href="/marketing/segundo-iceo" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600, color: '#097589', textDecoration: 'none', border: '1.5px solid rgba(9,117,137,0.45)', borderRadius: 999, padding: '8px 22px' }}>
+                Ver memoria del 2° ICEO →
+              </Link>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* Ola separadora: Legado (#ffffff) → Voces (#F7F6F3) */}
+      <WaveDown from="#ffffff" to="#F7F6F3" />
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          9. VOCES DEL 2° ICEO
+      ══════════════════════════════════════════════════════════════════════ */}
+      <section style={{ backgroundColor: '#F7F6F3', padding: '72px 48px 80px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <FadeIn>
+            <div style={{ textAlign: 'center', marginBottom: 52 }}>
+              <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#097589', marginBottom: 12 }}>Edición 2026 · Cali, Colombia</p>
+              <h2 style={{ fontFamily: 'Gloock, Georgia, serif', fontWeight: 400, fontSize: 'clamp(28px,3.5vw,44px)', color: '#09344e', lineHeight: 1.1, marginBottom: 16 }}>Voces del 2° ICEO</h2>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 15, color: '#5A6E77', lineHeight: 1.7, maxWidth: 480, margin: '0 auto' }}>El 2° ICEO fue un espacio de encuentro entre organizaciones, comunidades, líderes y jóvenes que construyen soluciones desde sus territorios.</p>
+            </div>
+          </FadeIn>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60, alignItems: 'start' }} className="voces-grid">
+            <FadeIn>
+              <motion.div
+                key={activeVideo}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: 'easeOut' }}
+              >
+                <blockquote style={{ borderLeft: '3px solid #03A383', paddingLeft: 18, margin: '0 0 16px', fontFamily: 'Inter, sans-serif', fontSize: 15, fontStyle: 'italic', color: '#5A6E77', lineHeight: 1.75 }}>
+                  {ENTREVISTAS[activeVideo].quote}
+                </blockquote>
+                <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, color: '#03A383', marginBottom: 6 }}>
+                  — {ENTREVISTAS[activeVideo].label}
+                </p>
+                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: '#097589', fontWeight: 600, marginBottom: 6 }}>
+                  {ENTREVISTAS[activeVideo].org}
+                </p>
+                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#5A6E77', lineHeight: 1.65 }}>
+                  {ENTREVISTAS[activeVideo].texto}
+                </p>
+              </motion.div>
+            </FadeIn>
+
+            <FadeIn delay={0.15}>
+              <div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 14 }}>
+                  {ENTREVISTAS.map((e, i) => (
+                    <button
+                      key={e.id}
+                      onClick={() => setActiveVideo(i)}
+                      style={{ padding: '8px 4px', borderRadius: 8, border: activeVideo === i ? '2px solid #03A383' : '2px solid #C3DED9', backgroundColor: activeVideo === i ? '#03A383' : '#fff', color: activeVideo === i ? '#fff' : '#5A6E77', fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s', letterSpacing: '0.02em' }}
+                    >
+                      {e.label}
+                    </button>
+                  ))}
+                </div>
+                <div style={{ borderRadius: 14, overflow: 'hidden', boxShadow: '4px 4px 24px rgba(9,52,78,0.2)', backgroundColor: '#000', aspectRatio: '16/9' }}>
+                  <video
+                    key={ENTREVISTAS[activeVideo].src}
+                    controls
+                    style={{ width: '100%', height: '100%', display: 'block', objectFit: 'contain', backgroundColor: '#000' }}
+                  >
+                    <source src={ENTREVISTAS[activeVideo].src} type="video/mp4" />
+                  </video>
+                </div>
+                <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 12, color: '#5A6E77', marginTop: 10, textAlign: 'center', letterSpacing: '0.03em' }}>
+                  {ENTREVISTAS[activeVideo].label} · 2° ICEO LATAM
+                </p>
+              </div>
+            </FadeIn>
+          </div>
+
+          <FadeIn delay={0.5}>
+            <div style={{ textAlign: 'center', marginTop: 40 }}>
+              <Link href="/marketing/segundo-iceo" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: '#09344e', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 600, padding: '12px 30px', borderRadius: 999, textDecoration: 'none', boxShadow: '0 2px 16px rgba(9,52,78,0.25)' }}>
+                Ver memoria completa del 2° ICEO →
+              </Link>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      <WaveDown from="#F7F6F3" to="#ffffff" />
 
       {/* ══════════════════════════════════════════════════════════════════════
           10. NOTICIAS
+          CAMBIO 3: sección "Momentos que definieron el 2° ICEO" ELIMINADA.
+          Las noticias van directamente después de Voces.
       ══════════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#ffffff', padding: '72px 48px 80px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
@@ -723,15 +842,15 @@ export default function HomePage() {
       </section>
 
       <SectionDonacion
-    bg="#09344e"
-    theme="dark"
-    showTopWave={true}
-    topWaveFrom="#ffffff"   // ← color de la sección anterior (noticias)
-  />
-    <SectionRedes bg="#ffffff" theme="light" />
+        bg="#09344e"
+        theme="dark"
+        showTopWave={true}
+        topWaveFrom="#ffffff"
+      />
+      <SectionRedes bg="#ffffff" theme="light" />
 
       {/* ── Responsive ── */}
-      <style>{`
+      <style suppressHydrationWarning>{`
         @media (max-width: 1100px) {
           .lineas-grid   { grid-template-columns: repeat(3,1fr) !important; }
           .speakers-grid { grid-template-columns: repeat(3,1fr) !important; }
@@ -744,8 +863,7 @@ export default function HomePage() {
           .sede-grid         { grid-template-columns: 1fr !important; }
           .noticias-grid     { grid-template-columns: 1fr !important; }
           .speakers-grid     { grid-template-columns: repeat(2,1fr) !important; }
-          .donacion-grid     { grid-template-columns: 1fr !important; }
-          .follow-grid       { grid-template-columns: 1fr !important; }
+          .voces-grid        { grid-template-columns: 1fr !important; }
           .momentos-grid     { grid-template-columns: repeat(2,1fr) !important; }
         }
         @media (max-width: 640px) {

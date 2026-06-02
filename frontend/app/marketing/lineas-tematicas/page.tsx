@@ -198,8 +198,8 @@ export default function LineasTematicasPage() {
       {/* ══ 1. HERO — unificado ════════════════════════════════════════════════ */}
       <HeroIceo
         badge="3ICEO · LATAM"
-        title={<>Líneas<br /><span style={{ color: '#ffffff' }}>Temáticas</span></>}
-        description="Agua, cooperación e innovación para territorios vivos. ICEO LATAM conecta conocimiento, comunidades, instituciones y soluciones alrededor de los territorios vivos de Latinoamérica."
+        title={<>Líneas <span style={{ color: '#ffffff' }}>Temáticas</span></>}
+        description={<>Agua, cooperación e innovación para<br />transformar los territorios vivos de LATAM</>}
         cta={{ label: 'QUIERO ASISTIR →', href: '/marketing/registro' }}
         ctaSecondary={{ label: 'Ver agenda', href: '/marketing/agenda' }}
         image="/icons/lineas_tematicas.svg"

@@ -26,8 +26,8 @@
  *  ┌─────────────────────────────────────────────────────────────────────┐
  *  │  description={                                                      │
  *  │    <>                                                               │
- *  │      Colabora como voluntario virtual, aliado o medio de prensa<br />│
- *  │      y ayuda a impulsar el congreso                                 │
+ *  │      Colabora como voluntario virtual, aliado o medio de prensa     │
+ *  │      <br /> y ayuda a impulsar el congreso                          │
  *  │    </>                                                              │
  *  │  }                                                                  │
  *  └─────────────────────────────────────────────────────────────────────┘
@@ -76,17 +76,17 @@ export interface HeroIceoProps {
 function Wave({ variant, color }: { variant: WaveVariant; color: string }) {
   if (variant === 'none') return null
 
-  // overlap: ola mucho más baja → deja espacio para que children sobresalga
+  // overlap: ola que cubre naturalmente los children
   if (variant === 'overlap') {
     return (
-      <div style={{ lineHeight: 0, position: 'relative', marginTop: -2 }}>
+      <div style={{ lineHeight: 0, marginTop: 0 }}>
         <svg
-          viewBox="0 0 1440 90"
+          viewBox="0 0 1440 72"
           preserveAspectRatio="none"
-          style={{ width: '100%', height: 90, display: 'block' }}
+          style={{ width: '100%', height: 72, display: 'block' }}
         >
           <path
-            d="M0,55 C240,90 480,20 720,55 C960,90 1200,30 1440,55 L1440,90 L0,90 Z"
+            d="M0,40 C240,72 480,12 720,42 C960,72 1200,22 1440,42 L1440,72 L0,72 Z"
             fill={color}
           />
         </svg>
@@ -152,7 +152,7 @@ export default function HeroIceo({
       <section
         style={{
           backgroundColor: '#74B4A7',
-          paddingTop: 120,
+          paddingTop: 88,
           paddingBottom: 0,
           position: 'relative',
           overflow: 'hidden',
@@ -174,7 +174,7 @@ export default function HeroIceo({
         <div
           className="container-brand"
           style={{
-            padding: waveVariant === 'overlap' ? '0 48px 32px' : '0 48px 88px',
+            padding: waveVariant === 'overlap' ? '0 48px 8px' : '0 48px 88px',
             position: 'relative',
           }}
         >
@@ -195,16 +195,17 @@ export default function HeroIceo({
                 </div>
               )}
 
-              {/* H1 — título corto */}
+              {/* H1 — título corto, UNA sola línea según Excel */}
               <h1
                 style={{
                   fontFamily: 'Gloock, Georgia, serif',
-                  fontSize: 'clamp(42px, 5.5vw, 72px)',
+                  fontSize: 'clamp(32px, 4vw, 56px)',
                   fontWeight: 400,
                   color: '#09344e',
                   lineHeight: 1.08,
                   marginBottom: 20,
                   letterSpacing: '-0.01em',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 {title}
@@ -292,19 +293,20 @@ export default function HeroIceo({
           </div>
         </div>
 
+        {/* ── Children en overlap: DENTRO del section teal, antes de la ola ── */}
+        {children && waveVariant === 'overlap' && (
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            {children}
+          </div>
+        )}
+
         {/* ── Ola ─────────────────────────────────────────────────────── */}
         <Wave variant={waveVariant} color={waveColor} />
       </section>
 
-      {/* ── Children (p.ej. días de agenda solapados sobre la ola) ───── */}
-      {children && (
-        <div
-          style={{
-            position: 'relative',
-            zIndex: 10,
-            marginTop: waveVariant === 'overlap' ? -48 : 0,
-          }}
-        >
+      {/* ── Children en variantes no-overlap: debajo de la ola ── */}
+      {children && waveVariant !== 'overlap' && (
+        <div style={{ position: 'relative', zIndex: 10 }}>
           {children}
         </div>
       )}
