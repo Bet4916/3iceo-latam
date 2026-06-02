@@ -6,10 +6,10 @@ import {
   IconLocation,
   IconPDF,
   IconExternalLink,
-  IconLinkedin,
-  IconInstagram,
-  IconFacebook,
 } from '@/components/ui/icons'
+import HeroIceo from '@/components/sections/HeroIceo'
+import SectionDonacion from '@/components/sections/SectionDonacion'
+import SectionRedes from '@/components/sections/SectionRedes'
 
 // ─── ANIMATION HELPER ─────────────────────────────────────────────────────────
 function FadeIn({
@@ -87,12 +87,6 @@ const ESPACIOS_MAP = [
   'Paradero MIO',
 ]
 
-const SOCIAL = [
-  { Icon: IconInstagram, href: 'https://instagram.com/awaqong',          label: 'Instagram', iconSrc: '/icons/icon_instagram.svg' },
-  { Icon: IconFacebook,  href: 'https://facebook.com/awaqong',           label: 'Facebook',  iconSrc: '/icons/icon_facebook.svg'  },
-  { Icon: IconLinkedin,  href: 'https://linkedin.com/company/awaq-ong',  label: 'LinkedIn',  iconSrc: '/icons/icon_linkedin.svg'  },
-]
-
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
 export default function UniversidadPage() {
   return (
@@ -100,93 +94,19 @@ export default function UniversidadPage() {
 
       {/* ══════════════════════════════════════════════════════════════════
           HERO
-          ✅ CAMBIO 1: imagen más visible — opacity subida de 0.22 → 0.55
-                       overlay más suave de 0.92/0.4 → 0.55/0.15
       ══════════════════════════════════════════════════════════════════ */}
-      <section style={{ position: 'relative', minHeight: 420, overflow: 'hidden' }}>
-        {/* Imagen de fondo — más visible ahora */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(135deg,#09344e 0%,#1C495C 60%,#437287 100%)',
-        }}>
-          {/* Reemplaza con: <Image src="/images/san-buenaventura-hero.jpg" fill style={{objectFit:'cover',opacity:.55}} alt="" /> */}
-          <div style={{
-            position: 'absolute', inset: 0,
-            background: 'url(https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?w=1400&q=75) center/cover',
-            opacity: 0.55, /* ← era 0.22, ahora se ve bien la imagen */
-          }} />
-        </div>
-
-        {/* Overlay degradado para legibilidad — más suave para que se vea la imagen */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(90deg,rgba(9,52,78,0.55) 45%,rgba(9,52,78,0.15) 100%)',
-          /* ← era rgba(9,52,78,0.92) y rgba(9,52,78,0.4) — ahora la imagen se ve */
-        }} />
-
-        <div className="container-brand" style={{
-          position: 'relative', zIndex: 1,
-          padding: '140px 48px 60px',
-        }}>
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-            style={{ maxWidth: 540 }}
-          >
-            {/* Badge */}
-            <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: 6,
-              backgroundColor: 'rgba(9,117,137,0.20)',
-              border: '1px solid rgba(9,117,137,0.45)',
-              borderRadius: 999, padding: '5px 14px', marginBottom: 16,
-            }}>
-              <IconLocation size={12} color="#AEE5DA" />
-              <span style={{
-                fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 600,
-                color: '#AEE5DA', textTransform: 'uppercase', letterSpacing: '0.1em',
-              }}>
-                Universidad de San Buenaventura · Cali
-              </span>
-            </div>
-
-            <h1 style={{
-              fontFamily: 'Gloock, Georgia, serif',
-              fontSize: 'clamp(32px, 4.5vw, 54px)',
-              fontWeight: 400, color: '#fff', lineHeight: 1.12, marginBottom: 16,
-            }}>
-              Sede del evento
-            </h1>
-
-            <p style={{
-              fontFamily: 'Inter, sans-serif', fontSize: 15,
-              color: 'rgba(255,255,255,0.75)', lineHeight: 1.75, marginBottom: 28,
-            }}>
-              Conoce el entorno e instalaciones de la universidad donde nos reuniremos
-              para celebrar este encuentro.
-            </p>
-
-            <Link href="/marketing/registro" style={{
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-              backgroundColor: '#B53077', color: '#fff',
-              fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700,
-              padding: '12px 28px', borderRadius: 999, textDecoration: 'none',
-              letterSpacing: '0.04em', textTransform: 'uppercase',
-              boxShadow: '0 4px 20px rgba(181,48,119,0.35)',
-            }}>
-              Quiero Asistir →
-            </Link>
-          </motion.div>
-        </div>
-
-        {/* Wave */}
-        <div style={{ position: 'relative', zIndex: 1, lineHeight: 0 }}>
-          <svg viewBox="0 0 1440 48" preserveAspectRatio="none"
-            style={{ width: '100%', height: 48, display: 'block' }}>
-            <path d="M0,28 C480,50 960,5 1440,28 L1440,48 L0,48 Z" fill="#ffffff" />
-          </svg>
-        </div>
-      </section>
+      <HeroIceo
+        badge="Universidad de San Buenaventura · Cali"
+        title={<>Sede del <span style={{ color: '#ffffff' }}>3° ICEO</span></>}
+        description={<>Conoce el campus e instalaciones donde nos reuniremos<br />para celebrar este encuentro ambiental</>}
+        cta={{ label: 'QUIERO ASISTIR →', href: '/marketing/registro' }}
+        image="https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?w=1400&q=75"
+        imageAlt="Universidad de San Buenaventura Cali"
+        imageLabel="USB Cali · Sede 3° ICEO"
+        imageScale={1.20}
+        waveVariant="default"
+        waveColor="#ffffff"
+      />
 
       {/* ══════════════════════════════════════════════════════════════════
           LAS INSTALACIONES
@@ -644,30 +564,18 @@ export default function UniversidadPage() {
 
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
                 {/* ✅ PDF real mapa_uni.pdf */}
-                <a href="/icons/mapa_uni.pdf" target="_blank" rel="noopener noreferrer" style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 8,
-                  border: '1.5px solid #D9DEE2', color: '#12303E',
-                  fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 700,
-                  padding: '10px 20px', borderRadius: 999, textDecoration: 'none',
-                  backgroundColor: '#fff', letterSpacing: '0.04em', textTransform: 'uppercase',
-                }}>
-                  <IconPDF size={16} color="#097589" />
-                  Descargar Plano PDF
-                </a>
-                <a
-                  href="/icons/mapa_uni.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    display: 'inline-flex', alignItems: 'center', gap: 8,
-                    backgroundColor: '#097589', color: '#fff',
-                    fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 700,
-                    padding: '10px 20px', borderRadius: 999, textDecoration: 'none',
-                    letterSpacing: '0.04em', textTransform: 'uppercase',
-                  }}
-                >
-                  Ver Plano
-                </a>
+                <a href="/icons/mapa_uni.pdf" target="_blank" rel="noopener noreferrer"
+  style={{
+    display: 'inline-flex', alignItems: 'center', gap: 8,
+    backgroundColor: '#097589', color: '#fff',
+    fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 700,
+    padding: '10px 20px', borderRadius: 999, textDecoration: 'none',
+    letterSpacing: '0.04em', textTransform: 'uppercase',
+  }}
+>
+  <IconPDF size={16} color="white" />
+  Ver Plano Completo PDF
+</a>
               </div>
             </FadeIn>
 
@@ -693,176 +601,14 @@ export default function UniversidadPage() {
           DONACIÓN
           ✅ CAMBIO: emoji 🌱 → market_ex.svg
       ══════════════════════════════════════════════════════════════════ */}
-      <section style={{
-        background: 'linear-gradient(135deg,#09344e 0%,#1C495C 100%)',
-        padding: '80px 0', position: 'relative', overflow: 'hidden',
-      }}>
-        <div style={{
-          position: 'absolute', top: -60, right: -60, width: 340, height: 340,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle,rgba(9,117,137,0.18) 0%,transparent 70%)',
-          pointerEvents: 'none',
-        }} />
-        <div className="container-brand" style={{ padding: '0 48px' }}>
-          <div style={{
-            display: 'grid', gridTemplateColumns: '1fr 1fr',
-            gap: 60, alignItems: 'center',
-          }} className="donacion-grid">
-
-            <FadeIn>
-              <h2 style={{
-                fontFamily: 'Poppins, sans-serif', fontSize: 30, fontWeight: 700,
-                color: '#fff', marginBottom: 14, lineHeight: 1.25,
-              }}>
-                ¡Gracias a tu donación,<br />nadie se queda fuera!
-              </h2>
-              <p style={{
-                fontFamily: 'Inter, sans-serif', fontSize: 14,
-                color: 'rgba(255,255,255,0.72)', lineHeight: 1.8, marginBottom: 10,
-              }}>
-                Tu ayuda permite que organizaciones ambientales sin recursos puedan
-                asistir al 3° ICEO y formar parte de un espacio de aprendizaje,
-                conexión y colaboración único.
-              </p>
-              <p style={{
-                fontFamily: 'Inter, sans-serif', fontSize: 12,
-                color: 'rgba(255,255,255,0.45)', lineHeight: 1.6, marginBottom: 28,
-              }}>
-                El importe irá íntegramente destinado a cubrir alojamiento, transporte y dietas.
-              </p>
-              <Link href="/marketing/donaciones" style={{
-                display: 'inline-flex', alignItems: 'center', gap: 8,
-                backgroundColor: '#B53077', color: '#fff',
-                fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700,
-                padding: '13px 32px', borderRadius: 999, textDecoration: 'none',
-                letterSpacing: '0.04em', textTransform: 'uppercase',
-                boxShadow: '0 4px 20px rgba(181,48,119,0.35)',
-              }}>
-                Dona ahora →
-              </Link>
-            </FadeIn>
-
-            {/* ✅ market_ex.svg en lugar de emoji 🌱 */}
-            <FadeIn delay={0.15}>
-              <div style={{
-                borderRadius: 14, overflow: 'hidden', aspectRatio: '4/3',
-                boxShadow: '8px 8px 40px rgba(0,0,0,0.3)',
-              }}>
-                <img
-                  src="/icons/planta_donacion.svg"
-                  alt=""
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                />
-              </div>
-            </FadeIn>
-          </div>
-        </div>
-      </section>
+      <SectionDonacion bg="#09344e" theme="dark" showWave={true} showTopWave topWaveFrom="#ffffff" />
 
       {/* ══════════════════════════════════════════════════════════════════
           REDES SOCIALES
           ✅ CAMBIO 1: emojis 📸👍💼 → icon_instagram/facebook/linkedin.svg
           ✅ CAMBIO 2: texto "FOLLOW US!" eliminado → follow.svg ya lo tiene
       ══════════════════════════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#F7F6F3', padding: '80px 0' }}>
-        <div className="container-brand" style={{ padding: '0 48px' }}>
-          <div style={{
-            display: 'grid', gridTemplateColumns: '1fr 1fr',
-            gap: 48, alignItems: 'center',
-          }} className="follow-grid">
-
-            <FadeIn>
-              <h3 style={{
-                fontFamily: 'Poppins, sans-serif', fontSize: 24, fontWeight: 700,
-                color: '#09344e', marginBottom: 12, lineHeight: 1.3,
-              }}>
-                ¡Pásate por nuestras Redes Sociales y síguenos!
-              </h3>
-              <p style={{
-                fontFamily: 'Inter, sans-serif', fontSize: 14,
-                color: '#5A6E77', lineHeight: 1.75, marginBottom: 28,
-              }}>
-                Publicamos contenido acerca de la labor que hacemos, podrás conocer
-                proyectos y a nosotros más a fondo.
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 300 }}>
-                {[
-                  { label: 'Instagram', bg: '#E1306C', href: 'https://instagram.com/awaqong',         iconSrc: '/icons/icon_instagram.svg' },
-                  { label: 'Facebook',  bg: '#1877F2', href: 'https://facebook.com/awaqong',          iconSrc: '/icons/icon_facebook.svg'  },
-                  { label: 'LinkedIn',  bg: '#0A66C2', href: 'https://linkedin.com/company/awaq-ong', iconSrc: '/icons/icon_linkedin.svg'  },
-                ].map(({ label, bg, href, iconSrc }) => (
-                  <Link key={label} href={href} target="_blank" rel="noopener noreferrer" style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    backgroundColor: '#fff', border: '1.5px solid #D9DEE2',
-                    borderRadius: 10, padding: '12px 18px',
-                    textDecoration: 'none',
-                    boxShadow: '2px 2px 8px rgba(9,52,78,0.06)',
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                      {/* ✅ Icono SVG oficial en lugar de emoji */}
-                      <div style={{
-                        width: 34, height: 34, borderRadius: 8,
-                        backgroundColor: bg,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      }}>
-                        <img
-                          src={iconSrc}
-                          alt={label}
-                          width={18}
-                          height={18}
-                          style={{ display: 'block', filter: 'brightness(0) invert(1)' }}
-                        />
-                      </div>
-                      <span style={{
-                        fontFamily: 'Poppins, sans-serif', fontSize: 14,
-                        fontWeight: 600, color: '#12303E',
-                      }}>
-                        {label}
-                      </span>
-                    </div>
-                    <span style={{ color: '#097589', fontSize: 13 }}>→</span>
-                  </Link>
-                ))}
-              </div>
-            </FadeIn>
-
-            {/* ✅ CAMBIO 2: follow.svg reemplaza todo el texto "FOLLOW US!" / "ON SOCIAL MEDIA" */}
-            <FadeIn delay={0.15}>
-              <div style={{
-                background: 'linear-gradient(135deg,#74B4A7 0%,#097589 100%)',
-                borderRadius: 20, padding: '44px 36px',
-                textAlign: 'center',
-                boxShadow: '4px 4px 24px rgba(9,117,137,0.25)',
-                display: 'flex', flexDirection: 'column',
-                alignItems: 'center', gap: 24,
-              }}>
-                {/* follow.svg ya contiene el texto "FOLLOW US!" y "@awaqong" internamente */}
-                <img
-                  src="/icons/follow.svg"
-                  alt="Follow Us on Social Media"
-                  style={{ width: '80%', maxWidth: 260, height: 'auto', display: 'block' }}
-                />
-
-                {/* Iconos sociales con SVGs oficiales */}
-                <div style={{ display: 'flex', gap: 14, justifyContent: 'center' }}>
-                  {SOCIAL.map(({ Icon, href, label, iconSrc }) => (
-                    <Link key={label} href={href} target="_blank" rel="noopener noreferrer" style={{
-                      width: 44, height: 44, borderRadius: '50%',
-                      border: '2px solid rgba(255,255,255,0.55)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      color: '#fff', textDecoration: 'none',
-                      transition: 'background .2s, border-color .2s',
-                    }}>
-                      <Icon size={18} color="white" />
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </FadeIn>
-          </div>
-        </div>
-      </section>
-
+      <SectionRedes bg="#F7F6F3" theme="light" />
       {/* ── RESPONSIVE ── */}
       <style suppressHydrationWarning>{`
         @media (max-width: 1024px) {

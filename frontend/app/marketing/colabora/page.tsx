@@ -80,16 +80,11 @@ export default function ColaboraPage() {
       ════════════════════════════════════════════════════════════════════ */}
       <HeroIceo
         badge="Colabora con el 3ICEO LATAM 2027"
-        title={
-          <>
-            Haz posible<br />
-            <span style={{ color: '#ffffff' }}>el encuentro</span>
-          </>
-        }
+        title={<>Colabora · <span style={{ color: '#ffffff' }}>3° ICEO</span></>}
         description="Súmate como voluntario virtual, aliado estratégico o medio acreditado para ampliar el impacto territorial del congreso."
         cta={{ label: 'Ser voluntario', href: '#como-colaborar' }}
         ctaSecondary={{ label: 'Donar', href: '/marketing/donaciones' }}
-        image="/icons/market_ex.svg"
+        image="/icons/convenios.svg"
         imageAlt="Colabora con 3ICEO"
         imageLabel="3ICEO LATAM 2027"
         waveVariant="default"

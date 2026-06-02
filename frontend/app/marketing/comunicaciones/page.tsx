@@ -3,21 +3,22 @@
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
+import HeroIceo from '@/components/sections/HeroIceo'
+import SectionDonacion from '@/components/sections/SectionDonacion'
+import SectionRedes from '@/components/sections/SectionRedes'
 
 // ─── TIPOS ────────────────────────────────────────────────────────────────────
-type Categoria = 'video' | 'streaming' | 'notas sociales' | 'video' | string
-
 interface Noticia {
   id: number
   categoria: string
   titulo: string
   extracto: string
   fecha: string
-  img: string // emoji placeholder — en prod: ruta /public/images/...
+  img: string
   imgBg: string
 }
 
-// ─── DATOS MOCK (en prod vendrían de API/CMS) ─────────────────────────────────
+// ─── DATOS MOCK ───────────────────────────────────────────────────────────────
 const NOTICIAS: Noticia[] = [
   {
     id: 1,
@@ -76,9 +77,8 @@ const NOTICIAS: Noticia[] = [
 ]
 
 const CATEGORIAS = ['Cantidad', 'video', 'streaming', 'notas sociales']
-const TEMAS = ['Mas', 'video', 'streaming', 'notas sociales']
+const TEMAS      = ['Mas',      'video', 'streaming', 'notas sociales']
 
-// Color de badge por categoría — igual que el Figma
 const BADGE_COLOR: Record<string, string> = {
   'video':          '#097589',
   'streaming':      '#B53077',
@@ -88,15 +88,12 @@ const BADGE_COLOR: Record<string, string> = {
 // ─── COMPONENTE PRINCIPAL ─────────────────────────────────────────────────────
 export default function ComunicacionesPage() {
   const [filtroCategoria, setFiltroCategoria] = useState('Cantidad')
-  const [filtroTema, setFiltroTema] = useState('Mas')
+  const [filtroTema,      setFiltroTema]      = useState('Mas')
 
-  // Filtrado reactivo
   const noticiasFiltradas = useMemo(() => {
     return NOTICIAS.filter(n => {
-      const pasaCat =
-        filtroCategoria === 'Cantidad' || n.categoria === filtroCategoria
-      const pasaTema =
-        filtroTema === 'Mas' || n.categoria === filtroTema
+      const pasaCat  = filtroCategoria === 'Cantidad' || n.categoria === filtroCategoria
+      const pasaTema = filtroTema      === 'Mas'      || n.categoria === filtroTema
       return pasaCat && pasaTema
     })
   }, [filtroCategoria, filtroTema])
@@ -109,70 +106,29 @@ export default function ComunicacionesPage() {
   return (
     <div style={{ backgroundColor: '#fff', minHeight: '100vh' }}>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          HERO — "Noticias" + foto derecha
-      ══════════════════════════════════════════════════════════════════ */}
-      <section style={{ paddingTop: 96, backgroundColor: '#fff' }}>
-        <div className="container-brand" style={{ padding: '48px 48px 0' }}>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr auto',
-              gap: 48,
-              alignItems: 'flex-start',
-            }}
-            className="hero-grid"
-          >
-            {/* Columna izquierda */}
-            <div>
-              <h1 style={{
-                fontFamily: 'Georgia, "Times New Roman", serif',
-                fontSize: 'clamp(40px, 5.5vw, 64px)',
-                fontWeight: 700, color: '#09344e',
-                marginBottom: 16, lineHeight: 1.05,
-              }}>
-                Noticias
-              </h1>
-              <p style={{
-                fontFamily: 'Inter, sans-serif', fontSize: 15,
-                color: '#5A6E77', lineHeight: 1.7, maxWidth: 400,
-              }}>
-                Descubre lo que dicen de nosotros en nuestro Centro
-                de ICEO de Comunicaciones y Repositorio Multimedia
-              </p>
-            </div>
+      {/* ════════════════════════════════════════════════════════════════
+          HERO — componente unificado igual que Colabora / otras páginas
+      ════════════════════════════════════════════════════════════════ */}
+      <HeroIceo
+        badge="Centro de Comunicaciones ICEO"
+        title={<>Noticias · <span style={{ color: '#ffffff' }}>3° ICEO</span></>}
+        description="Descubre lo que dicen de nosotros en nuestro Centro de ICEO de Comunicaciones y Repositorio Multimedia."
+        cta={{ label: 'Ver noticias', href: '#noticias' }}
+        ctaSecondary={{ label: 'Síguenos', href: '#redes' }}
+        // Imagen de redacción periodística real (Unsplash / libre de derechos)
+        image="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=640&q=80"
+        imageAlt="Redacción periodística"
+        imageLabel="Comunicaciones ICEO"
+        waveVariant="default"
+        waveColor="#ffffff"
+      />
 
-            {/* Foto decorativa derecha */}
-            <div style={{ position: 'relative', flexShrink: 0 }}>
-              <div style={{
-                position: 'absolute', bottom: -16, right: -16,
-                width: 200, height: 150, borderRadius: 12,
-                background: 'linear-gradient(135deg, #8CCDFF 0%, #4886B5 100%)',
-                opacity: 0.5, zIndex: 0,
-              }} />
-              <div style={{
-                position: 'relative', zIndex: 1,
-                width: 260, height: 180, borderRadius: 12,
-                overflow: 'hidden',
-                background: 'linear-gradient(135deg, #AEE5DA 0%, #097589 60%, #09344e 100%)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 56,
-                boxShadow: '4px 4px 24px rgba(9,52,78,0.2)',
-              }}>
-                📰
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════════════
-          SECCIÓN NOTICIAS — título + filtros + grid
-      ══════════════════════════════════════════════════════════════════ */}
-      <section style={{ padding: '56px 0 72px', backgroundColor: '#fff' }}>
+      {/* ════════════════════════════════════════════════════════════════
+          SECCIÓN NOTICIAS — filtros + grid
+      ════════════════════════════════════════════════════════════════ */}
+      <section id="noticias" style={{ padding: '56px 0 72px', backgroundColor: '#fff' }}>
         <div className="container-brand" style={{ padding: '0 48px' }}>
 
-          {/* Título sección */}
           <h2 style={{
             fontFamily: 'Poppins, sans-serif',
             fontSize: 'clamp(18px, 2.5vw, 24px)',
@@ -182,19 +138,15 @@ export default function ComunicacionesPage() {
             Enterate de las últimas noticias
           </h2>
 
-          {/* ── Filtros (Figma: "Filtrar por: Cantidad | Mas + ícono reset") ── */}
+          {/* Filtros */}
           <div style={{
             display: 'flex', alignItems: 'center', gap: 12,
             marginBottom: 32, flexWrap: 'wrap',
           }}>
-            <span style={{
-              fontFamily: 'Inter, sans-serif', fontSize: 13,
-              color: '#5A6E77', whiteSpace: 'nowrap',
-            }}>
+            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#5A6E77', whiteSpace: 'nowrap' }}>
               Filtrar por:
             </span>
 
-            {/* Select categoría */}
             <select
               value={filtroCategoria}
               onChange={e => setFiltroCategoria(e.target.value)}
@@ -210,7 +162,6 @@ export default function ComunicacionesPage() {
               ))}
             </select>
 
-            {/* Select tema */}
             <select
               value={filtroTema}
               onChange={e => setFiltroTema(e.target.value)}
@@ -226,7 +177,6 @@ export default function ComunicacionesPage() {
               ))}
             </select>
 
-            {/* Botón reset */}
             <button
               onClick={resetFiltros}
               title="Limpiar filtros"
@@ -245,7 +195,6 @@ export default function ComunicacionesPage() {
                 ;(e.currentTarget as HTMLElement).style.color = '#097589'
               }}
             >
-              {/* Ícono refresh */}
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                 <path d="M1 4v6h6M23 20v-6h-6"/>
@@ -254,7 +203,7 @@ export default function ComunicacionesPage() {
             </button>
           </div>
 
-          {/* ── Grid de noticias / estado vacío ── */}
+          {/* Grid / estado vacío */}
           <AnimatePresence mode="wait">
             {noticiasFiltradas.length > 0 ? (
               <motion.div
@@ -293,19 +242,15 @@ export default function ComunicacionesPage() {
                       ;(e.currentTarget as HTMLElement).style.transform = 'translateY(0)'
                     }}
                   >
-                    {/* Imagen */}
                     <div style={{
                       height: 160, background: n.imgBg,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       fontSize: 48, flexShrink: 0,
                     }}>
                       {n.img}
-                      {/* En prod: <Image src={n.imgSrc} fill style={{objectFit:'cover'}} alt={n.titulo} /> */}
                     </div>
 
-                    {/* Contenido */}
                     <div style={{ padding: '16px 18px 20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                      {/* Badge categoría */}
                       <span style={{
                         display: 'inline-block',
                         backgroundColor: BADGE_COLOR[n.categoria] || '#097589',
@@ -332,21 +277,17 @@ export default function ComunicacionesPage() {
                         {n.extracto}
                       </p>
 
-                      {/* Footer de card: fecha + link */}
                       <div style={{
                         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                         paddingTop: 12, borderTop: '1px solid #EFF4F7',
                       }}>
-                        <span style={{
-                          fontFamily: 'Inter, sans-serif', fontSize: 12, color: '#9EADB4',
-                        }}>
+                        <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: '#9EADB4' }}>
                           {n.fecha}
                         </span>
                         <Link href={`/marketing/comunicaciones/${n.id}`} style={{
                           fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 600,
                           color: '#097589', textDecoration: 'none',
                           display: 'flex', alignItems: 'center', gap: 4,
-                          transition: 'color 0.2s',
                         }}>
                           ver noticia →
                         </Link>
@@ -356,7 +297,6 @@ export default function ComunicacionesPage() {
                 ))}
               </motion.div>
             ) : (
-              /* Estado vacío — igual al Figma */
               <motion.div
                 key="empty"
                 initial={{ opacity: 0, y: 12 }}
@@ -368,7 +308,6 @@ export default function ComunicacionesPage() {
                   alignItems: 'center', gap: 16,
                 }}
               >
-                {/* Ícono AWAQ con interrogación */}
                 <div style={{
                   width: 80, height: 80, borderRadius: '50%',
                   backgroundColor: '#E6F3EE', border: '2px solid #AEE5DA',
@@ -377,16 +316,10 @@ export default function ComunicacionesPage() {
                 }}>
                   🌿
                 </div>
-                <h3 style={{
-                  fontFamily: 'Poppins, sans-serif', fontSize: 18, fontWeight: 700,
-                  color: '#09344e',
-                }}>
+                <h3 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 18, fontWeight: 700, color: '#09344e' }}>
                   Sin resultados
                 </h3>
-                <p style={{
-                  fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#5A6E77',
-                  lineHeight: 1.6, maxWidth: 360,
-                }}>
+                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#5A6E77', lineHeight: 1.6, maxWidth: 360 }}>
                   Parece que no tenemos ninguna noticia con los filtros seleccionados.
                   Prueba a eliminarlos o introdúcelos de otro modo.
                 </p>
@@ -397,8 +330,7 @@ export default function ComunicacionesPage() {
                     border: '1.5px solid #097589', color: '#097589',
                     backgroundColor: 'transparent',
                     fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600,
-                    cursor: 'pointer', letterSpacing: '0.04em',
-                    transition: 'all 0.2s',
+                    cursor: 'pointer', letterSpacing: '0.04em', transition: 'all 0.2s',
                   }}
                   onMouseEnter={e => {
                     (e.currentTarget as HTMLElement).style.backgroundColor = '#097589'
@@ -414,111 +346,18 @@ export default function ComunicacionesPage() {
               </motion.div>
             )}
           </AnimatePresence>
-
-          {/* ══════════════════════════════════════════════════════════════
-              FOLLOW US BANNER (igual que Sprint 2, reutilizado)
-          ══════════════════════════════════════════════════════════════ */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'auto 1fr',
-              gap: 40,
-              alignItems: 'center',
-              backgroundColor: '#E6F3EE',
-              borderRadius: 16,
-              padding: '40px 48px',
-            }}
-            className="follow-grid"
-          >
-            {/* Badge FOLLOW US */}
-            <div style={{ position: 'relative' }}>
-              <div style={{
-                position: 'absolute', top: -16, left: -16,
-                width: 180, height: 130, borderRadius: 8,
-                background: 'linear-gradient(135deg, #AEE5DA 0%, #8CCDFF 100%)',
-                transform: 'rotate(-3deg)', opacity: 0.45,
-              }} />
-              <div style={{
-                position: 'relative',
-                background: 'linear-gradient(135deg, #4886B5 0%, #097589 100%)',
-                borderRadius: 10, padding: '18px 24px',
-                textAlign: 'center', transform: 'rotate(-2deg)',
-                boxShadow: '4px 4px 20px rgba(9,52,78,0.2)',
-              }}>
-                <div style={{
-                  fontFamily: 'Poppins, sans-serif', fontSize: 24, fontWeight: 900,
-                  color: '#fff', letterSpacing: '0.05em', lineHeight: 1, marginBottom: 4,
-                }}>
-                  FOLLOW US!
-                </div>
-                <div style={{
-                  fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 600,
-                  color: 'rgba(255,255,255,0.85)', letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
-                }}>
-                  ON SOCIAL MEDIA
-                </div>
-              </div>
-            </div>
-
-            {/* Texto + links RRSS */}
-            <div>
-              <h3 style={{
-                fontFamily: 'Poppins, sans-serif', fontSize: 18, fontWeight: 700,
-                color: '#09344e', marginBottom: 10,
-              }}>
-                ¡Pásate por nuestras Redes Sociales y síguenos!
-              </h3>
-              <p style={{
-                fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#5A6E77',
-                lineHeight: 1.7, marginBottom: 20, maxWidth: 460,
-              }}>
-                Publicamos contenido a cerca de la labor que hacemos, podrás conocer nuestros
-                proyectos y a nosotros más a fondo.
-              </p>
-              <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-                {[
-                  { name: 'Instagram', href: 'https://instagram.com/somosawaq' },
-                  { name: 'Facebook',  href: 'https://facebook.com/somosawaq' },
-                  { name: 'LinkedIn',  href: 'https://linkedin.com/company/somosawaq' },
-                ].map(s => (
-                  <a key={s.name} href={s.href} target="_blank" rel="noopener noreferrer"
-                    style={{
-                      display: 'inline-flex', alignItems: 'center', gap: 7,
-                      fontFamily: 'Inter, sans-serif', fontSize: 14, fontWeight: 500,
-                      color: '#09344e', textDecoration: 'none',
-                      padding: '8px 16px', border: '1.5px solid #C3DED9',
-                      borderRadius: 50, backgroundColor: '#fff', transition: 'all 0.2s',
-                    }}
-                    onMouseEnter={e => {
-                      (e.currentTarget as HTMLElement).style.backgroundColor = '#09344e'
-                      ;(e.currentTarget as HTMLElement).style.color = '#fff'
-                      ;(e.currentTarget as HTMLElement).style.borderColor = '#09344e'
-                    }}
-                    onMouseLeave={e => {
-                      (e.currentTarget as HTMLElement).style.backgroundColor = '#fff'
-                      ;(e.currentTarget as HTMLElement).style.color = '#09344e'
-                      ;(e.currentTarget as HTMLElement).style.borderColor = '#C3DED9'
-                    }}
-                  >
-                    {s.name}
-                  </a>
-                ))}
-              </div>
-            </div>
-          </motion.div>
         </div>
       </section>
 
+      {/* ════════════════════════════════════════════════════════════════
+          DONACIÓN + REDES — igual que Colabora
+      ════════════════════════════════════════════════════════════════ */}
+      <SectionDonacion bg="#09344e" theme="dark" waveColor="#ffffff" showWave />
+      <SectionRedes    bg="#F7F6F3" theme="light" />
+
       <style suppressHydrationWarning>{`
         @media (max-width: 900px) {
-          .hero-grid  { grid-template-columns: 1fr !important; }
-          .hero-grid > div:last-child { display: none; }
-          .news-grid  { grid-template-columns: repeat(2, 1fr) !important; }
-          .follow-grid { grid-template-columns: 1fr !important; }
+          .news-grid { grid-template-columns: repeat(2, 1fr) !important; }
         }
         @media (max-width: 560px) {
           .news-grid { grid-template-columns: 1fr !important; }

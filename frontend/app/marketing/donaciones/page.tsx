@@ -1,10 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
+import HeroIceo from '@/components/sections/HeroIceo'
+import SectionRedes from '@/components/sections/SectionRedes'
+import SectionDonacion from '@/components/sections/SectionDonacion'
 
-//TYPES
+
+// ─── TYPES ────────────────────────────────────────────────────────────────────
 type DonationForm = {
   importe: string
   nombre: string
@@ -37,7 +41,7 @@ function Icon({
   )
 }
 
-//CONSTS
+// ─── CONSTS ───────────────────────────────────────────────────────────────────
 const TAGS = [
   { label: 'Alojamiento', icon: '/icons/icon_bed.svg'       },
   { label: 'Transporte',  icon: '/icons/icon_transport.svg' },
@@ -86,18 +90,12 @@ const FAQS = [
   },
 ]
 
-const SOCIAL = [
-  { src: '/icons/icon_instagram.svg', href: 'https://instagram.com/somosawaq',        label: 'Instagram' },
-  { src: '/icons/icon_facebook.svg',  href: 'https://facebook.com/somosawaq',         label: 'Facebook'  },
-  { src: '/icons/icon_linkedin.svg',  href: 'https://linkedin.com/company/somosawaq', label: 'LinkedIn'  },
-]
-
 const INITIAL: DonationForm = {
   importe: '', nombre: '', email: '',
   aceptaPrivacidad: false, aceptaComunicaciones: false,
 }
 
-//FadeIn
+// ─── FadeIn ───────────────────────────────────────────────────────────────────
 function FadeIn({
   children,
   delay = 0,
@@ -119,13 +117,20 @@ function FadeIn({
   )
 }
 
-//MAIN
+// ─── MAIN ─────────────────────────────────────────────────────────────────────
 export default function DonacionesPage() {
   const [form, setForm]             = useState<DonationForm>(INITIAL)
   const [errors, setErrors]         = useState<Record<string, string>>({})
   const [faqOpen, setFaqOpen]       = useState<number | null>(null)
   const [submitted, setSubmitted]   = useState(false)
   const [submitting, setSubmitting] = useState(false)
+
+  // Ref para scroll al formulario
+  const formRef = useRef<HTMLDivElement>(null)
+
+  const scrollToForm = () => {
+    formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
 
   const set = (k: keyof DonationForm, v: string | boolean) => {
     setForm(p => ({ ...p, [k]: v }))
@@ -154,53 +159,80 @@ export default function DonacionesPage() {
     <div style={{ backgroundColor: '#fff', minHeight: '100vh' }}>
 
       {/* ════════════════════════════════════════════════════════════════════
-          HERO
+          1. HERO — componente unificado
+          El botón DONAR hace scroll suave al formulario
       ════════════════════════════════════════════════════════════════════ */}
-      <section style={{ paddingTop: 100, backgroundColor: '#fff' }}>
-        <div
-          className="container-brand"
-          style={{ padding: '48px 48px 0' }}
-        >
+      <HeroIceo
+        badge="AWAQ ONGD · 3ICEO LATAM"
+        title={<>Donaciones</>}
+        description={
+          <>
+            Las donaciones se destinan íntegramente a cubrir la logística de
+            organizaciones ambientales sin recursos para que puedan participar en el 3ICEO.
+          </>
+        }
+        /* CTA principal → scroll al form */
+        cta={{
+          label: 'DONAR',
+          href:  '#form-donacion',
+          icon:  '/icons/icon_paypal.svg',
+          onClick: (e: React.MouseEvent) => {
+            e.preventDefault()
+            scrollToForm()
+          },
+        }}
+        image="/icons/donaciones_abrazo_azul.svg"
+        imageAlt="Ilustración de donaciones"
+        imageLabel="3° ICEO · Donaciones"
+        waveVariant="default"
+        imageScale={1.2}
+        waveColor="#fff"
+      />
+
+      {/* ════════════════════════════════════════════════════════════════════
+          2. DESCRIPCIÓN + FORMULARIO DE DONACIÓN
+          Los tags de destino (Alojamiento / Transporte / Dieta) viven aquí,
+          justo antes de los stats, como respuesta visual a "¿a qué va tu dinero?"
+      ════════════════════════════════════════════════════════════════════ */}
+      <section id="form-donacion" style={{ padding: '72px 0 80px', backgroundColor: '#fff' }}>
+        <div className="container-brand" style={{ padding: '0 48px' }}>
           <div
-            className="donaciones-hero-grid"
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr auto',
-              gap: 64,
-              alignItems: 'center',
-            }}
+            className="donaciones-form-grid"
+            style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 64, alignItems: 'flex-start' }}
           >
-            {/* ── LEFT ─────────────────────────────────────────────────── */}
+            {/* ── LEFT — descripción + tags de destino + stats ─────────── */}
             <FadeIn>
-              {/* Eyebrow */}
-              <p style={{
-                fontFamily: 'Poppins, sans-serif',
-                fontSize: 12, fontWeight: 600, letterSpacing: '0.14em',
-                color: '#097589', textTransform: 'uppercase', marginBottom: 14,
+              <h2 style={{
+                fontFamily: 'Gloock, Georgia, serif', fontSize: 'clamp(22px, 2.8vw, 32px)',
+                fontWeight: 400, color: '#09344e', marginBottom: 16, lineHeight: 1.2,
               }}>
-                AWAQ ONGD · 3ICEO LATAM
+                Por qué tu aportación importa
+              </h2>
+              <p style={{
+                fontFamily: 'Poppins, sans-serif', fontSize: 15,
+                color: '#5A6E77', lineHeight: 1.8, marginBottom: 16,
+              }}>
+                Tu aporte permitirá que organizaciones ambientales que no cuentan con recursos puedan
+                asistir al 3º ICEO y formar parte de un espacio de aprendizaje, conexión y colaboración único.
+              </p>
+              <p style={{
+                fontFamily: 'Poppins, sans-serif', fontSize: 15,
+                color: '#5A6E77', lineHeight: 1.8, marginBottom: 24,
+              }}>
+                Con tu apoyo contribuimos a cubrir la logística necesaria para su participación,
+                asegurando que tengan acceso a talleres, networking, exposiciones y todas las experiencias
+                que el congreso ofrece.
               </p>
 
-              {/* Title */}
-              <h1 style={{
-                fontFamily: 'Gloock, Georgia, serif',
-                fontSize: 'clamp(44px, 5.5vw, 72px)', fontWeight: 400,
-                color: '#09344e', marginBottom: 22, lineHeight: 1.04,
-              }}>
-                Donaciones
-              </h1>
-
-              {/* Description */}
+              {/* ── Tags: a qué se destina la donación ────────────────── */}
               <p style={{
-                fontFamily: 'Poppins, sans-serif', fontSize: 16,
-                color: '#12303E', lineHeight: 1.65, marginBottom: 28, maxWidth: 480,
+                fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 700,
+                letterSpacing: '0.12em', textTransform: 'uppercase',
+                color: '#097589', marginBottom: 10,
               }}>
-                Las donaciones se destinan íntegramente a cubrir la logística de
-                organizaciones ambientales sin recursos para que puedan participar en el 3ICEO.
+                Tu donación cubre
               </p>
-
-              {/* Tags — icon + label, sin emojis */}
-              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 36 }}>
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 32 }}>
                 {TAGS.map(tag => (
                   <span
                     key={tag.label}
@@ -219,106 +251,11 @@ export default function DonacionesPage() {
                 ))}
               </div>
 
-              {/* CTA — botón DONAR con icon_paypal */}
-              <button
-                onClick={handleDonar}
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 10,
-                  backgroundColor: '#B53077', color: '#fff', border: 'none',
-                  borderRadius: 50, padding: '14px 32px',
-                  fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700,
-                  cursor: 'pointer', letterSpacing: '0.06em',
-                  boxShadow: '0 4px 16px rgba(181,48,119,0.3)',
-                  transition: 'background-color 0.2s, transform 0.15s',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.backgroundColor = '#802254'
-                  e.currentTarget.style.transform = 'translateY(-1px)'
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.backgroundColor = '#B53077'
-                  e.currentTarget.style.transform = 'translateY(0)'
-                }}
-              >
-                DONAR
-                <Icon
-                  src="/icons/icon_paypal.svg"
-                  size={20}
-                />
-              </button>
-            </FadeIn>
-
-            {/* ── RIGHT — ilustración donaciones_abrazo_azul ───────────── */}
-            <FadeIn delay={0.12}>
-              <div style={{ position: 'relative', flexShrink: 0 }}>
-                {/* Decorative bg blob */}
-                <div style={{
-                  position: 'absolute', inset: -18,
-                  background: 'linear-gradient(135deg, #DAEBF2 0%, #AEE5DA 60%, #C0FFF2 100%)',
-                  borderRadius: 24, opacity: 0.55, zIndex: 0,
-                  filter: 'blur(2px)',
-                }} />
-                <div style={{
-                  position: 'relative', zIndex: 1,
-                  borderRadius: 18,
-                  overflow: 'hidden',
-                  boxShadow: '4px 4px 32px rgba(9,52,78,0.14)',
-                  background: 'linear-gradient(135deg, #DAEBF2 0%, #AEE5DA 100%)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  width: 372, height: 213,
-                }}>
-                  <Icon
-                    src="/icons/donaciones_abrazo_azul.svg"
-                    size={372}
-                    style={{ width: 372, height: 213, objectFit: 'cover' }}
-                    alt="Ilustración de donaciones"
-                  />
-                </div>
-              </div>
-            </FadeIn>
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════════════════════════════════
-          DESCRIPCIÓN + FORMULARIO DE DONACIÓN
-      ════════════════════════════════════════════════════════════════════ */}
-      <section style={{ padding: '72px 0 80px', backgroundColor: '#fff' }}>
-        <div className="container-brand" style={{ padding: '0 48px' }}>
-          <div
-            className="donaciones-form-grid"
-            style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 64, alignItems: 'flex-start' }}
-          >
-            {/* ── LEFT — descripción larga ─────────────────────────────── */}
-            <FadeIn>
-              <h2 style={{
-                fontFamily: 'Gloock, Georgia, serif', fontSize: 'clamp(22px, 2.8vw, 32px)',
-                fontWeight: 400, color: '#09344e', marginBottom: 20, lineHeight: 1.2,
-              }}>
-                Por qué tu aportación importa
-              </h2>
-              <p style={{
-                fontFamily: 'Poppins, sans-serif', fontSize: 15,
-                color: '#5A6E77', lineHeight: 1.8, marginBottom: 20,
-              }}>
-                Tu aporte permitirá que organizaciones ambientales que no cuentan con recursos puedan
-                asistir al 3º ICEO y formar parte de un espacio de aprendizaje, conexión y colaboración único.
-              </p>
-              <p style={{
-                fontFamily: 'Poppins, sans-serif', fontSize: 15,
-                color: '#5A6E77', lineHeight: 1.8, marginBottom: 28,
-              }}>
-                Con tu apoyo contribuimos a cubrir la logística necesaria para su participación,
-                asegurando que tengan acceso a talleres, networking, exposiciones y todas las experiencias
-                que el congreso ofrece.
-              </p>
-
-              {/* Bloque de impacto — stats visuales */}
+              {/* ── Stats ─────────────────────────────────────────────── */}
               <div style={{
                 display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 1,
                 borderRadius: 14, overflow: 'hidden',
                 border: '1.5px solid #C3DED9',
-                marginTop: 8,
               }}>
                 {[
                   { num: '100%', desc: 'va a logística de organizaciones sin recursos' },
@@ -354,8 +291,11 @@ export default function DonacionesPage() {
               </div>
             </FadeIn>
 
-            {/* ── RIGHT — caja de donación (navy) ─────────────────────── */}
+            {/* ── RIGHT — formulario (navy) ─────────────────────────────── */}
             <FadeIn delay={0.1}>
+              {/* Anchor invisible para que el scroll llegue aquí */}
+              <div ref={formRef} style={{ scrollMarginTop: 40 }} />
+
               <AnimatePresence mode="wait">
                 {!submitted ? (
                   <motion.div
@@ -525,7 +465,6 @@ export default function DonacionesPage() {
                       )}
                     </button>
 
-                    {/* Seguridad */}
                     <p style={{
                       fontFamily: 'Poppins, sans-serif', fontSize: 10,
                       color: 'rgba(255,255,255,0.4)', textAlign: 'center', lineHeight: 1.6,
@@ -590,7 +529,7 @@ export default function DonacionesPage() {
       </section>
 
       {/* ════════════════════════════════════════════════════════════════════
-          CON NUESTRA UNIÓN, HACEMOS POSIBLE — 4 tarjetas de impacto
+          3. CON NUESTRA UNIÓN, HACEMOS POSIBLE — 4 tarjetas de impacto
       ════════════════════════════════════════════════════════════════════ */}
       <section style={{ padding: '80px 0', backgroundColor: '#F5FBFA' }}>
         <div className="container-brand" style={{ padding: '0 48px' }}>
@@ -606,9 +545,7 @@ export default function DonacionesPage() {
 
           <div
             className="impactos-grid"
-            style={{
-              display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24,
-            }}
+            style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24 }}
           >
             {IMPACTOS.map((imp, i) => (
               <FadeIn key={i} delay={i * 0.08}>
@@ -619,7 +556,6 @@ export default function DonacionesPage() {
                     transition: 'transform 0.25s, box-shadow 0.25s',
                     cursor: 'default',
                     position: 'relative',
-                    /* altura fija igual para todas */
                     height: 300,
                   }}
                   onMouseEnter={e => {
@@ -631,7 +567,6 @@ export default function DonacionesPage() {
                     e.currentTarget.style.boxShadow = '2px 4px 20px rgba(9,52,78,0.18)'
                   }}
                 >
-                  {/* Imagen — ocupa todo el card */}
                   <img
                     src={imp.image}
                     alt={imp.label}
@@ -642,7 +577,6 @@ export default function DonacionesPage() {
                       display: 'block',
                     }}
                   />
-                  {/* Overlay degradado desde abajo */}
                   <div style={{
                     position: 'absolute', inset: 0,
                     background: `linear-gradient(to top, ${
@@ -653,7 +587,6 @@ export default function DonacionesPage() {
                       ][i]
                     })`,
                   }} />
-                  {/* Label — fijo en la parte inferior */}
                   <div style={{
                     position: 'absolute', bottom: 0, left: 0, right: 0,
                     padding: '20px 20px 22px',
@@ -674,12 +607,11 @@ export default function DonacionesPage() {
       </section>
 
       {/* ════════════════════════════════════════════════════════════════════
-          FAQ — con icon_questionmark_selected / no_selected
+          4. FAQ
       ════════════════════════════════════════════════════════════════════ */}
       <section style={{ padding: '80px 0', backgroundColor: '#fff' }}>
         <div className="container-brand" style={{ padding: '0 48px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'flex-start' }}>
-            {/* Left — headline */}
             <FadeIn>
               <p style={{
                 fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 600,
@@ -702,8 +634,6 @@ export default function DonacionesPage() {
                 Queremos que tu proceso de donación sea completamente transparente y seguro.
                 Aquí resolvemos las dudas más comunes.
               </p>
-
-              {/* drop_hands decorativo */}
               <div style={{ marginTop: 36 }}>
                 <Icon
                   src="/icons/drop_hands.svg"
@@ -714,7 +644,6 @@ export default function DonacionesPage() {
               </div>
             </FadeIn>
 
-            {/* Right — accordeon */}
             <FadeIn delay={0.1}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
                 {FAQS.map((faq, i) => {
@@ -742,7 +671,6 @@ export default function DonacionesPage() {
                         }}>
                           {faq.q}
                         </span>
-                        {/* Icono alterna entre selected y no_selected */}
                         <Icon
                           src={open
                             ? '/icons/icon_questionmark_selcted.svg'
@@ -782,174 +710,41 @@ export default function DonacionesPage() {
       </section>
 
       {/* ════════════════════════════════════════════════════════════════════
-          REDES SOCIALES — follow.svg + iconos + drop_hands
+          5. CTA FINAL
       ════════════════════════════════════════════════════════════════════ */}
-      <section style={{ padding: '80px 0 90px', backgroundColor: '#09344e' }}>
-        <div className="container-brand" style={{ padding: '0 48px' }}>
-          <div
-            className="rrss-grid"
-            style={{
-              display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64,
-              alignItems: 'center',
-            }}
-          >
-            {/* Left — follow badge grande, sin texto redundante */}
-            <FadeIn>
-              <div style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                <Icon
-                  src="/icons/follow.svg"
-                  alt="Follow us on social media"
-                  style={{ width: '100%', maxWidth: 380, height: 'auto' }}
-                />
-              </div>
-            </FadeIn>
+            {/* ══ 5. DONACIÓN — unificado, con ola de entrada desde #E6F3EE ═════════ */}
+            <SectionDonacion
+              bg="#09344e"
+              theme="dark"
+              showTopWave={true}
+              topWaveFrom="#E6F3EE"
+              waveColor="#ffffff"
+              showWave={true}
+            />
 
-            {/* Right — texto + botones RRSS */}
-            <FadeIn delay={0.1}>
-              <h3 style={{
-                fontFamily: 'Poppins, sans-serif', fontSize: 22, fontWeight: 700,
-                color: '#fff', marginBottom: 12, lineHeight: 1.3,
-              }}>
-                ¡Pásate por nuestras Redes Sociales y síguenos!
-              </h3>
-              <p style={{
-                fontFamily: 'Poppins, sans-serif', fontSize: 14, color: 'rgba(255,255,255,0.65)',
-                lineHeight: 1.75, marginBottom: 32, maxWidth: 460,
-              }}>
-                Publicamos contenido acerca de la labor que hacemos. Podrás conocer
-                nuestros proyectos y a nosotros más a fondo.
-              </p>
 
-              {/* Social icon buttons con icon_instagram, icon_facebook, icon_linkedin */}
-              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                {SOCIAL.map(({ src, href, label }) => (
-                  <a
-                    key={label}
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={label}
-                    style={{
-                      width: 48, height: 48, borderRadius: '50%',
-                      backgroundColor: '#09344e',
-                      border: '1.5px solid rgba(255,255,255,0.2)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      transition: 'background .2s, transform .2s, border-color .2s',
-                    }}
-                    onMouseEnter={e => {
-                      const a = e.currentTarget as HTMLAnchorElement
-                      a.style.backgroundColor = '#097589'
-                      a.style.transform = 'scale(1.1)'
-                      a.style.borderColor = '#097589'
-                    }}
-                    onMouseLeave={e => {
-                      const a = e.currentTarget as HTMLAnchorElement
-                      a.style.backgroundColor = '#09344e'
-                      a.style.transform = 'scale(1)'
-                      a.style.borderColor = 'rgba(255,255,255,0.2)'
-                    }}
-                  >
-                    <img
-                      src={src}
-                      alt={label}
-                      width={22}
-                      height={22}
-                      style={{ filter: 'brightness(0) invert(1)', display: 'block' }}
-                    />
-                  </a>
-                ))}
-              </div>
-            </FadeIn>
-          </div>
-        </div>
-      </section>
+      {/* ══ 6. REDES SOCIALES — unificado ════════════════════════════════════ */}
+            <SectionRedes bg="#ffffff" theme="light" />
 
-      {/* ════════════════════════════════════════════════════════════════════
-          CTA FINAL — drop_hands + acción
-      ════════════════════════════════════════════════════════════════════ */}
-      <section style={{ padding: '80px 0', backgroundColor: '#F5FBFA' }}>
-        <div className="container-brand" style={{ padding: '0 48px' }}>
-          <div style={{
-            display: 'grid', gridTemplateColumns: '1fr 220px', gap: 48,
-            alignItems: 'center',
-            backgroundColor: '#fff', borderRadius: 20,
-            overflow: 'hidden',
-            boxShadow: '2px 2px 24px rgba(9,52,78,0.1)',
-          }}>
-            {/* Text */}
-            <div style={{ padding: '44px 44px 44px 0', paddingLeft: 44 }}>
-              <h3 style={{
-                fontFamily: 'Gloock, Georgia, serif', fontSize: 'clamp(20px, 2.2vw, 28px)',
-                fontWeight: 400, color: '#09344e', marginBottom: 14, lineHeight: 1.2,
-              }}>
-                ¡Gracias a tu donación, nadie se queda fuera!
-              </h3>
-              <p style={{
-                fontFamily: 'Poppins, sans-serif', fontSize: 14,
-                color: '#437287', marginBottom: 28, lineHeight: 1.75,
-              }}>
-                El importe irá íntegramente destinado a cubrir alojamiento, transporte y dieta.
-              </p>
-              <button
-                onClick={handleDonar}
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 10,
-                  backgroundColor: '#B53077', color: '#fff', border: 'none',
-                  borderRadius: 50, padding: '13px 28px',
-                  fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700,
-                  cursor: 'pointer', letterSpacing: '0.05em',
-                  boxShadow: '0 4px 16px rgba(181,48,119,0.28)',
-                  transition: 'background-color 0.2s, transform 0.15s',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.backgroundColor = '#802254'
-                  e.currentTarget.style.transform = 'translateY(-1px)'
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.backgroundColor = '#B53077'
-                  e.currentTarget.style.transform = 'translateY(0)'
-                }}
-              >
-                DONAR AHORA
-                <Icon src="/icons/icon_paypal.svg" size={18} />
-              </button>
-            </div>
-
-            {/* drop_hands imagen */}
-            <div style={{
-              height: '100%', minHeight: 200,
-              background: 'linear-gradient(135deg, #AEE5DA 0%, #74B4A7 50%, #097589 100%)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              padding: 24,
-            }}>
-              <Icon
-                src="/icons/drop_hands.svg"
-                alt="Manos de apoyo"
-                style={{ width: 100, height: 'auto', opacity: 0.9 }}
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ────────────────────────────────────────────────────────────────────
-          RESPONSIVE overrides
-      ──────────────────────────────────────────────────────────────────── */}
+      {/* ─── RESPONSIVE ──────────────────────────────────────────────────── */}
       <style suppressHydrationWarning>{`
         @keyframes spin { to { transform: rotate(360deg); } }
-
+        .spinner {
+          display: inline-block;
+          width: 18px; height: 18px;
+          border: 2px solid rgba(255,255,255,0.3);
+          border-top-color: #fff;
+          border-radius: 50%;
+          animation: spin 0.7s linear infinite;
+        }
         @media (max-width: 1100px) {
-          .impactos-grid   { grid-template-columns: repeat(2, 1fr) !important; }
+          .impactos-grid { grid-template-columns: repeat(2, 1fr) !important; }
         }
         @media (max-width: 900px) {
-          .donaciones-hero-grid  { grid-template-columns: 1fr !important; }
-          .donaciones-form-grid  { grid-template-columns: 1fr !important; }
-          .rrss-grid             { grid-template-columns: 1fr !important; }
+          .donaciones-form-grid { grid-template-columns: 1fr !important; }
         }
         @media (max-width: 640px) {
-          .impactos-grid   { grid-template-columns: 1fr !important; }
+          .impactos-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </div>

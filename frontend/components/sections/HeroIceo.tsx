@@ -11,8 +11,8 @@
  *  │ title        │ JSX del h1 — permite spans de color                  │
  *  │ description  │ H2 descriptivo — acepta JSX con <br /> para corte    │
  *  │              │ exacto según especificaciones del Excel de copy       │
- *  │ cta          │ { label, href, target? } — botón principal           │
- *  │ ctaSecondary │ { label, href, target? } — botón secundario opcional │
+ *  │ cta          │ { label, href, target?, icon?, onClick? }            │
+ *  │ ctaSecondary │ { label, href, target?, icon?, onClick? } — opcional │
  *  │ image        │ src de la imagen/SVG derecha                         │
  *  │ imageAlt     │ alt de la imagen                                     │
  *  │ imageLabel   │ Texto del chip flotante sobre la imagen              │
@@ -52,6 +52,10 @@ interface CtaProps {
   label: string
   href: string
   target?: '_blank' | '_self'
+  /** Ruta del icono (SVG o imagen) que se muestra a la izquierda del label */
+  icon?: string
+  /** Handler opcional — útil para scroll suave, analytics, etc. */
+  onClick?: (e: React.MouseEvent) => void
 }
 
 export interface HeroIceoProps {
@@ -229,24 +233,44 @@ export default function HeroIceo({
 
               {/* CTAs */}
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+                {/* ── CTA Principal ── */}
                 <Link
                   href={cta.href}
                   target={cta.target}
+                  onClick={cta.onClick}
                   style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: '#09344e', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, padding: '13px 30px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.05em', textTransform: 'uppercase', boxShadow: '0 4px 22px rgba(9,52,78,0.38)', transition: 'background-color 0.2s, transform 0.15s' }}
                   onMouseEnter={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.backgroundColor = '#1C495C'; el.style.transform = 'translateY(-1px)' }}
                   onMouseLeave={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.backgroundColor = '#09344e'; el.style.transform = 'translateY(0)' }}
                 >
+                  {cta.icon && (
+                    <img
+                      src={cta.icon}
+                      alt=""
+                      aria-hidden="true"
+                      style={{ width: 18, height: 18, objectFit: 'contain', flexShrink: 0 }}
+                    />
+                  )}
                   {cta.label}
                 </Link>
 
+                {/* ── CTA Secundario ── */}
                 {ctaSecondary && (
                   <Link
                     href={ctaSecondary.href}
                     target={ctaSecondary.target}
+                    onClick={ctaSecondary.onClick}
                     style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: 'rgba(9,52,78,0.10)', color: '#09344e', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600, padding: '12px 28px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.05em', textTransform: 'uppercase', border: '1.5px solid rgba(9,52,78,0.25)', transition: 'background-color 0.2s' }}
                     onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = 'rgba(9,52,78,0.18)')}
                     onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = 'rgba(9,52,78,0.10)')}
                   >
+                    {ctaSecondary.icon && (
+                      <img
+                        src={ctaSecondary.icon}
+                        alt=""
+                        aria-hidden="true"
+                        style={{ width: 18, height: 18, objectFit: 'contain', flexShrink: 0 }}
+                      />
+                    )}
                     {ctaSecondary.label}
                   </Link>
                 )}
