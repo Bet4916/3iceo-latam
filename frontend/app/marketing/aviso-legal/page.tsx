@@ -1,6 +1,7 @@
 // frontend/app/marketing/aviso-legal/page.tsx
 import HeroIceo from '@/components/sections/HeroIceo'
 import SectionDonacion from '@/components/sections/SectionDonacion'
+import SectionRedes from '@/components/sections/SectionRedes'
 
 const SECTIONS = [
   {
@@ -71,7 +72,11 @@ export default function AvisoLegalPage() {
         </div>
       </section>
 
-      <SectionDonacion bg="#09344e" theme="dark" showTopWave topWaveFrom="#ffffff" waveColor="#ffffff" showWave />
+      {/* ══ 4. DONACIÓN ═══════════════════════════════════════════════════════ */}
+            <SectionDonacion bg="#09344e" theme="dark" showTopWave={true} topWaveFrom="#ffffff" waveColor="#ffffff" showWave={true} />
+            
+            {/* ══ 5. REDES ══════════════════════════════════════════════════════════ */}
+           <SectionRedes bg="#ffffff" theme="light" />
     </div>
   )
 }

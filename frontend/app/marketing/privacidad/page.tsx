@@ -1,6 +1,7 @@
 // frontend/app/marketing/privacidad/page.tsx
 import HeroIceo from '@/components/sections/HeroIceo'
 import SectionDonacion from '@/components/sections/SectionDonacion'
+import SectionRedes from '@/components/sections/SectionRedes'
 
 const SECTIONS = [
   {
@@ -103,6 +104,9 @@ export default function PrivacidadPage() {
       </section>
 
       <SectionDonacion bg="#09344e" theme="dark" showTopWave topWaveFrom="#ffffff" waveColor="#ffffff" showWave />
+      
+      <SectionRedes bg="#ffffff" theme="light" />
+      
     </div>
   )
 }

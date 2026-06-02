@@ -532,7 +532,7 @@ export default function HomePage() {
               </p>
               <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
                 <Link href="/marketing/marketplace" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: '#B53077', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700, padding: '13px 30px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em', boxShadow: '0 4px 20px rgba(181,48,119,0.45)' }}>Explorar el Marketplace →</Link>
-                <Link href="/marketing/registro" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '2px solid rgba(255,255,255,0.45)', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 600, padding: '13px 26px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em' }}>Reserva tu stand</Link>
+                <Link href="/marketing/registro?tipo=asistencia&stand=true" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '2px solid rgba(255,255,255,0.45)', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 600, padding: '13px 26px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em' }}>Reserva tu stand</Link>
               </div>
             </FadeIn>
             <FadeIn delay={0.15}>

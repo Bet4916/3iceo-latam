@@ -1,6 +1,7 @@
 // frontend/app/marketing/cookies/page.tsx
 import HeroIceo from '@/components/sections/HeroIceo'
 import SectionDonacion from '@/components/sections/SectionDonacion'
+import SectionRedes from '@/components/sections/SectionRedes'
 
 const COOKIES_TABLE = [
   { nombre: 'cf_clearance', tipo: 'Propia', duracion: '1 año', finalidad: 'Seguridad y verificación de navegador.' },
@@ -135,7 +136,11 @@ export default function CookiesPage() {
         </div>
       </section>
 
-      <SectionDonacion bg="#09344e" theme="dark" showTopWave topWaveFrom="#ffffff" waveColor="#ffffff" showWave />
+      {/* ══ 4. DONACIÓN ═══════════════════════════════════════════════════════ */}
+            <SectionDonacion bg="#09344e" theme="dark" showTopWave={true} topWaveFrom="#ffffff" waveColor="#ffffff" showWave={true} />
+            
+      {/* ══ 5. REDES ══════════════════════════════════════════════════════════ */}
+      <SectionRedes bg="#ffffff" theme="light" />
     </div>
   )
 }

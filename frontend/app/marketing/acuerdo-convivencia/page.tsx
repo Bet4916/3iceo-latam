@@ -1,6 +1,7 @@
 // frontend/app/marketing/acuerdo-convivencia/page.tsx
 import HeroIceo from '@/components/sections/HeroIceo'
 import SectionDonacion from '@/components/sections/SectionDonacion'
+import SectionRedes from '@/components/sections/SectionRedes'
 
 const PRINCIPIOS = [
   { title: 'Respeto mutuo', desc: 'El fomentar el respeto mutuo entre los participantes y el personal de operaciones de AWAQ ONGD es el pilar fundamental para el desarrollo del congreso. Quienes se dirigirán hacia todos los participantes, ponentes y organizadores con respeto y consideración, independientemente de su cargo, origen étnico, género, orientación sexual, edad o afiliación institucional.' },
@@ -24,7 +25,7 @@ export default function AcuerdoConvivenciaPage() {
         title={<>Acuerdo de <span style={{ color: '#ffffff' }}>Convivencia</span></>}
         description={<>Principios que garantizan un ambiente respetuoso,<br />colaborativo y productivo en el congreso</>}
         cta={{ label: 'VER AGENDA →', href: '/marketing/agenda' }}
-        image="/icons/panelistas.svg"
+        image="/icons/lineas_tematicas.svg"
         imageAlt="Acuerdo de convivencia"
         imageScale={1.30}
         waveVariant="default"
@@ -79,7 +80,11 @@ export default function AcuerdoConvivenciaPage() {
         </div>
       </section>
 
-      <SectionDonacion bg="#09344e" theme="dark" showTopWave topWaveFrom="#ffffff" waveColor="#ffffff" showWave />
+      {/* ══ 4. DONACIÓN ═══════════════════════════════════════════════════════ */}
+      <SectionDonacion bg="#09344e" theme="dark" showTopWave={true} topWaveFrom="#ffffff" waveColor="#ffffff" showWave={true} />
+      
+      {/* ══ 5. REDES ══════════════════════════════════════════════════════════ */}
+     <SectionRedes bg="#ffffff" theme="light" />
     </div>
   )
 }

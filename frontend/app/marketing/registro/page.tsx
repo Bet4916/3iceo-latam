@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Country, State, City } from 'country-state-city'
 import { CountrySelect, PhoneCodeSelect } from '@/components/ui/CountrySelect'
+
 
 type Step = 1 | 2 | 3
 type TipoSolicitud = 'asistencia' | 'ponente' | 'colaboracion'
@@ -94,6 +95,17 @@ function LocationIcon({ size = 14 }: { size?: number }) {
 }
 
 export default function RegistroPage() {
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search)
+  const tipo = params.get('tipo') as TipoSolicitud | null
+  const stand = params.get('stand') === 'true'
+  if (tipo && ['asistencia', 'ponente', 'colaboracion'].includes(tipo)) {
+    setForm(p => ({ ...p, tipoSolicitud: tipo, quiereStand: stand && tipo === 'asistencia' }))
+    setStep(2) // salta directo al Step 2 con todo pre-cargado
+    scrollToForm()
+  }
+}, [])
+
   const [step, setStep]             = useState<Step>(1)
   const [errors, setErrors]         = useState<Record<string, string>>({})
   const [submitting, setSubmitting] = useState(false)

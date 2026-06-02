@@ -1,29 +1,29 @@
 'use client'
 
-// frontend/components/layout/Footer.tsx
-// CAMBIOS vs versión anterior:
-//  1. Validación real con errores en rojo (email vacío, email inválido, mensaje vacío)
-//  2. Envío real a /api/contact → Salesforce
-//  3. Links de políticas apuntan a sus páginas reales
-
 import { useState } from 'react'
 import Link from 'next/link'
 
-// ─── WAVES (exactas del Figma — no tocar) ─────────────────────────────────────
+// ─── WAVES ────────────────────────────────────────────────────────────────────
 function FooterWaves() {
   return (
-    <div style={{ position: 'relative', overflow: 'hidden', lineHeight: 0 }}>
+    <div style={{ lineHeight: 0, display: 'block', marginBottom: -4, overflow: 'hidden' }}>
       <svg
+        width="100%"
+        height="100"
         viewBox="0 0 1440 109"
         preserveAspectRatio="none"
-        style={{ width: '100%', height: 109, display: 'block' }}
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        style={{ display: 'block' }}
       >
-        {/* Ola trasera — azul claro */}
         <path
-          d="M1440 109V32.0755C1440 32.0755 1399 4 1358 32.0755C1317 60.1509 1234.5 20 1157.5 20C1080.5 20 979 55.1435 935 32.0755C891 8.98955 854 0 808 0C762 0 714.5 32.0755 672 32.0755C629.5 32.0755 609 7.00745 566 7.00745C523 7.00745 491.5 46.4275 459 46.4275C426.5 46.4275 420 20.8708 368.5 20.8708C317 20.8708 290.5 46.4275 257 46.4275C223.5 46.4275 170.5 20.8708 111.839 46.4275C98.5 47.7336 18 55.6161 0 7.00745V77.0755H1440Z"
+          d="M1440 61.7474V7.44475C1440 7.44475 1362.5 -1.7517 1311 38.0995C1259.5 77.9507 1202 46.5919 1162.5 21.4586C1123 -3.6747 1093.5 45.8108 1016 46.6867C938.5 47.5625 930 46.6867 869 11.8237C808 -23.0392 810 72.7911 735 42.3074C660 11.8237 593 60.8715 558 31.9685C523 3.0655 472.263 37.5519 429.5 35.0341C391.665 32.8064 386 6.56911 338 6.5689C290 6.56869 253.117 21.4581 212 21.4581C170.883 21.4581 161.183 7.24925 123.5 14.0136C96.8775 18.7925 87.6238 33.884 58.5 32.4067C32.5033 31.088 0 0 0 0V61.7474H1440Z"
+          fill="#ADC6D9"
+        />
+        <path
+          d="M1440 77.0755V7.00745C1440 7.00745 1374 39.4131 1316 37.6614C1258 35.9097 1242.5 3.50233 1201.5 33.2821C1160.5 63.0619 1114.5 62.6231 1114.5 62.6231C1114.5 62.6231 1029.5 58.6818 982 28.4649C934.5 -1.75191 838.5 49.9224 778.5 52.5508C718.5 55.1792 713.5 37.2243 692.5 39.851C671.5 42.4777 671.5 55.1792 651.5 52.5508C631.5 49.9224 632.5 27.1511 607 27.1511C581.5 27.1511 573.5 49.9224 542.5 63.4989C511.5 77.0755 457 24.5236 419 24.5236C381 24.5236 349 59.1197 325 63.4989C301 67.8782 280.5 18.5419 225.5 19.7064C170.5 20.8708 111.839 46.4275 98.5 47.7336C18 55.6161 0 7.00745 0 7.00745V77.0755H1440Z"
           fill="#4886B5"
         />
-        {/* Ola delantera — navy footer */}
         <path
           d="M1440 109V67.2624C1440 67.2624 1298.5 39.242 1261.5 67.2624C1224.5 95.2829 1134.7 53.4115 1051.5 54.1315C973.136 54.8097 848 70.1321 848 70.1321C822 70.1321 815 51.8707 779 52.3937C743 52.9166 733.5 70.1321 696 72.5243C658.5 74.9165 643.5 51.3502 628 52.3937C612.5 53.4371 586 65.0655 570 59.9585C554 54.8514 485.654 37.829 423.5 59.9585C389.5 62.8281 369.5 18.6595 328.5 48.8763C287.5 79.0932 283 70.3347 227.5 52.3797C172 34.4248 149 75.1518 103 45.0894C57 15.0269 0 67.2624 0 67.2624V109H1440Z"
           fill="#09354E"
@@ -33,8 +33,8 @@ function FooterWaves() {
   )
 }
 
-// ─── ESTILOS REUTILIZABLES (tokens oficiales) ─────────────────────────────────
-const inputBase: React.CSSProperties = {
+// ─── INPUTS DARK ─────────────────────────────────────────────────────────────
+const inputDarkStyle: React.CSSProperties = {
   width: '100%',
   display: 'block',
   boxSizing: 'border-box',
@@ -49,58 +49,27 @@ const inputBase: React.CSSProperties = {
   transition: 'border-color 0.2s',
 }
 
-const lblStyle: React.CSSProperties = {
-  fontFamily: 'Poppins, sans-serif',
-  fontSize: 14,
-  fontWeight: 500,
-  color: 'rgba(255,255,255,0.7)',
-  display: 'block',
-  marginBottom: 8,
-}
-
-const colTitleStyle: React.CSSProperties = {
-  fontFamily: 'Poppins, sans-serif',
-  fontSize: 20,
-  fontWeight: 600,
-  color: '#A3D7FF',
-  marginBottom: 10,
-}
-
-const colLinkStyle: React.CSSProperties = {
-  fontFamily: 'Poppins, sans-serif',
-  fontSize: 15,
-  fontWeight: 400,
-  color: 'rgba(255,255,255,0.6)',
-  textDecoration: 'none',
-  transition: 'color .2s',
-}
-
-// ─── FOOTER ───────────────────────────────────────────────────────────────────
+// ─── FOOTER COMPONENT ─────────────────────────────────────────────────────────
 export default function Footer() {
   const [email,   setEmail]   = useState('')
   const [mensaje, setMensaje] = useState('')
   const [sent,    setSent]    = useState(false)
   const [sending, setSending] = useState(false)
+  // ── NUEVO: errores por campo ──────────────────────────────────────────────
+  const [errors, setErrors]   = useState<{ email?: string; mensaje?: string }>({})
 
-  // Errores por campo — texto en rojo cuando falla validación
-  const [errors, setErrors] = useState<{ email?: string; mensaje?: string }>({})
-
-  const validate = () => {
+  // ── NUEVO: validación real + fetch a /api/contact ─────────────────────────
+  const handleSend = async () => {
     const e: { email?: string; mensaje?: string } = {}
     if (!email.trim()) {
       e.email = 'El email es requerido'
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       e.email = 'Introduce un email válido'
     }
-    if (!mensaje.trim()) {
-      e.mensaje = 'El mensaje es requerido'
-    }
+    if (!mensaje.trim()) e.mensaje = 'El mensaje es requerido'
     setErrors(e)
-    return Object.keys(e).length === 0
-  }
+    if (Object.keys(e).length > 0) return
 
-  const handleSend = async () => {
-    if (!validate()) return
     setSending(true)
     try {
       const res = await fetch('/api/contact', {
@@ -125,25 +94,11 @@ export default function Footer() {
     }
   }
 
-  // Helpers de estilo condicional
-  const inputStyle = (field: 'email' | 'mensaje'): React.CSSProperties => ({
-    ...inputBase,
-    borderColor: errors[field] ? '#F07070' : 'rgba(255,255,255,0.2)',
-  })
-
-  const errStyle: React.CSSProperties = {
-    fontFamily: 'Poppins, sans-serif',
-    fontSize: 12,
-    color: '#F07070',
-    marginTop: 4,
-    display: 'block',
-  }
-
   return (
     <footer>
       <FooterWaves />
 
-      {/* ── Cuerpo del footer ── */}
+      {/* ── Cuerpo del footer — sin separación con las waves ── */}
       <div style={{ backgroundColor: '#09354E', marginTop: 0 }}>
 
         {/* ── Contenido principal ── */}
@@ -175,12 +130,25 @@ export default function Footer() {
             />
           </div>
 
-          {/* Col 2 — Formulario ¡Escríbenos! */}
+          {/* Col 2 — ¡Escríbenos! */}
           <div>
-            <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 24, fontWeight: 600, color: '#A3D7FF', marginBottom: 10 }}>
+            <p style={{
+              fontFamily: 'Poppins, sans-serif',
+              fontSize: 24,
+              fontWeight: 600,
+              color: '#A3D7FF',
+              marginBottom: 10,
+            }}>
               ¡Escríbenos!
             </p>
-            <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 16, fontWeight: 400, color: 'rgba(255,255,255,0.65)', lineHeight: 1.6, marginBottom: 28 }}>
+            <p style={{
+              fontFamily: 'Poppins, sans-serif',
+              fontSize: 16,
+              fontWeight: 400,
+              color: 'rgba(255,255,255,0.65)',
+              lineHeight: 1.6,
+              marginBottom: 28,
+            }}>
               Pregúntanos tus dudas o haznos llegar tu feedback.
             </p>
 
@@ -190,38 +158,36 @@ export default function Footer() {
               </p>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-
-                {/* Campo email */}
                 <div>
                   <label style={lblStyle}>Tu e-mail *</label>
                   <input
                     type="email"
                     value={email}
-                    onChange={e => { setEmail(e.target.value); if (errors.email) setErrors(prev => ({ ...prev, email: undefined })) }}
+                    onChange={e => { setEmail(e.target.value); if (errors.email) setErrors(p => ({ ...p, email: undefined })) }}
                     placeholder="correo@electrónico.com"
-                    style={inputStyle('email')}
-                    onFocus={e => { if (!errors.email) (e.target as HTMLInputElement).style.borderColor = 'rgba(255,255,255,0.5)' }}
-                    onBlur={e => { if (!errors.email) (e.target as HTMLInputElement).style.borderColor = 'rgba(255,255,255,0.2)' }}
+                    style={{ ...inputDarkStyle, borderColor: errors.email ? '#F07070' : 'rgba(255,255,255,0.2)' }}
                   />
-                  {errors.email && <span style={errStyle}>{errors.email}</span>}
+                  {/* ── NUEVO: error en rojo ── */}
+                  {errors.email
+                    ? <span style={errStyle}>{errors.email}</span>
+                    : <span style={hintStyle}>Requerido</span>
+                  }
                 </div>
-
-                {/* Campo mensaje */}
                 <div>
                   <label style={lblStyle}>Mensaje *</label>
                   <textarea
                     value={mensaje}
-                    onChange={e => { setMensaje(e.target.value); if (errors.mensaje) setErrors(prev => ({ ...prev, mensaje: undefined })) }}
+                    onChange={e => { setMensaje(e.target.value); if (errors.mensaje) setErrors(p => ({ ...p, mensaje: undefined })) }}
                     placeholder="Click para empezar a escribir"
                     rows={5}
-                    style={{ ...inputStyle('mensaje'), resize: 'vertical' }}
-                    onFocus={e => { if (!errors.mensaje) (e.target as HTMLTextAreaElement).style.borderColor = 'rgba(255,255,255,0.5)' }}
-                    onBlur={e => { if (!errors.mensaje) (e.target as HTMLTextAreaElement).style.borderColor = errors.mensaje ? '#F07070' : 'rgba(255,255,255,0.2)' }}
+                    style={{ ...inputDarkStyle, resize: 'vertical', borderColor: errors.mensaje ? '#F07070' : 'rgba(255,255,255,0.2)' }}
                   />
-                  {errors.mensaje && <span style={errStyle}>{errors.mensaje}</span>}
+                  {/* ── NUEVO: error en rojo ── */}
+                  {errors.mensaje
+                    ? <span style={errStyle}>{errors.mensaje}</span>
+                    : <span style={hintStyle}>Requerido</span>
+                  }
                 </div>
-
-                {/* Botón enviar */}
                 <button
                   onClick={handleSend}
                   disabled={sending}
@@ -240,16 +206,20 @@ export default function Footer() {
                     opacity: sending ? 0.7 : 1,
                     transition: 'all 0.2s',
                   }}
-                  onMouseEnter={e => { if (!sending) (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(255,255,255,0.1)' }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent' }}
+                  onMouseEnter={e => {
+                    if (!sending) (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(255,255,255,0.1)'
+                  }}
+                  onMouseLeave={e => {
+                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent'
+                  }}
                 >
-                  {sending ? 'Enviando…' : 'ENVIAR MENSAJE'}
+                  {sending ? 'ENVIANDO...' : 'ENVIAR'}
                 </button>
               </div>
             )}
           </div>
 
-           {/* Col 3 — Contacto / Streaming / Redes */}
+          {/* Col 3 — Contacto / Streaming / Redes — INTACTO */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 36 }}>
             <div>
               <p style={colTitleStyle}>Contacto</p>
@@ -285,16 +255,20 @@ export default function Footer() {
         {/* ── Bottom bar ── */}
         <div style={{ borderTop: '1px solid rgba(255,255,255,0.12)', marginTop: 56 }}>
           <div className="container-brand" style={{ padding: '20px 48px 36px' }}>
-            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 16 }}>
+            <div style={{
+              display: 'flex', flexWrap: 'wrap',
+              justifyContent: 'space-between', alignItems: 'center', gap: 16,
+            }}>
               <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14, color: 'rgba(255,255,255,0.35)' }}>
-                © {new Date().getFullYear()} Awaq ONGD
+                © {new Date().getFullYear()} Awaq ONG
               </span>
+              {/* ── NUEVO: rutas reales en lugar de # ── */}
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'center' }}>
                 {[
-                  { label: 'Políticas de privacidad',  href: '/marketing/privacidad'          },
-                  { label: 'Políticas de Cookies',     href: '/marketing/cookies'             },
-                  { label: 'Aviso Legal',              href: '/marketing/aviso-legal'         },
-                  { label: 'Acuerdo de convivencia',   href: '/marketing/acuerdo-convivencia' },
+                  { label: 'Políticas de privacidad', href: '/marketing/privacidad'          },
+                  { label: 'Políticas de Cookies',    href: '/marketing/cookies'             },
+                  { label: 'Aviso Legal',             href: '/marketing/aviso-legal'         },
+                  { label: 'Acuerdo de convivencia',  href: '/marketing/acuerdo-convivencia' },
                 ].map(({ label, href }) => (
                   <Link key={label} href={href}
                     style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14, color: 'rgba(255,255,255,0.35)', textDecoration: 'none', transition: 'color .2s' }}
@@ -320,4 +294,44 @@ export default function Footer() {
       `}</style>
     </footer>
   )
+}
+
+// ─── Tokens locales ───────────────────────────────────────────────────────────
+const lblStyle: React.CSSProperties = {
+  fontFamily: 'Poppins, sans-serif',
+  fontSize: 14,
+  fontWeight: 500,
+  color: 'rgba(255,255,255,0.7)',
+  display: 'block',
+  marginBottom: 8,
+}
+const hintStyle: React.CSSProperties = {
+  fontFamily: 'Poppins, sans-serif',
+  fontSize: 12,
+  color: 'rgba(255,255,255,0.35)',
+  marginTop: 4,
+  display: 'block',
+}
+// ── NUEVO ──────────────────────────────────────────────────────────────────────
+const errStyle: React.CSSProperties = {
+  fontFamily: 'Poppins, sans-serif',
+  fontSize: 12,
+  color: '#F07070',
+  marginTop: 4,
+  display: 'block',
+}
+const colTitleStyle: React.CSSProperties = {
+  fontFamily: 'Poppins, sans-serif',
+  fontSize: 20,
+  fontWeight: 600,
+  color: '#A3D7FF',
+  marginBottom: 10,
+}
+const colLinkStyle: React.CSSProperties = {
+  fontFamily: 'Poppins, sans-serif',
+  fontSize: 15,
+  fontWeight: 400,
+  color: 'rgba(255,255,255,0.6)',
+  textDecoration: 'none',
+  transition: 'color .2s',
 }
