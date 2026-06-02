@@ -219,7 +219,7 @@ export default function HeroIceo({
                   fontWeight: 400,
                   color: 'rgba(9,52,78,0.80)',
                   lineHeight: 1.55,
-                  maxWidth: 480,
+                  maxWidth: 550,
                   marginBottom: 36,
                   letterSpacing: '-0.005em',
                 }}

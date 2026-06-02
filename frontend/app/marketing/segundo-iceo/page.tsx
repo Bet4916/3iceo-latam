@@ -285,17 +285,17 @@ export default function SegundoIceoPage() {
 
       {/* ══ HERO ════════════════════════════════════════════════════════════════ */}
       <HeroIceo
-        badge="Edición 2026 · Cali, Colombia"
-        title={<>Memoria del<br /><span style={{ color: '#ffffff' }}>2° ICEO</span></>}
-        description="Descubre el impacto que logramos en la segunda edición del congreso en 2026 y aprende más sobre este movimiento que transforma organizaciones ambientales en Latinoamérica."
-        cta={{ label: 'Ver Memoria →', href: '/docs/memoria_2iceo.pdf', target: '_blank' }}
-        image="/icons/2do_iceo.svg"
-        imageAlt="2° ICEO LATAM · Cali 2026"
-        imageLabel="2° ICEO · 2026 · Cali"
-        imageScale={1.40}
-        waveVariant="default"
-        waveColor="#ffffff"
-      />
+  badge="Edición 2026 · Cali, Colombia"
+  title={<>Memoria <span style={{ color: '#ffffff' }}>2° ICEO</span></>}
+  description={<>Descubre el impacto de la segunda edición del congreso<br />y el movimiento que transforma territorios en LATAM</>}
+  cta={{ label: 'VER MEMORIA →', href: '/docs/memoria_2iceo.pdf', target: '_blank' }}
+  image="/icons/2do_iceo.svg"
+  imageAlt="2° ICEO LATAM · Cali 2026"
+  imageLabel="2° ICEO · 2026 · Cali"
+  imageScale={1.40}
+  waveVariant="default"
+  waveColor="#ffffff"
+/>
 
       {/* ══ MOMENTOS ══════════════════════════════════════════════════════════════
           Cards con esquinas asimétricas del Figma:
@@ -507,16 +507,21 @@ export default function SegundoIceoPage() {
 
       {/* ══ CTA MEMORIA ═══════════════════════════════════════════════════════════ */}
       <section style={{ background: 'linear-gradient(135deg, #03A383 0%, #3C625B 100%)', padding: '72px 48px', textAlign: 'center' }}>
-        <FadeIn>
-          <h2 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 28, fontWeight: 600, color: '#fff', marginBottom: 28 }}>
-            Lee la memoria del 2° ICEO completa
-          </h2>
-          <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link href="/docs/memoria_2iceo.pdf" target="_blank" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: '#fff', color: '#03A383', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, padding: '13px 32px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em', textTransform: 'uppercase', boxShadow: '0 4px 20px rgba(0,0,0,0.15)' }}>↓ Descargar memoria</Link>
-            <Link href="/docs/memoria_2iceo.pdf" target="_blank" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: 'transparent', color: '#fff', border: '2px solid rgba(255,255,255,0.8)', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, padding: '11px 32px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em', textTransform: 'uppercase' }}>Ver memoria</Link>
-          </div>
-        </FadeIn>
-      </section>
+  <FadeIn>
+    <h2 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 28, fontWeight: 600, color: '#fff', marginBottom: 28 }}>
+      Lee la memoria del 2° ICEO completa
+    </h2>
+    <Link href="/docs/memoria_2iceo.pdf" target="_blank"
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 10, backgroundColor: '#fff', color: '#03A383', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, padding: '13px 32px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em', textTransform: 'uppercase', boxShadow: '0 4px 20px rgba(0,0,0,0.15)' }}>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="#03A383" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M14 2v6h6M9 13h6M9 17h4" stroke="#03A383" strokeWidth="1.8" strokeLinecap="round"/>
+        <path d="M7 9h2" stroke="#03A383" strokeWidth="1.8" strokeLinecap="round"/>
+      </svg>
+      Descargar Memoria PDF
+    </Link>
+  </FadeIn>
+</section>
 
       {/* ══ DONACIÓN — componente unificado ══════════════════════════════════════ */}
       <SectionDonacion

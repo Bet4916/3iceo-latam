@@ -6,246 +6,329 @@ import HeroIceo from '@/components/sections/HeroIceo'
 import SectionDonacion from '@/components/sections/SectionDonacion'
 import SectionRedes from '@/components/sections/SectionRedes'
 
-function FadeIn({ children, delay = 0, style, className }: { children: React.ReactNode; delay?: number; style?: React.CSSProperties; className?: string }) {
+function FadeIn({
+  children, delay = 0, style,
+}: { children: React.ReactNode; delay?: number; style?: React.CSSProperties }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 22 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-40px' }}
+      viewport={{ once: true, margin: '-48px' }}
       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay }}
       style={style}
-      className={className}
     >{children}</motion.div>
   )
 }
 
-const ORGANIZADORES = [
+const DIAS = [
   {
-    logo: '/icons/AWAQ_aliado.svg',
-    name: 'Awaq ONGD',
-    href: 'https://www.somosawaq.org/',
-    desc: 'Awaq es una organización de cooperación internacional que, desde 2019, se dedica al desarrollo de proyectos de investigación científica y conservación de ecosistemas en comunidades menos favorecidas. A través de Estaciones Biológicas, Awaq implementa modelos económicos alternativos con el objetivo de mejorar la calidad de vida de los habitantes de estas comunidades.',
-    accentBg: '#ADC6D9',
+    label:    'DÍA 1 · AGUA Y TERRITORIOS',
+    badge:    'Agua y territorios',
+    title:    'Agua, territorios vivos y comunidades',
+    accentColor: '#097589',
+    body: 'Proteger las fuentes hídricas que sostienen la biodiversidad, la cultura y la vida rural. Esta línea sitúa al agua dulce, los nacimientos y las cuencas como base de conservación, comunidad y futuro territorial. Promueve una mirada integral que conecta el diagnóstico, la visión compartida y las acciones necesarias para activar el cambio desde los territorios.',
+    puntos: [
+      { n: '1', title: 'Análisis de la problemática actual', desc: 'Comprender qué está ocurriendo hoy y cuál es el estado real de las fuentes hídricas y los territorios.' },
+      { n: '2', title: '¿A dónde queremos llegar?', desc: 'Definir una visión compartida de protección, recuperación y sostenibilidad para los territorios vivos.' },
+      { n: '3', title: '¿Qué proyectos o iniciativas hacen falta?', desc: 'Identificar soluciones, alianzas y acciones concretas para activar el cambio.' },
+    ],
+    img: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&q=80',
+    imgAlt: 'Río y comunidad en bosque tropical latinoamericano',
+    imgRight: true,
   },
   {
-    logo: '/icons/humans_pro.svg',
-    name: 'HumansPRO®',
-    href: 'https://www.humanspro.org/',
-    desc: 'Como Ente de Acreditación Internacional, promovemos la confianza y la transparencia en los procesos de certificación, garantizando que nuestras acreditaciones reflejen competencia, excelencia y cumplimiento de estándares internacionales. Colaboramos con diversos sectores como industria, tecnología, educación y salud.',
-    accentBg: '#4886B5',
+    label:    'DÍA 2 · COOPERACIÓN E INNOVACIÓN',
+    badge:    'Cooperación e innovación',
+    title:    'Cooperación internacional al desarrollo, innovación y mundo rural',
+    accentColor: '#4886B5',
+    body: 'Conectar conocimiento, tecnologías y alianzas internacionales para activar soluciones territoriales. Esta línea impulsa la transferencia universidad–territorio, la cooperación al desarrollo, la innovación aplicada y los modelos rurales sostenibles, generando impacto real y duradero.',
+    bullets: [
+      'Alianzas Europa–LATAM y cooperación al desarrollo.',
+      'Transferencia universidad–territorio y tecnología aplicada.',
+      'Innovación para la solución de desafíos territoriales.',
+      'Bioeconomía y desarrollo rural sostenible con enfoque territorial.',
+      'Intercambio de conocimiento, buenas prácticas y proyectos colaborativos.',
+    ],
+    img: '/icons/ent_aliados.svg',
+    imgAlt: 'Aliados y cooperación internacional ICEO LATAM',
+    imgRight: false,
   },
   {
-    logo: '/icons/logo_uni_USB.svg',
-    name: 'Universidad de San Buenaventura',
-    href: 'https://usb.edu.co/',
-    desc: 'La Universidad de San Buenaventura en Cali es una institución de educación superior que se distingue por su enfoque católico y franciscano, buscando la formación integral del ser humano y la transformación de la sociedad. Fue fundada por la comunidad Franciscana y ha contribuido al desarrollo de la educación colombiana desde su creación.',
-    accentBg: '#ADC6D9',
-  },
-]
-
-const SOCIOS = [
-  {
-    logo: '/icons/gob_valle_cauca.svg',
-    isJpg: false,
-    name: 'Gobernación del Valle del Cauca',
-    desc: 'Máxima autoridad administrativa del departamento, promueve el desarrollo integral, la prosperidad y la preservación cultural de sus habitantes.',
-    href: 'https://www.valledelcauca.gov.co/',
-    accentBg: '#097589',
-  },
-  {
-    logo: '/icons/sc_uni_lasalle_utopia.svg',
-    isJpg: false,
-    name: 'Proyecto Utopía · Universidad de La Salle',
-    desc: 'Referente de transformación territorial y agroecología con sentido social. Modelo educativo rural orientado a la paz y la sostenibilidad.',
-    href: 'https://lasalle.edu.co/es/campus-unisalle/campus-yopal/proyecto-utopia',
-    accentBg: '#4886B5',
-  },
-  {
-    logo: '/icons/sc_proyecto_colombia.svg',
-    isJpg: false,
-    name: 'Proyectando Colombia',
-    desc: 'Integra regiones y fortalece la imagen de PMI® en Colombia, contribuyendo al desarrollo sostenible a través de la gestión de proyectos.',
-    href: 'https://www.proyectandocolombia.org/',
-    accentBg: '#ADC6D9',
-  },
-  {
-    logo: '/icons/sc_sophic.svg',
-    isJpg: false,
-    name: 'SoPhIC — Sociedad Filosófica Iberoamérica-Colombia',
-    desc: 'Asociación gremial de doctores e investigadores de Colombia, generando impacto social, económico y científico a nivel nacional e internacional.',
-    href: 'https://www.sophicol.org/',
-    accentBg: '#74B4A7',
-  },
-  {
-    logo: '/icons/sc_juanDcastellanos.jpg',
-    isJpg: true,
-    name: 'Fundación Universitaria Juan de Castellanos',
-    desc: 'Aliada en la articulación entre academia, sostenibilidad y acción comunitaria. Comprometida con el desarrollo rural y la conservación ambiental.',
-    href: 'https://www.jdc.edu.co/',
-    accentBg: '#097589',
+    label:    'DÍA 3 · CONCLUSIONES',
+    badge:    'Jornada de cierre',
+    title:    'Conclusiones',
+    accentColor: '#C8A84B',
+    body: 'Sintetizar aprendizajes, acuerdos y próximos pasos del congreso. Este espacio convierte las conversaciones principales en memoria, conclusiones útiles y una hoja de ruta compartida para futuras alianzas.',
+    bullets: [
+      'Síntesis de las dos líneas principales.',
+      'Memorias, conclusiones y compromisos institucionales.',
+      'Hoja de ruta ICEO LATAM para próximas alianzas.',
+    ],
+    img: '/icons/conferencias.svg',
+    imgAlt: 'Conferencias y clausura del congreso ICEO LATAM',
+    imgRight: true,
   },
 ]
 
-function OrgCard({ org, delay = 0 }: { org: typeof ORGANIZADORES[0]; delay?: number }) {
-  return (
-    <FadeIn delay={delay} style={{ flex: '1 1 0', minWidth: 260, maxWidth: 360, height: '100%' }}>
-      <div style={{ position: 'relative', height: '100%' }}>
-        <div style={{ position: 'absolute', inset: 0, borderRadius: '48px 8px 48px 8px', backgroundColor: org.accentBg, transform: 'translate(10px, 10px)', zIndex: 0 }} />
-        <div style={{ position: 'relative', zIndex: 1, height: '100%', borderRadius: '48px 8px 48px 8px', backgroundColor: '#ffffff', padding: '28px 26px 26px', boxShadow: '0 4px 20px rgba(9,52,78,0.10)', display: 'flex', flexDirection: 'column', transition: 'transform 0.22s', boxSizing: 'border-box' }}
-          onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-3px)'}
-          onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'}
-        >
-          <div style={{ width: '100%', height: 148, flexShrink: 0, borderRadius: '32px 4px 20px 4px', border: '2px solid #AEE5DA', backgroundColor: '#F8FDFC', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px 24px', marginBottom: 22, overflow: 'hidden' }}>
-            <img src={org.logo} alt={org.name} style={{ maxWidth: '100%', maxHeight: 100, objectFit: 'contain', display: 'block' }} />
+const LINEAS = [
+  {
+    num: '01', title: 'Territorios y naturaleza', color: '#097589',
+    desc: 'Protección de fuentes hídricas, restauración ecológica, cuencas vivas, biodiversidad y soluciones basadas en naturaleza.',
+    icon: (
+      <svg width={30} height={30} viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M16 4C16 4 6 14 6 20a10 10 0 0 0 20 0C26 14 16 4 16 4z" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.9)" strokeWidth={1.8} strokeLinejoin="round"/>
+        <path d="M11 23c1.5 2 4 3 6 2.5" stroke="rgba(255,255,255,0.7)" strokeWidth={1.6} strokeLinecap="round"/>
+      </svg>
+    ),
+  },
+  {
+    num: '02', title: 'Comunidad y cultura', color: '#B53077',
+    desc: 'Comunidades, mujeres, juventudes y saberes locales como guardianes del agua, la biodiversidad y la memoria territorial.',
+    icon: (
+      <svg width={30} height={30} viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <circle cx="10" cy="11" r="4" stroke="rgba(255,255,255,0.9)" strokeWidth={1.8}/>
+        <circle cx="22" cy="11" r="4" stroke="rgba(255,255,255,0.9)" strokeWidth={1.8}/>
+        <path d="M4 26c0-4 3-6 6-6M22 26c0-4-3-6-6-6M12 26c0-4 2-6 4-6s4 2 4 6" stroke="rgba(255,255,255,0.9)" strokeWidth={1.8} strokeLinecap="round"/>
+      </svg>
+    ),
+  },
+  {
+    num: '03', title: 'Innovación y conocimiento', color: '#4886B5',
+    desc: 'Universidad-territorio, transferencia de conocimiento, ciencia ciudadana, inteligencia artificial, laboratorios y monitoreo ambiental.',
+    icon: (
+      <svg width={30} height={30} viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <circle cx="16" cy="16" r="3" stroke="rgba(255,255,255,0.9)" strokeWidth={1.8}/>
+        <circle cx="6" cy="8" r="2.5" stroke="rgba(255,255,255,0.9)" strokeWidth={1.6}/>
+        <circle cx="26" cy="8" r="2.5" stroke="rgba(255,255,255,0.9)" strokeWidth={1.6}/>
+        <circle cx="6" cy="24" r="2.5" stroke="rgba(255,255,255,0.9)" strokeWidth={1.6}/>
+        <circle cx="26" cy="24" r="2.5" stroke="rgba(255,255,255,0.9)" strokeWidth={1.6}/>
+        <path d="M8 9.5L14 14M18 18l6 5.5M8 22.5L14 18M18 14l6-5.5" stroke="rgba(255,255,255,0.55)" strokeWidth={1.4}/>
+      </svg>
+    ),
+  },
+  {
+    num: '04', title: 'Economías para la vida', color: '#03A383',
+    desc: 'Bioeconomía, emprendimientos verdes, economía circular, marketplace territorial, turismo regenerativo y redes de valor local.',
+    icon: (
+      <svg width={30} height={30} viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M16 28V14" stroke="rgba(255,255,255,0.9)" strokeWidth={1.8} strokeLinecap="round"/>
+        <path d="M16 14C16 8 10 5 6 6c0 6 4 10 10 10z" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.9)" strokeWidth={1.7} strokeLinejoin="round"/>
+        <path d="M16 18c0-5 6-8 10-7-1 6-5 9-10 9z" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.9)" strokeWidth={1.7} strokeLinejoin="round"/>
+      </svg>
+    ),
+  },
+  {
+    num: '05', title: 'Gobernanza y futuro regional', color: '#74B4A7',
+    desc: 'Cooperación, política pública, participación, derechos de la naturaleza, financiación climática, manifiesto y hoja de ruta.',
+    icon: (
+      <svg width={30} height={30} viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <circle cx="16" cy="16" r="11" stroke="rgba(255,255,255,0.9)" strokeWidth={1.8}/>
+        <path d="M16 5v3M16 24v3M5 16h3M24 16h3" stroke="rgba(255,255,255,0.5)" strokeWidth={1.4} strokeLinecap="round"/>
+        <path d="M19 10l-4.5 6-4.5 2 4.5-6 4.5-2z" fill="rgba(255,255,255,0.9)" stroke="rgba(255,255,255,0.9)" strokeWidth={0.5} strokeLinejoin="round"/>
+      </svg>
+    ),
+  },
+]
+
+function DiaSection({ dia, bgColor }: { dia: typeof DIAS[0]; bgColor: string }) {
+  const textCol = (
+    <FadeIn>
+      <div>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, backgroundColor: `${dia.accentColor}18`, border: `1px solid ${dia.accentColor}40`, borderRadius: 999, padding: '4px 14px', marginBottom: 12 }}>
+          <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 700, color: dia.accentColor, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{dia.label}</span>
+        </div>
+        <h2 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 'clamp(22px, 2.8vw, 34px)', fontWeight: 700, color: '#09344e', lineHeight: 1.2, marginBottom: 16 }}>{dia.title}</h2>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 15, color: '#12303E', lineHeight: 1.75, marginBottom: 20 }}>{dia.body}</p>
+        {'puntos' in dia && dia.puntos && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {(dia.puntos as Array<{n: string; title: string; desc: string}>).map(p => (
+              <div key={p.n} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                <div style={{ width: 28, height: 28, borderRadius: '50%', flexShrink: 0, backgroundColor: dia.accentColor, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 700, color: '#fff' }}>{p.n}</span>
+                </div>
+                <div>
+                  <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 600, color: '#09344e', marginBottom: 2 }}>{p.title}</p>
+                  <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#5A6E77', lineHeight: 1.6 }}>{p.desc}</p>
+                </div>
+              </div>
+            ))}
           </div>
-          <h3 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 17, fontWeight: 700, color: '#09344e', lineHeight: 1.25, marginBottom: 12, flexShrink: 0 }}>{org.name}</h3>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13.5, color: '#12303E', lineHeight: 1.7, flex: 1, marginBottom: 18 }}>{org.desc}</p>
-          <a href={org.href} target="_blank" rel="noopener noreferrer"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: 'Poppins, sans-serif', fontSize: 13.5, fontWeight: 600, color: '#097589', textDecoration: 'none', transition: 'gap 0.2s', flexShrink: 0 }}
-            onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.gap = '10px'}
-            onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.gap = '6px'}
-          >
-            Saber más
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M10 5l3 3-3 3" stroke="#097589" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          </a>
+        )}
+        {'bullets' in dia && dia.bullets && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {(dia.bullets as string[]).map((b, i) => (
+              <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: dia.accentColor, flexShrink: 0, marginTop: 6 }} />
+                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#12303E', lineHeight: 1.6 }}>{b}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </FadeIn>
+  )
+
+  const imgCol = (
+    <FadeIn delay={0.1}>
+      <div style={{ position: 'relative' }}>
+        <div style={{ position: 'absolute', ...(dia.imgRight ? { top: -16, left: -16 } : { top: -16, right: -16 }), width: '90%', height: '90%', borderRadius: 18, backgroundColor: `${dia.accentColor}25`, zIndex: 0 }} />
+        <div style={{ position: 'relative', zIndex: 1, borderRadius: 18, overflow: 'hidden', boxShadow: '4px 4px 28px rgba(9,52,78,0.15)' }}>
+          <img src={dia.img} alt={dia.imgAlt} style={{ width: '100%', height: 'auto', display: 'block', maxHeight: 340, objectFit: 'cover' }} />
         </div>
       </div>
     </FadeIn>
   )
-}
 
-function SocioCard({ socio, index }: { socio: typeof SOCIOS[0]; index: number }) {
   return (
-    <FadeIn delay={index * 0.06} style={{ height: '100%' }}>
-      <div style={{ position: 'relative', height: '100%' }}>
-        <div style={{ position: 'absolute', inset: 0, borderRadius: '32px 6px 32px 6px', backgroundColor: socio.accentBg, opacity: 0.35, transform: 'translate(6px, 6px)', zIndex: 0 }} />
-        <div style={{ position: 'relative', zIndex: 1, height: '100%', borderRadius: '32px 6px 32px 6px', backgroundColor: '#ffffff', padding: '22px 20px 20px', boxShadow: '0 2px 14px rgba(9,52,78,0.09)', display: 'flex', flexDirection: 'column', transition: 'transform 0.2s', boxSizing: 'border-box' }}
-          onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-4px)'}
-          onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'}
-        >
-          <div style={{ width: '100%', height: 100, flexShrink: 0, borderRadius: '22px 4px 14px 4px', border: `2px solid ${socio.accentBg}55`, backgroundColor: '#F8FDFC', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '14px 16px', marginBottom: 16, overflow: 'hidden' }}>
-            <img src={socio.logo} alt={socio.name} style={{ maxWidth: '100%', maxHeight: 72, objectFit: 'contain', display: 'block', borderRadius: socio.isJpg ? 6 : 0 }} />
-          </div>
-          <h3 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700, color: '#09344e', lineHeight: 1.3, marginBottom: 8, flexShrink: 0 }}>{socio.name}</h3>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12.5, color: '#5A6E77', lineHeight: 1.65, flex: 1, marginBottom: 14 }}>{socio.desc}</p>
-          <a href={socio.href} target="_blank" rel="noopener noreferrer"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontFamily: 'Poppins, sans-serif', fontSize: 12.5, fontWeight: 600, color: '#097589', textDecoration: 'none', transition: 'gap 0.2s', flexShrink: 0 }}
-            onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.gap = '9px'}
-            onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.gap = '5px'}
-          >
-            Saber más
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M10 5l3 3-3 3" stroke="#097589" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          </a>
+    <section style={{ backgroundColor: bgColor, padding: '72px 48px' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+        <div className="dia-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 72, alignItems: 'center' }}>
+          {dia.imgRight ? textCol : imgCol}
+          {dia.imgRight ? imgCol  : textCol}
         </div>
       </div>
-    </FadeIn>
+    </section>
   )
 }
 
-export default function AliadosPage() {
+export default function LineasTematicasPage() {
   return (
     <div style={{ backgroundColor: '#ffffff', minHeight: '100vh' }}>
 
-      {/* ══ 1. HERO — Excel: H1 corto (1-2 palabras), H2 dos líneas exactas ══ */}
+      {/* ══ 1. HERO — unificado ════════════════════════════════════════════════ */}
       <HeroIceo
         badge="3ICEO · LATAM"
-        title={<>Aliados <span style={{ color: '#ffffff' }}>3° ICEO</span></>}
-        description={<>Una red de instituciones y organizaciones comprometidas<br />con el futuro de las fuentes hídricas</>}
+        title={<>Líneas <span style={{ color: '#ffffff' }}>Temáticas</span></>}
+        description={<>Agua, cooperación e innovación para<br />transformar los territorios vivos de LATAM</>}
         cta={{ label: 'QUIERO ASISTIR →', href: '/marketing/registro' }}
-        ctaSecondary={{ label: 'Ver programa', href: '/marketing/agenda' }}
-        image="/icons/aliados.svg"
-        imageAlt="Red de aliados ICEO LATAM"
-        imageLabel="3° ICEO · Aliados · 2027"
+        ctaSecondary={{ label: 'Ver agenda', href: '/marketing/agenda' }}
+        image="/icons/lineas_tematicas.svg"
+        imageAlt="Líneas temáticas del 3ICEO"
+        imageLabel="3° ICEO · Líneas Temáticas"
         waveVariant="default"
         imageScale={1.40}
-        waveColor="#F0F4F7"
+        waveColor="#F7F6F3"
       />
 
-      {/* ══ 2. ORGANIZADORES ══════════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#F0F4F7', padding: '80px 48px' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <FadeIn>
-            <h2 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 'clamp(24px,2.8vw,32px)', fontWeight: 700, color: '#09344e', textAlign: 'center', marginBottom: 56 }}>
-              Organizadores
-            </h2>
-          </FadeIn>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 32, alignItems: 'stretch', padding: '0 8px 16px' }} className="org-grid">
-            {ORGANIZADORES.map((org, i) => <OrgCard key={org.name} org={org} delay={i * 0.1} />)}
-          </div>
-        </div>
-      </section>
+      {/* ══ 2. SECCIONES POR DÍA ══════════════════════════════════════════════ */}
+      <div id="lineas">
+        {DIAS.map((dia, i) => {
+          const bg = i === 1 ? '#ffffff' : '#F7F6F3'
+          return <DiaSection key={dia.title} dia={dia} bgColor={bg} />
+        })}
+      </div>
 
-      {/* ── Wave #F0F4F7 → blanca ── */}
-      <div style={{ lineHeight: 0, backgroundColor: '#F0F4F7' }}>
-        <svg viewBox="0 0 1440 56" preserveAspectRatio="none" style={{ width: '100%', height: 56, display: 'block' }}>
-          <path d="M0,56 C240,0 480,56 720,28 C960,0 1200,48 1440,20 L1440,56 L0,56 Z" fill="#ffffff" />
+      {/* Wave F7F6F3 → navy */}
+      <div style={{ lineHeight: 0, backgroundColor: '#F7F6F3' }}>
+        <svg viewBox="0 0 1440 64" preserveAspectRatio="none" style={{ width: '100%', height: 64, display: 'block' }}>
+          <path d="M0,0 C240,64 480,0 720,40 C960,64 1200,16 1440,44 L1440,64 L0,64 Z" fill="#09344e"/>
         </svg>
       </div>
 
-      {/* ══ 3. SOCIOS COLABORADORES ═══════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#ffffff', padding: '80px 48px' }}>
+      {/* ══ 3. LÍNEAS TEMÁTICAS — 5 tarjetas grid sobre navy ══════════════════ */}
+      <section style={{ backgroundColor: '#09344e', padding: '72px 48px 88px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <FadeIn>
             <div style={{ textAlign: 'center', marginBottom: 56 }}>
-              <h2 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 'clamp(24px,2.8vw,32px)', fontWeight: 700, color: '#09344e', marginBottom: 12 }}>
-                Socios Colaboradores
+              <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#74B4A7', marginBottom: 12 }}>PROGRAMA · 3ICEO LATAM</p>
+              <h2 style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontSize: 'clamp(26px, 3.5vw, 42px)', fontWeight: 700, color: '#ffffff', lineHeight: 1.15, marginBottom: 16 }}>
+                Un marco vivo para ordenar<br />la conversación regional
               </h2>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 15, color: '#5A6E77', lineHeight: 1.7, maxWidth: 520, margin: '0 auto' }}>
-                Organizaciones, instituciones académicas y entidades que nos acompañan activamente en la construcción del 3ICEO.
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 15, color: 'rgba(255,255,255,0.60)', lineHeight: 1.7, maxWidth: 560, margin: '0 auto' }}>
+                Estas líneas temáticas son una guía preliminar de trabajo y podrán evolucionar conforme avancemos en la curaduría de contenidos, alianzas y convocatorias.
               </p>
             </div>
           </FadeIn>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 28, alignItems: 'stretch', padding: '0 8px 16px' }} className="socios-grid">
-            {SOCIOS.map((socio, i) => <SocioCard key={socio.name} socio={socio} index={i} />)}
+
+          <div className="lineas-grid-top" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20, marginBottom: 20 }}>
+            {LINEAS.slice(0, 3).map((l, i) => (
+              <FadeIn key={l.num} delay={i * 0.1}>
+                <div style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 20, padding: '32px 28px', transition: 'background-color 0.2s, transform 0.2s', cursor: 'default' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.backgroundColor = 'rgba(255,255,255,0.10)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-3px)' }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.backgroundColor = 'rgba(255,255,255,0.06)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)' }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                    <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 700, color: l.color, letterSpacing: '0.1em' }}>{l.num}</span>
+                    <div style={{ width: 52, height: 52, borderRadius: 14, backgroundColor: l.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{l.icon}</div>
+                  </div>
+                  <h3 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 18, fontWeight: 700, color: '#ffffff', lineHeight: 1.25, marginBottom: 14 }}>{l.title}</h3>
+                  <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.65)', lineHeight: 1.7 }}>{l.desc}</p>
+                </div>
+              </FadeIn>
+            ))}
           </div>
+
+          <div className="lineas-grid-bottom" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20, maxWidth: 860, margin: '0 auto' }}>
+            {LINEAS.slice(3).map((l, i) => (
+              <FadeIn key={l.num} delay={0.3 + i * 0.1}>
+                <div style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 20, padding: '32px 28px', transition: 'background-color 0.2s, transform 0.2s', cursor: 'default' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.backgroundColor = 'rgba(255,255,255,0.10)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-3px)' }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.backgroundColor = 'rgba(255,255,255,0.06)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)' }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                    <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 700, color: l.color, letterSpacing: '0.1em' }}>{l.num}</span>
+                    <div style={{ width: 52, height: 52, borderRadius: 14, backgroundColor: l.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{l.icon}</div>
+                  </div>
+                  <h3 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 18, fontWeight: 700, color: '#ffffff', lineHeight: 1.25, marginBottom: 14 }}>{l.title}</h3>
+                  <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.65)', lineHeight: 1.7 }}>{l.desc}</p>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+
+          <FadeIn delay={0.5}>
+            <div style={{ marginTop: 32, backgroundColor: 'rgba(116,180,167,0.15)', border: '1px solid rgba(116,180,167,0.35)', borderRadius: 16, padding: '24px 32px', display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
+              <div style={{ width: 44, height: 44, borderRadius: 12, flexShrink: 0, backgroundColor: '#74B4A7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg width={24} height={24} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <div style={{ flex: 1, minWidth: 200 }}>
+                <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, color: '#74B4A7', marginBottom: 4, letterSpacing: '0.04em' }}>CAPA TRANSVERSAL</p>
+                <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 15, fontWeight: 600, color: '#ffffff', lineHeight: 1.3, marginBottom: 4 }}>Manifiesto y hoja de ruta ICEO LATAM</p>
+                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.60)', lineHeight: 1.6 }}>Durante el congreso se recogerán aprendizajes, acuerdos y prioridades para activar una agenda regional compartida.</p>
+              </div>
+            </div>
+          </FadeIn>
         </div>
       </section>
 
-      {/* ══ 4. LLAMADO A ALIADOS — inspirado en CTA Ponentes ════════════════ */}
+      {/* Wave navy → aqua pálido */}
+      <div style={{ lineHeight: 0, backgroundColor: '#09344e' }}>
+        <svg viewBox="0 0 1440 56" preserveAspectRatio="none" style={{ width: '100%', height: 56, display: 'block' }}>
+          <path d="M0,0 C360,56 720,0 1080,36 C1260,48 1380,12 1440,28 L1440,56 L0,56 Z" fill="#E6F3EE"/>
+        </svg>
+      </div>
+
+      {/* ══ 4. CTA PONENTE ════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#E6F3EE', padding: '72px 48px 80px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <div className="cta-aliados-grid" style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 48, alignItems: 'center' }}>
+          <div className="cta-grid" style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 48, alignItems: 'center' }}>
             <FadeIn>
-              <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#097589', marginBottom: 12 }}>
-                LLAMADA A ALIADOS
-              </p>
-              <h2 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 'clamp(24px, 2.8vw, 36px)', fontWeight: 700, color: '#09344e', lineHeight: 1.2, marginBottom: 16 }}>
-                ¿Tu organización quiere ser parte del 3ICEO?
-              </h2>
+              <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#097589', marginBottom: 12 }}>LLAMADA A PONENTES</p>
+              <h2 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 'clamp(24px, 2.8vw, 36px)', fontWeight: 700, color: '#09344e', lineHeight: 1.2, marginBottom: 16 }}>¿Tienes experiencias o investigaciones para compartir?</h2>
               <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 15, color: '#5A6E77', lineHeight: 1.7, marginBottom: 32, maxWidth: 540 }}>
-                El 3ICEO busca aliados institucionales, académicos y organizaciones de cooperación comprometidas con la protección de las fuentes hídricas y los territorios vivos de Latinoamérica. Únete a la red y construye junto a nosotros.
+                El 3ICEO abre sus puertas a ponentes de toda Latinoamérica. Si trabajas en alguna de estas líneas temáticas, inscríbete y comparte tu conocimiento con la comunidad ambiental del continente.
               </p>
               <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-                <Link href="/marketing/registro?tipo=colaboracion"
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: '#097589', color: '#ffffff', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, padding: '12px 28px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.05em', boxShadow: '0 2px 16px rgba(9,117,137,0.30)', transition: 'background-color 0.2s, transform 0.15s' }}
-                  onMouseEnter={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.backgroundColor = '#074954'; el.style.transform = 'translateY(-1px)' }}
-                  onMouseLeave={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.backgroundColor = '#097589'; el.style.transform = 'translateY(0)' }}
-                >
-                  QUIERO SER ALIADO →
-                </Link>
-                <Link href="/marketing/agenda"
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: 'transparent', color: '#09344e', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600, padding: '11px 24px', borderRadius: 999, border: '1.5px solid rgba(9,52,78,0.30)', textDecoration: 'none', letterSpacing: '0.04em', transition: 'border-color 0.2s, background-color 0.2s' }}
+                <Link href="/marketing/registro?tipo=ponente" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: '#B53077', color: '#ffffff', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, padding: '12px 28px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.05em', boxShadow: '0 2px 16px rgba(181,48,119,0.25)', transition: 'background-color 0.2s, transform 0.15s' }}
+                  onMouseEnter={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.backgroundColor = '#802254'; el.style.transform = 'translateY(-1px)' }}
+                  onMouseLeave={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.backgroundColor = '#B53077'; el.style.transform = 'translateY(0)' }}
+                >INSCRIBIRME COMO PONENTE</Link>
+                <Link href="/marketing/agenda" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: 'transparent', color: '#09344e', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600, padding: '11px 24px', borderRadius: 999, border: '1.5px solid rgba(9,52,78,0.30)', textDecoration: 'none', letterSpacing: '0.04em', transition: 'border-color 0.2s, background-color 0.2s' }}
                   onMouseEnter={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.borderColor = '#097589'; el.style.backgroundColor = 'rgba(9,117,137,0.07)' }}
                   onMouseLeave={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.borderColor = 'rgba(9,52,78,0.30)'; el.style.backgroundColor = 'transparent' }}
-                >
-                  Ver programa →
-                </Link>
+                >Ver agenda →</Link>
               </div>
             </FadeIn>
-
-            {/* Beneficios de ser aliado */}
             <FadeIn delay={0.12}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, flexShrink: 0 }} className="aliados-beneficios">
-                {[
-                  { emoji: '🤝', label: 'Visibilidad institucional ante más de 1.000 asistentes' },
-                  { emoji: '🌎', label: 'Red de cooperación Europa–Latinoamérica' },
-                  { emoji: '🎙️', label: 'Espacio en agenda: paneles, talleres o conferencias' },
-                  { emoji: '🏪', label: 'Stand en el Marketplace Territorial' },
-                  { emoji: '📢', label: 'Difusión en redes y comunicaciones del congreso' },
-                ].map((b, i) => (
-                  <div key={i} style={{ backgroundColor: '#fff', border: '1.5px solid #AEE5DA', borderRadius: 12, padding: '12px 18px', display: 'flex', alignItems: 'center', gap: 12, boxShadow: '2px 2px 8px rgba(9,52,78,0.06)', minWidth: 280 }}>
-                    <span style={{ fontSize: 18, flexShrink: 0 }}>{b.emoji}</span>
-                    <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 500, color: '#09344e', lineHeight: 1.35 }}>{b.label}</span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, flexShrink: 0 }} className="lineas-cards">
+                {LINEAS.map(l => (
+                  <div key={l.num} style={{ backgroundColor: '#fff', border: `1.5px solid ${l.color}30`, borderRadius: 12, padding: '12px 18px', display: 'flex', alignItems: 'center', gap: 12, boxShadow: '2px 2px 8px rgba(9,52,78,0.06)', minWidth: 260 }}>
+                    <div style={{ width: 32, height: 32, borderRadius: 8, flexShrink: 0, backgroundColor: l.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 700, color: '#fff' }}>{l.num}</span>
+                    </div>
+                    <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600, color: '#09344e', lineHeight: 1.3 }}>{l.title}</span>
                   </div>
                 ))}
               </div>
@@ -254,22 +337,34 @@ export default function AliadosPage() {
         </div>
       </section>
 
-      {/* ══ 5. DONACIÓN ═══════════════════════════════════════════════════════ */}
-      <SectionDonacion bg="#09344e" theme="dark" showWave={false} showTopWave topWaveFrom="#E6F3EE" />
+      {/* ══ 5. DONACIÓN — unificado, con ola de entrada desde #E6F3EE ═════════ */}
+      <SectionDonacion
+        bg="#09344e"
+        theme="dark"
+        showTopWave={true}
+        topWaveFrom="#E6F3EE"
+        waveColor="#ffffff"
+        showWave={true}
+      />
 
-      {/* ══ 6. REDES SOCIALES ════════════════════════════════════════════════ */}
+      {/* ══ 6. REDES SOCIALES — unificado ════════════════════════════════════ */}
       <SectionRedes bg="#ffffff" theme="light" />
 
       <style suppressHydrationWarning>{`
         @media (max-width: 900px) {
-          .org-grid           { grid-template-columns: 1fr !important; }
-          .socios-grid        { grid-template-columns: repeat(2,1fr) !important; }
-          .cta-aliados-grid   { grid-template-columns: 1fr !important; }
-          .aliados-beneficios { display: none !important; }
+          .dia-grid           { grid-template-columns: 1fr !important; }
+          .dia-grid > div:last-child { display: none !important; }
+          .lineas-grid-top    { grid-template-columns: 1fr !important; }
+          .lineas-grid-bottom { grid-template-columns: 1fr !important; }
+          .cta-grid           { grid-template-columns: 1fr !important; }
+          .lineas-cards       { display: none !important; }
           .follow-grid        { grid-template-columns: 1fr !important; }
+          .follow-grid > div:first-child { display: none !important; }
+          .donacion-grid      { grid-template-columns: 1fr !important; }
         }
-        @media (max-width: 580px) {
-          .socios-grid { grid-template-columns: 1fr !important; }
+        @media (max-width: 600px) {
+          section { padding-left: 20px !important; padding-right: 20px !important; }
+          .lineas-grid-bottom { max-width: 100% !important; }
         }
       `}</style>
     </div>
