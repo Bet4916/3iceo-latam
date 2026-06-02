@@ -185,7 +185,7 @@ export default function DonacionesPage() {
         imageAlt="Ilustración de donaciones"
         imageLabel="3° ICEO · Donaciones"
         waveVariant="default"
-        imageScale={1.2}
+        imageScale={1.1}
         waveColor="#fff"
       />
 
