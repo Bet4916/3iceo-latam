@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import {
@@ -34,29 +35,7 @@ function FadeIn({
   )
 }
 
-// ─── HELPER: Icono desde /public/icons ────────────────────────────────────────
-function Ico({
-  src,
-  size = 22,
-  style,
-}: {
-  src: string
-  size?: number
-  style?: React.CSSProperties
-}) {
-  return (
-    <img
-      src={src}
-      alt=""
-      width={size}
-      height={size}
-      style={{ display: 'block', flexShrink: 0, ...style }}
-    />
-  )
-}
-
 // ─── DATOS ────────────────────────────────────────────────────────────────────
-// ✅ CAMBIO: emojis reemplazados por imágenes oficiales instalaciones_N.svg
 const INSTALACIONES = [
   { label: 'Auditorio Central',    bg: 'linear-gradient(135deg,#09344e 0%,#1C495C 100%)', imgSrc: '/icons/instalaciones_1.svg' },
   { label: 'Auditorio 103 B Lago', bg: 'linear-gradient(135deg,#097589 0%,#03A383 100%)', imgSrc: '/icons/instalaciones_2.svg' },
@@ -64,7 +43,6 @@ const INSTALACIONES = [
   { label: 'Auditorio 103 A Lago', bg: 'linear-gradient(135deg,#12303E 0%,#437287 100%)', imgSrc: '/icons/instalaciones_4.svg' },
 ]
 
-// ✅ CAMBIO: emojis fallback reemplazados por SVGs oficiales de la sede
 const SERVICIOS = [
   { label: 'Cafetería',          icon: '/icons/sede_food.svg'       },
   { label: 'Parking gratuito',   icon: '/icons/sede_parking.svg'    },
@@ -87,6 +65,321 @@ const ESPACIOS_MAP = [
   'Paradero MIO',
 ]
 
+// ─── PLANO DEL ESPACIO ────────────────────────────────────────────────────────
+function PlanoDelEspacio() {
+  const [vista, setVista] = useState<'mapa' | 'unity'>('mapa')
+
+  return (
+    <section style={{ backgroundColor: '#fff', padding: '72px 0' }}>
+      <div className="container-brand" style={{ padding: '0 48px' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1.4fr',
+            gap: 56,
+            alignItems: 'start',
+          }}
+          className="plano-grid"
+        >
+          {/* ── Columna izquierda ── */}
+          <FadeIn>
+            <h2
+              style={{
+                fontFamily: 'Poppins, sans-serif',
+                fontSize: 26,
+                fontWeight: 600,
+                color: '#09344e',
+                marginBottom: 12,
+              }}
+            >
+              Plano del espacio
+            </h2>
+            <p
+              style={{
+                fontFamily: 'Inter, sans-serif',
+                fontSize: 14,
+                color: '#5A6E77',
+                lineHeight: 1.8,
+                marginBottom: 24,
+              }}
+            >
+              ¡Consulta el mapa de las instalaciones y llévalo contigo para no perderte!
+            </p>
+
+            {/* Lista de espacios */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '6px 20px',
+                marginBottom: 28,
+              }}
+            >
+              {ESPACIOS_MAP.map((esp, i) => (
+                <div
+                  key={i}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: 12,
+                    color: '#5A6E77',
+                    padding: '4px 0',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 20,
+                      height: 20,
+                      borderRadius: '50%',
+                      flexShrink: 0,
+                      backgroundColor: '#097589',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontFamily: 'Poppins, sans-serif',
+                      fontSize: 9,
+                      fontWeight: 700,
+                      color: '#fff',
+                    }}
+                  >
+                    {i + 1}
+                  </div>
+                  {esp}
+                </div>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+              <a
+                href="/icons/mapa_uni.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  backgroundColor: '#097589',
+                  color: '#fff',
+                  fontFamily: 'Poppins, sans-serif',
+                  fontSize: 12,
+                  fontWeight: 700,
+                  padding: '10px 20px',
+                  borderRadius: 999,
+                  textDecoration: 'none',
+                  letterSpacing: '0.04em',
+                  textTransform: 'uppercase' as const,
+                }}
+              >
+                <IconPDF size={16} color="white" />
+                Ver Plano Completo PDF
+              </a>
+            </div>
+          </FadeIn>
+
+          {/* ── Columna derecha ── */}
+          <FadeIn delay={0.12}>
+            {/* Toggle buttons */}
+            <div
+              style={{
+                display: 'flex',
+                gap: 0,
+                marginBottom: 16,
+                backgroundColor: '#F0F4F6',
+                borderRadius: 12,
+                padding: 4,
+                width: 'fit-content',
+              }}
+            >
+              <button
+                onClick={() => setVista('mapa')}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 7,
+                  fontFamily: 'Poppins, sans-serif',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  padding: '9px 18px',
+                  borderRadius: 9,
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  backgroundColor: vista === 'mapa' ? '#09344e' : 'transparent',
+                  color: vista === 'mapa' ? '#fff' : '#5A6E77',
+                  boxShadow: vista === 'mapa' ? '0 2px 8px rgba(9,52,78,0.25)' : 'none',
+                }}
+              >
+                <svg width={14} height={14} viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"
+                    stroke={vista === 'mapa' ? '#AEE5DA' : '#5A6E77'}
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                Ver Mapa
+              </button>
+
+              <button
+                onClick={() => setVista('unity')}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 7,
+                  fontFamily: 'Poppins, sans-serif',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  padding: '9px 18px',
+                  borderRadius: 9,
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  backgroundColor: vista === 'unity' ? '#097589' : 'transparent',
+                  color: vista === 'unity' ? '#fff' : '#5A6E77',
+                  boxShadow: vista === 'unity' ? '0 2px 8px rgba(9,117,137,0.30)' : 'none',
+                }}
+              >
+                <svg width={14} height={14} viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+                    stroke={vista === 'unity' ? '#AEE5DA' : '#5A6E77'}
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                Recorrido Virtual
+              </button>
+            </div>
+
+            {/* Panel: Mapa */}
+            {vista === 'mapa' && (
+              <motion.div
+                key="mapa"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
+                style={{
+                  borderRadius: 14,
+                  overflow: 'hidden',
+                  boxShadow: '4px 8px 32px rgba(9,52,78,0.12)',
+                  border: '1px solid #D9DEE2',
+                }}
+              >
+                <img
+                  src="/icons/sede_vista_acortada.svg"
+                  alt="Plano Universidad de San Buenaventura Cali"
+                  style={{ width: '100%', height: 'auto', display: 'block' }}
+                />
+              </motion.div>
+            )}
+
+            {/* Panel: Unity — recorrido virtual */}
+            {vista === 'unity' && (
+              <motion.div
+                key="unity"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
+              >
+                {/* Descripción breve */}
+                <div
+                  style={{
+                    backgroundColor: '#F0F9F7',
+                    border: '1px solid rgba(9,117,137,0.18)',
+                    borderRadius: 12,
+                    padding: '14px 18px',
+                    marginBottom: 14,
+                    display: 'flex',
+                    gap: 12,
+                    alignItems: 'flex-start',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: 8,
+                      backgroundColor: '#097589',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      marginTop: 1,
+                    }}
+                  >
+                    <svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+                        stroke="#fff"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <p
+                      style={{
+                        fontFamily: 'Poppins, sans-serif',
+                        fontSize: 12,
+                        fontWeight: 700,
+                        color: '#09344e',
+                        marginBottom: 3,
+                      }}
+                    >
+                      Recorrido virtual de la sede
+                    </p>
+                    <p
+                      style={{
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: 12,
+                        color: '#5A6E77',
+                        lineHeight: 1.6,
+                        margin: 0,
+                      }}
+                    >
+                      Explora el campus en 3D. Haz clic sobre cada ubicación para ver su
+                      descripción e información del espacio.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Embed Unity */}
+                <div
+                  style={{
+                    borderRadius: 14,
+                    overflow: 'hidden',
+                    border: '1px solid rgba(9,117,137,0.20)',
+                    boxShadow: '4px 8px 32px rgba(9,52,78,0.15)',
+                    aspectRatio: '16/10',
+                    backgroundColor: '#09344e',
+                  }}
+                >
+                  <iframe
+                    src="https://i.simmer.io/@iceo/ecoworld"
+                    title="Recorrido virtual USB Cali — 3° ICEO LATAM"
+                    allow="fullscreen"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      border: 'none',
+                      display: 'block',
+                    }}
+                  />
+                </div>
+              </motion.div>
+            )}
+          </FadeIn>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
 export default function UniversidadPage() {
   return (
@@ -98,12 +391,12 @@ export default function UniversidadPage() {
       <HeroIceo
         badge="Universidad de San Buenaventura · Cali"
         title={
-        <>
+          <>
             Sede del{' '}
             <span style={{ color: '#ffffff', fontVariantNumeric: 'lining-nums' }}>
               3er ICEO
             </span>
-        </>
+          </>
         }
         description={<>Conoce el campus e instalaciones donde nos reuniremos<br />para celebrar este encuentro ambiental</>}
         cta={{ label: 'QUIERO ASISTIR →', href: '/marketing/registro' }}
@@ -117,7 +410,6 @@ export default function UniversidadPage() {
 
       {/* ══════════════════════════════════════════════════════════════════
           LAS INSTALACIONES
-          ✅ CAMBIO: emojis 🏛️🎭🎓📚 → instalaciones_1-4.svg
       ══════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#fff', padding: '72px 0 64px' }}>
         <div className="container-brand" style={{ padding: '0 48px' }}>
@@ -139,18 +431,18 @@ export default function UniversidadPage() {
             </p>
           </FadeIn>
 
-          {/* Grid de auditorios */}
           <div style={{
             display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
             gap: 16, marginBottom: 16,
           }} className="inst-grid">
             {INSTALACIONES.map((inst, i) => (
               <FadeIn key={i} delay={i * 0.08}>
-                <div style={{
-                  borderRadius: 12, overflow: 'hidden',
-                  boxShadow: '2px 2px 8px rgba(9,52,78,0.10)',
-                  transition: 'transform .2s, box-shadow .2s',
-                }}
+                <div
+                  style={{
+                    borderRadius: 12, overflow: 'hidden',
+                    boxShadow: '2px 2px 8px rgba(9,52,78,0.10)',
+                    transition: 'transform .2s, box-shadow .2s',
+                  }}
                   onMouseEnter={e => {
                     (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-4px)'
                     ;(e.currentTarget as HTMLDivElement).style.boxShadow = '4px 12px 24px rgba(9,52,78,0.18)'
@@ -160,7 +452,6 @@ export default function UniversidadPage() {
                     ;(e.currentTarget as HTMLDivElement).style.boxShadow = '2px 2px 8px rgba(9,52,78,0.10)'
                   }}
                 >
-                  {/* ✅ imagen SVG oficial en lugar de emoji */}
                   <div style={{
                     background: inst.bg, aspectRatio: '4/3',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -177,7 +468,6 @@ export default function UniversidadPage() {
             ))}
           </div>
 
-          {/* Labels */}
           <FadeIn>
             <p style={{
               fontFamily: 'Inter, sans-serif', fontSize: 12,
@@ -191,7 +481,6 @@ export default function UniversidadPage() {
 
       {/* ══════════════════════════════════════════════════════════════════
           SERVICIOS DISPONIBLES
-          ✅ CAMBIO: emojis 🍽️🅿️📽️♿📶🛋️ → SVGs oficiales sede_*.svg
       ══════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#F7F6F3', padding: '72px 0' }}>
         <div className="container-brand" style={{ padding: '0 48px' }}>
@@ -221,7 +510,6 @@ export default function UniversidadPage() {
               </p>
             </FadeIn>
 
-            {/* Servicios grid 3x2 */}
             <FadeIn delay={0.12}>
               <div style={{
                 display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
@@ -236,7 +524,6 @@ export default function UniversidadPage() {
                     boxShadow: '2px 2px 8px rgba(9,52,78,0.07)',
                     border: '1px solid #D9DEE2',
                   }}>
-                    {/* ✅ SVG oficial en lugar de emoji */}
                     <div style={{
                       width: 44, height: 44, borderRadius: 10,
                       backgroundColor: '#E6F3EE',
@@ -266,7 +553,6 @@ export default function UniversidadPage() {
 
       {/* ══════════════════════════════════════════════════════════════════
           MARKETPLACE / EXHIBICIÓN
-          ✅ CAMBIO: emoji 🌿 → market_ex.svg
       ══════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#fff', padding: '72px 0' }}>
         <div className="container-brand" style={{ padding: '0 48px' }}>
@@ -275,7 +561,6 @@ export default function UniversidadPage() {
             gap: 60, alignItems: 'center',
           }} className="marketplace-grid">
 
-            {/* ✅ Imagen marketplace_ex.svg oficial */}
             <FadeIn>
               <div style={{
                 borderRadius: 14, overflow: 'hidden', aspectRatio: '4/3',
@@ -335,7 +620,6 @@ export default function UniversidadPage() {
 
       {/* ══════════════════════════════════════════════════════════════════
           CONOCE EL LUGAR — Universidad + Video
-          ✅ CAMBIO: video placeholder → iframe YouTube real
       ══════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#09344e', padding: '72px 0' }}>
         <div className="container-brand" style={{ padding: '0 48px' }}>
@@ -379,7 +663,6 @@ export default function UniversidadPage() {
               </Link>
             </FadeIn>
 
-            {/* ✅ Video real de YouTube en lugar del placeholder con play button */}
             <FadeIn delay={0.12}>
               <div style={{
                 borderRadius: 14, overflow: 'hidden',
@@ -414,7 +697,6 @@ export default function UniversidadPage() {
 
       {/* ══════════════════════════════════════════════════════════════════
           UBICACIÓN
-          ✅ CAMBIO: emoji 🏔️ → ubicacion.svg | emoji 🎓 → logo_uni.svg
       ══════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#F7F6F3', padding: '72px 0' }}>
         <div className="container-brand" style={{ padding: '0 48px' }}>
@@ -423,7 +705,6 @@ export default function UniversidadPage() {
             gap: 60, alignItems: 'center',
           }} className="ubicacion-grid">
 
-            {/* ✅ ubicacion.svg en lugar de emoji 🏔️ */}
             <FadeIn>
               <div style={{
                 borderRadius: 14, overflow: 'hidden', aspectRatio: '4/3',
@@ -438,7 +719,6 @@ export default function UniversidadPage() {
             </FadeIn>
 
             <FadeIn delay={0.12}>
-              {/* ✅ logo_uni.svg en lugar de emoji 🎓 */}
               <div style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
                 backgroundColor: '#fff', border: '1px solid #D9DEE2',
@@ -520,89 +800,9 @@ export default function UniversidadPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════
-          PLANO DEL ESPACIO
-          ✅ CAMBIO: SVG placeholder → ubicacion.svg | PDF → mapa_uni.pdf
+          PLANO DEL ESPACIO — con toggle Mapa / Recorrido Virtual
       ══════════════════════════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#fff', padding: '72px 0' }}>
-        <div className="container-brand" style={{ padding: '0 48px' }}>
-          <div style={{
-            display: 'grid', gridTemplateColumns: '1fr 1.4fr',
-            gap: 56, alignItems: 'center',
-          }} className="plano-grid">
-
-            <FadeIn>
-              <h2 style={{
-                fontFamily: 'Poppins, sans-serif', fontSize: 26, fontWeight: 600,
-                color: '#09344e', marginBottom: 12,
-              }}>
-                Plano del espacio
-              </h2>
-              <p style={{
-                fontFamily: 'Inter, sans-serif', fontSize: 14,
-                color: '#5A6E77', lineHeight: 1.8, marginBottom: 24,
-              }}>
-                ¡Consulta el mapa de las instalaciones y llévalo contigo para no perderte!
-              </p>
-
-              {/* Lista de espacios */}
-              <div style={{
-                display: 'grid', gridTemplateColumns: '1fr 1fr',
-                gap: '6px 20px', marginBottom: 28,
-              }}>
-                {ESPACIOS_MAP.map((esp, i) => (
-                  <div key={i} style={{
-                    display: 'flex', alignItems: 'center', gap: 8,
-                    fontFamily: 'Inter, sans-serif', fontSize: 12, color: '#5A6E77',
-                    padding: '4px 0',
-                  }}>
-                    <div style={{
-                      width: 20, height: 20, borderRadius: '50%', flexShrink: 0,
-                      backgroundColor: '#097589',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontFamily: 'Poppins, sans-serif', fontSize: 9, fontWeight: 700,
-                      color: '#fff',
-                    }}>
-                      {i + 1}
-                    </div>
-                    {esp}
-                  </div>
-                ))}
-              </div>
-
-              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                {/* ✅ PDF real mapa_uni.pdf */}
-                <a href="/icons/mapa_uni.pdf" target="_blank" rel="noopener noreferrer"
-  style={{
-    display: 'inline-flex', alignItems: 'center', gap: 8,
-    backgroundColor: '#097589', color: '#fff',
-    fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 700,
-    padding: '10px 20px', borderRadius: 999, textDecoration: 'none',
-    letterSpacing: '0.04em', textTransform: 'uppercase',
-  }}
->
-  <IconPDF size={16} color="white" />
-  Ver Plano Completo PDF
-</a>
-              </div>
-            </FadeIn>
-
-            {/* ✅ ubicacion.svg en lugar del SVG mapa placeholder */}
-            <FadeIn delay={0.12}>
-              <div style={{
-                borderRadius: 14, overflow: 'hidden',
-                boxShadow: '4px 8px 32px rgba(9,52,78,0.12)',
-                border: '1px solid #D9DEE2',
-              }}>
-                <img
-                  src="/icons/sede_vista_acortada.svg"
-                  alt="Plano Universidad de San Buenaventura Cali"
-                  style={{ width: '100%', height: 'auto', display: 'block' }}
-                />
-              </div>
-            </FadeIn>
-          </div>
-        </div>
-      </section>
+      <PlanoDelEspacio />
 
       {/* ══════════════════════════════════════════════════════════════════
           DONACIÓN
@@ -613,6 +813,7 @@ export default function UniversidadPage() {
           REDES SOCIALES
       ══════════════════════════════════════════════════════════════════ */}
       <SectionRedes bg="#FFFFFF" theme="light" />
+
       {/* ── RESPONSIVE ── */}
       <style suppressHydrationWarning>{`
         @media (max-width: 1024px) {

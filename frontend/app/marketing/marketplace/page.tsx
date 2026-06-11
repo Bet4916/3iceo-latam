@@ -28,19 +28,19 @@ function FadeIn({ children, delay = 0, style }: { children: React.ReactNode; del
 const STATS = [
   {
     num: '28', label: 'Organizaciones',
-    image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/momentos/marketplace.jpg',
+    image: '/icons/ent_aliados.svg',
   },
   {
     num: '03', label: 'Días de Marketplace',
-    image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/momentos/dias_marketplace.jpg',
+    image: '/icons/dias_marletplace.svg',
   },
   {
     num: '9', label: 'Países representados',
-    image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/momentos/universidades.jpg',
+    image: '/icons/uni_aliadas.svg',
   },
   {
     num: '100%', label: 'Enfoque sostenible',
-    image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/momentos/panelistas.jpg',
+    image: "/icons/planta_donacion.svg",
   },
 ]
 

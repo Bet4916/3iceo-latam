@@ -35,7 +35,7 @@ interface Form {
   codigoPais: string
   telefono: string
   ubicacionPaisCode: string
-  ubicacionPaisNombre: string   // ← NUEVO
+  ubicacionPaisNombre: string
   ubicacionRegionCode: string
   ubicacionCiudad: string
   mensaje: string
@@ -77,7 +77,7 @@ const INITIAL_FORM: Form = {
   codigoPais: 'CO',
   telefono: '',
   ubicacionPaisCode: '',
-  ubicacionPaisNombre: '',   // ← NUEVO
+  ubicacionPaisNombre: '',
   ubicacionRegionCode: '', ubicacionCiudad: '',
   mensaje: '', aceptaPrivacidad: false, aceptaComunicaciones: false,
 }
@@ -95,40 +95,48 @@ function LocationIcon({ size = 14 }: { size?: number }) {
 }
 
 export default function RegistroPage() {
-useEffect(() => {
-  const params = new URLSearchParams(window.location.search)
-  const tipo = params.get('tipo') as TipoSolicitud | null
-  const stand = params.get('stand') === 'true'
-  if (tipo && ['asistencia', 'ponente', 'colaboracion'].includes(tipo)) {
-    setForm(p => ({ ...p, tipoSolicitud: tipo, quiereStand: stand && tipo === 'asistencia' }))
-    setStep(2) // salta directo al Step 2 con todo pre-cargado
-    scrollToForm()
-  }
-}, [])
-
   const [step, setStep]             = useState<Step>(1)
   const [errors, setErrors]         = useState<Record<string, string>>({})
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [form, setForm]             = useState<Form>(INITIAL_FORM)
+  // ── NUEVO: marca si el usuario ya tocó el prefijo telefónico a mano ──
+  const [phoneCodeTouched, setPhoneCodeTouched] = useState(false)
   const formRef = useRef<HTMLDivElement>(null)
 
   const regions = form.ubicacionPaisCode ? State.getStatesOfCountry(form.ubicacionPaisCode) : []
   const cities  = form.ubicacionPaisCode && form.ubicacionRegionCode
     ? City.getCitiesOfState(form.ubicacionPaisCode, form.ubicacionRegionCode) : []
 
-  // ← CAMBIADO: guarda también el nombre del país
+  // ── Cambio de país de UBICACIÓN ───────────────────────────────────────────
+  // Solo autocompleta el prefijo telefónico la PRIMERA vez que se elige país
+  // (y siempre que el usuario no lo haya cambiado a mano). Si ya había país
+  // y se cambia, NO se toca el teléfono.
   const handleCountryChange = (isoCode: string) => {
     const countryData = Country.getCountryByCode(isoCode)
     const nombre = countryData?.name || isoCode
+    const esPrimeraVez = !form.ubicacionPaisCode
     setForm(p => ({
       ...p,
       ubicacionPaisCode:   isoCode,
-      ubicacionPaisNombre: nombre,   // ← guarda nombre legible
+      ubicacionPaisNombre: nombre,
       ubicacionRegionCode: '',
       ubicacionCiudad:     '',
-      codigoPais:          isoCode,
+      codigoPais: (esPrimeraVez && !phoneCodeTouched) ? isoCode : p.codigoPais,
     }))
+    setErrors(p => { const e = { ...p }; delete e.ubicacionPais; return e })
+  }
+
+  // ── Cambio manual del prefijo telefónico ──────────────────────────────────
+  const handlePhoneCodeChange = (iso: string) => {
+    setPhoneCodeTouched(true)
+    set('codigoPais', iso)
+  }
+
+  // ── Teléfono: solo números y símbolos válidos ─────────────────────────────
+  const handlePhoneChange = (v: string) => {
+    const filtered = v.replace(/[^0-9+\-\s()]/g, '')
+    set('telefono', filtered)
   }
 
   const set = (k: keyof Form, v: string | boolean) => {
@@ -143,6 +151,18 @@ useEffect(() => {
 
   const scrollToForm = () => setTimeout(() => formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100)
 
+  // ── Autoselección por query (?tipo=...&stand=true) ────────────────────────
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const tipo = params.get('tipo') as TipoSolicitud | null
+    const stand = params.get('stand') === 'true'
+    if (tipo && ['asistencia', 'ponente', 'colaboracion'].includes(tipo)) {
+      setForm(p => ({ ...p, tipoSolicitud: tipo, quiereStand: stand && tipo === 'asistencia' }))
+      setStep(2)
+      scrollToForm()
+    }
+  }, [])
+
   const validateStep1 = () => {
     if (!form.tipoSolicitud) { setErrors({ tipoSolicitud: 'Por favor selecciona una opción para continuar.' }); return false }
     return true
@@ -156,7 +176,18 @@ useEffect(() => {
     if (form.tipoOrg === 'Otra organización' && !form.tipoOrgEspecifica.trim()) e.tipoOrgEspecifica = 'Especifica el tipo'
     if (!form.nombreOrg.trim()) e.nombreOrg = 'El nombre de la organización es requerido'
     if (!form.puesto.trim()) e.puesto = 'Tu puesto es requerido'
-    if (!form.telefono.trim()) e.telefono = 'El teléfono es requerido'
+
+    // ── Teléfono: requerido + solo números + longitud válida ──
+    const phoneDigits = form.telefono.replace(/\D/g, '')
+    if (!form.telefono.trim()) {
+      e.telefono = 'El teléfono es requerido'
+    } else if (phoneDigits.length < 7 || phoneDigits.length > 15) {
+      e.telefono = 'Introduce un número válido (entre 7 y 15 dígitos)'
+    }
+
+    // ── País obligatorio ──
+    if (!form.ubicacionPaisCode) e.ubicacionPais = 'Selecciona tu país'
+
     if (form.tipoSolicitud === 'ponente') {
       if (!form.tituloPonencia.trim()) e.tituloPonencia = 'El título de la ponencia es requerido'
       if (!form.areaTematica) e.areaTematica = 'Selecciona el área temática'
@@ -196,6 +227,9 @@ useEffect(() => {
 
   const heroTitle = { asistencia: 'Solicitud de asistencia al Congreso', ponente: 'Inscripción como Ponente', colaboracion: 'Propuesta de Colaboración / Alianza' }
   const heroBadge = { asistencia: 'Asistencia', ponente: 'Ponente', colaboracion: 'Colaboración' }
+
+  // ¿Pidió stand? (solo aplica a asistencia)
+  const pidioStand = form.quiereStand && form.tipoSolicitud === 'asistencia'
 
   return (
     <div style={{ backgroundColor: '#E6F3EE', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -399,82 +433,106 @@ useEffect(() => {
                     <div style={S.field}>
                       <label style={S.label}>Nº Teléfono *</label>
                       <div style={{ display: 'flex', gap: 8 }}>
-                        <PhoneCodeSelect value={form.codigoPais} onChange={v => set('codigoPais', v)} />
+                        <PhoneCodeSelect value={form.codigoPais} onChange={handlePhoneCodeChange} />
                         <input
                           style={{ ...S.input, borderColor: errors.telefono ? '#A7170C' : '#C3DED9', flex: 1, width: 'auto' }}
-                          type="tel" placeholder="000 000 0000"
-                          value={form.telefono} onChange={e => set('telefono', e.target.value)}
+                          type="tel" inputMode="tel" placeholder="000 000 0000"
+                          value={form.telefono} onChange={e => handlePhoneChange(e.target.value)}
                         />
                       </div>
-                      {errors.telefono ? <span style={S.error}>{errors.telefono}</span> : <span style={S.hint}>Requerido</span>}
+                      {errors.telefono ? <span style={S.error}>{errors.telefono}</span> : <span style={S.hint}>Solo números — entre 7 y 15 dígitos</span>}
                     </div>
 
+                    {/* ── PAÍS (obligatorio) + región/localidad solo si hay datos ── */}
                     <div style={S.field}>
-                      <label style={S.label}>Ubicación</label>
+                      <label style={S.label}>País *</label>
                       <CountrySelect
                         value={form.ubicacionPaisCode}
                         onChange={v => handleCountryChange(v)}
-                        hasError={false}
+                        hasError={!!errors.ubicacionPais}
                       />
+                      {errors.ubicacionPais ? <span style={S.error}>{errors.ubicacionPais}</span> : <span style={S.hint}>Requerido</span>}
+
                       <AnimatePresence>
                         {form.ubicacionPaisCode && (
-                          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
-                            style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 8 }}>
-                            <div>
-                              <div style={{ position: 'relative' }}>
-                                <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', zIndex: 1, display: 'flex' }}>
-                                  <LocationIcon size={14} />
-                                </span>
-                                <select
-                                  value={form.ubicacionRegionCode}
-                                  onChange={e => { set('ubicacionRegionCode', e.target.value); set('ubicacionCiudad', '') }}
-                                  style={{ ...S.select, fontSize: 13, paddingLeft: 30 }}
-                                  disabled={regions.length === 0}
-                                >
-                                  <option value="">Región / Estado</option>
-                                  {regions.map(r => <option key={r.isoCode} value={r.isoCode}>{r.name}</option>)}
-                                </select>
-                              </div>
-                              <span style={S.hint}>Opcional</span>
-                            </div>
-                            <div>
-                              {form.ubicacionRegionCode ? (
-                                cities.length > 0 ? (
+                          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} style={{ marginTop: 8 }}>
+                            {regions.length > 0 ? (
+                              // ── El país TIENE regiones ──
+                              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                                <div>
                                   <div style={{ position: 'relative' }}>
                                     <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', zIndex: 1, display: 'flex' }}>
                                       <LocationIcon size={14} />
                                     </span>
                                     <select
-                                      value={form.ubicacionCiudad}
-                                      onChange={e => set('ubicacionCiudad', e.target.value)}
-                                      style={{ ...S.select, fontSize: 13, width: '100%', paddingLeft: 30 }}
+                                      value={form.ubicacionRegionCode}
+                                      onChange={e => { set('ubicacionRegionCode', e.target.value); set('ubicacionCiudad', '') }}
+                                      style={{ ...S.select, fontSize: 13, paddingLeft: 30 }}
                                     >
-                                      <option value="">Localidad</option>
-                                      {cities.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
+                                      <option value="">Región / Estado</option>
+                                      {regions.map(r => <option key={r.isoCode} value={r.isoCode}>{r.name}</option>)}
                                     </select>
                                   </div>
-                                ) : (
-                                  <div style={{ position: 'relative' }}>
-                                    <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', zIndex: 1, display: 'flex' }}>
-                                      <LocationIcon size={14} />
-                                    </span>
-                                    <input
-                                      type="text"
-                                      value={form.ubicacionCiudad}
-                                      onChange={e => set('ubicacionCiudad', e.target.value)}
-                                      placeholder="Ciudad / Localidad"
-                                      style={{ ...S.input, fontSize: 13, paddingLeft: 30 }}
-                                    />
-                                  </div>
-                                )
-                              ) : (
-                                <div style={{ height: 48, display: 'flex', alignItems: 'center', gap: 8, padding: '0 12px', borderRadius: 8, border: '1.5px solid #E0E6E9', backgroundColor: '#F7F6F3', fontFamily: 'Poppins, sans-serif', fontSize: 13, color: '#9EADB4' }}>
-                                  <LocationIcon size={14} />
-                                  Primero elige región
+                                  <span style={S.hint}>Opcional</span>
                                 </div>
-                              )}
-                              <span style={S.hint}>Opcional</span>
-                            </div>
+                                <div>
+                                  {form.ubicacionRegionCode ? (
+                                    cities.length > 0 ? (
+                                      <div style={{ position: 'relative' }}>
+                                        <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', zIndex: 1, display: 'flex' }}>
+                                          <LocationIcon size={14} />
+                                        </span>
+                                        <select
+                                          value={form.ubicacionCiudad}
+                                          onChange={e => set('ubicacionCiudad', e.target.value)}
+                                          style={{ ...S.select, fontSize: 13, width: '100%', paddingLeft: 30 }}
+                                        >
+                                          <option value="">Localidad</option>
+                                          {cities.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
+                                        </select>
+                                      </div>
+                                    ) : (
+                                      // región sin localidades → texto libre
+                                      <div style={{ position: 'relative' }}>
+                                        <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', zIndex: 1, display: 'flex' }}>
+                                          <LocationIcon size={14} />
+                                        </span>
+                                        <input
+                                          type="text"
+                                          value={form.ubicacionCiudad}
+                                          onChange={e => set('ubicacionCiudad', e.target.value)}
+                                          placeholder="Ciudad / Localidad"
+                                          style={{ ...S.input, fontSize: 13, paddingLeft: 30 }}
+                                        />
+                                      </div>
+                                    )
+                                  ) : (
+                                    <div style={{ height: 48, display: 'flex', alignItems: 'center', gap: 8, padding: '0 12px', borderRadius: 8, border: '1.5px solid #E0E6E9', backgroundColor: '#F7F6F3', fontFamily: 'Poppins, sans-serif', fontSize: 13, color: '#9EADB4' }}>
+                                      <LocationIcon size={14} />
+                                      Primero elige región
+                                    </div>
+                                  )}
+                                  <span style={S.hint}>Opcional</span>
+                                </div>
+                              </div>
+                            ) : (
+                              // ── El país NO tiene regiones → solo ciudad en texto libre ──
+                              <div>
+                                <div style={{ position: 'relative' }}>
+                                  <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', zIndex: 1, display: 'flex' }}>
+                                    <LocationIcon size={14} />
+                                  </span>
+                                  <input
+                                    type="text"
+                                    value={form.ubicacionCiudad}
+                                    onChange={e => set('ubicacionCiudad', e.target.value)}
+                                    placeholder="Ciudad / Localidad"
+                                    style={{ ...S.input, fontSize: 13, paddingLeft: 30 }}
+                                  />
+                                </div>
+                                <span style={S.hint}>Opcional</span>
+                              </div>
+                            )}
                           </motion.div>
                         )}
                       </AnimatePresence>
@@ -551,17 +609,20 @@ useEffect(() => {
                     <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 17, fontWeight: 600, color: '#09344e', marginBottom: 20 }}>Gracias por tu interés y ser parte del 3ICEO</p>
                     <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 40 }}>
                       <Link href="/" style={{ padding: '12px 24px', borderRadius: 50, border: '1.5px solid #C3DED9', color: '#097589', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 600, textDecoration: 'none', letterSpacing: '0.03em' }}>Volver al inicio</Link>
-                      <Link href="/marketing/donaciones" style={{ padding: '12px 24px', borderRadius: 50, border: 'none', backgroundColor: '#B53077', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700, textDecoration: 'none', letterSpacing: '0.03em', boxShadow: '0 2px 12px rgba(181,48,119,0.3)' }}>Apoya el congreso</Link>
+                      <Link href="/marketing/donaciones#form-donacion" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '12px 24px', borderRadius: 50, border: 'none', backgroundColor: '#B53077', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700, textDecoration: 'none', letterSpacing: '0.03em', boxShadow: '0 2px 12px rgba(181,48,119,0.3)' }}>
+                        Apoya el congreso
+                      </Link>
                     </div>
                     <div style={{ height: 1, backgroundColor: '#EFF4F7', margin: '0 -32px 32px' }} />
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
-                      <img src="/icons/follow.svg" alt="Síguenos" style={{ width: 80, height: 'auto', objectFit: 'contain' }} />
+                      {/* follow más grande */}
+                      <img src="/icons/follow.svg" alt="Síguenos" style={{ width: 190, height: 'auto', objectFit: 'contain' }} />
                       <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 15, fontWeight: 600, color: '#09344e', margin: 0 }}>Síguenos en redes para no perderte nada</p>
                       <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
                         {[
-                          { src: '/icons/icon_instagram.svg', href: 'https://instagram.com/awaqong',         label: 'Instagram' },
-                          { src: '/icons/icon_facebook.svg',  href: 'https://facebook.com/awaqong',          label: 'Facebook'  },
-                          { src: '/icons/icon_linkedin.svg',  href: 'https://linkedin.com/company/awaq-ong', label: 'LinkedIn'  },
+                          { src: '/icons/icon_instagram.svg', href: 'https://www.instagram.com/awaqongd',         label: 'Instagram' },
+                          { src: '/icons/icon_facebook.svg',  href: 'https://facebook.com/awaqong',                label: 'Facebook'  },
+                          { src: '/icons/icon_linkedin.svg',  href: 'https://www.linkedin.com/company/awaq-ongd/', label: 'LinkedIn'  },
                         ].map(({ src, href, label }) => (
                           <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}
                             style={{ width: 44, height: 44, borderRadius: '50%', backgroundColor: '#09344e', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background .2s, transform .2s' }}
@@ -576,11 +637,67 @@ useEffect(() => {
                   </div>
                 </Card>
 
+                {/* ════════════════════════════════════════════════════════════
+                    INVITACIÓN AL MARKETPLACE VIRTUAL — solo si pidió stand
+                ════════════════════════════════════════════════════════════ */}
+                {pidioStand && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
+                    style={{ position: 'relative', marginTop: 24, borderRadius: 18, overflow: 'hidden', boxShadow: '4px 10px 36px rgba(9,52,78,0.28)' }}
+                  >
+                    <div style={{ position: 'relative', background: 'linear-gradient(135deg, #09344e 0%, #1C495C 55%, #097589 100%)', padding: '36px 34px' }}>
+                      {/* textura/brillo */}
+                      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(/icons/market_ex.svg)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.18, pointerEvents: 'none' }} />
+                      <div style={{ position: 'absolute', top: -60, right: -40, width: 220, height: 220, background: 'radial-gradient(circle, rgba(174,229,218,0.25) 0%, transparent 65%)', pointerEvents: 'none' }} />
+
+                      <div style={{ position: 'relative' }}>
+                        <span style={{ display: 'inline-block', fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700, color: '#AEE5DA', letterSpacing: '0.14em', textTransform: 'uppercase', backgroundColor: 'rgba(174,229,218,0.12)', border: '1px solid rgba(174,229,218,0.3)', borderRadius: 999, padding: '5px 14px', marginBottom: 16 }}>
+                          🎮 Marketplace Circular · 3ICEO
+                        </span>
+                        <h3 style={{ fontFamily: 'Gloock, Georgia, serif', fontWeight: 400, fontSize: 'clamp(22px, 3vw, 30px)', color: '#fff', lineHeight: 1.2, marginBottom: 12 }}>
+                          ¡Tu stand te espera en el mundo virtual!
+                        </h3>
+                        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 14.5, color: 'rgba(255,255,255,0.82)', lineHeight: 1.7, marginBottom: 18, maxWidth: 520 }}>
+                          Solicitaste un stand, así que tienes que conocer <strong style={{ color: '#AEE5DA' }}>EcoWorld</strong>: un mapa interactivo donde caminas entre los stands de las organizaciones ambientales, exploras sus proyectos y te conectas con la comunidad.
+                        </p>
+
+                        {/* mini controles */}
+                        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 26 }}>
+                          {[
+                            { k: 'WASD', t: 'Moverte' },
+                            { k: 'E', t: 'Interactuar' },
+                          ].map(c => (
+                            <div key={c.k} style={{ display: 'flex', alignItems: 'center', gap: 8, backgroundColor: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.14)', borderRadius: 10, padding: '6px 12px' }}>
+                              <span style={{ fontFamily: 'monospace', fontSize: 12, fontWeight: 700, color: '#fff', backgroundColor: '#097589', borderRadius: 6, padding: '2px 8px' }}>{c.k}</span>
+                              <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.75)' }}>{c.t}</span>
+                            </div>
+                          ))}
+                        </div>
+
+                        <Link
+                          href="/marketing/marketplace#ecoworld"
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: '#B53077', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700, padding: '14px 30px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em', boxShadow: '0 4px 20px rgba(181,48,119,0.45)', transition: 'background-color 0.2s, transform 0.15s' }}
+                          onMouseEnter={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.backgroundColor = '#802254'; el.style.transform = 'translateY(-1px)' }}
+                          onMouseLeave={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.backgroundColor = '#B53077'; el.style.transform = 'translateY(0)' }}
+                        >
+                          Explorar el Marketplace virtual →
+                        </Link>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* ════════════════════════════════════════════════════════════
+                    BANNER DONACIÓN
+                ════════════════════════════════════════════════════════════ */}
                 <div style={{ marginTop: 24, borderRadius: 12, overflow: 'hidden', backgroundColor: '#fff', display: 'grid', gridTemplateColumns: '1fr 200px', boxShadow: '2px 2px 16px rgba(9,52,78,0.1)' }} className="donation-banner">
                   <div style={{ padding: '36px 32px' }}>
                     <h3 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 20, fontWeight: 700, color: '#09344e', marginBottom: 14, lineHeight: 1.3 }}>¡Gracias a tu donación, nadie se queda fuera!</h3>
                     <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14, color: '#437287', marginBottom: 24, lineHeight: 1.7 }}>El importe irá íntegramente destinado a cubrir alojamiento, transporte y dietas.</p>
-                    <Link href="/marketing/donaciones" style={{ display: 'inline-block', padding: '11px 28px', borderRadius: 50, backgroundColor: '#B53077', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700, textDecoration: 'none', letterSpacing: '0.04em' }}>DONAR</Link>
+                    <Link href="/marketing/donaciones#form-donacion" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '11px 26px', borderRadius: 50, backgroundColor: '#B53077', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700, textDecoration: 'none', letterSpacing: '0.04em' }}>
+                      <img src="/icons/icon_paypal.svg" alt="" width={18} height={18} style={{ display: 'block', objectFit: 'contain' }} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
+                      DONAR
+                    </Link>
                   </div>
                   <div style={{ background: 'linear-gradient(135deg, #AEE5DA 0%, #74B4A7 50%, #097589 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <img src="/icons/drop_hands.svg" alt="" style={{ width: 80, height: 80, objectFit: 'contain', opacity: 0.85 }} />

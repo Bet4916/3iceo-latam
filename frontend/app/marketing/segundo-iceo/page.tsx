@@ -21,21 +21,9 @@ const FadeIn = ({ children, delay = 0, style }: { children: React.ReactNode; del
 
 // ─── DATA ─────────────────────────────────────────────────────────────────────
 
-// Las imágenes reales del congreso para la sección momentos
+// Imágenes LOCALES por ahora. Cuando tengas las fotos en Cloudflare R2,
+// solo reemplaza cada "image" por su URL (mismo orden, mismo num/label).
 const MOMENTOS = [
-  { num: '30', label: 'Panelistas',                       image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/momentos/panelistas.jpg'        },
-  { num: '14', label: 'Conferencias',                     image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/momentos/conferencias.jpg'      },
-  { num: '02', label: 'Conversatorios',                   image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/momentos/conversatorios.jpg'    },
-  { num: '28', label: 'Organizaciones en el Marketplace', image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/momentos/marketplace.jpg'       },
-  { num: '02', label: 'Convenios',                        image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/momentos/convenios.jpg'         },
-  { num: '05', label: 'Talleres',                         image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/momentos/talleres.jpg'          },
-  { num: '17', label: 'Entidades aliadas',                image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/momentos/entidades.jpg'         },
-  { num: '03', label: 'Días de Marketplace',              image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/momentos/dias_marketplace.jpg'  },
-  { num: '09', label: 'Universidades aliadas',            image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/momentos/universidades.jpg'     },
-]
-
-// Fallback con SVGs locales si las fotos no están aún en R2
-const MOMENTOS_FALLBACK = [
   { num: '30', label: 'Panelistas',                       image: '/icons/panelistas.svg'       },
   { num: '14', label: 'Conferencias',                     image: '/icons/conferencias.svg'     },
   { num: '02', label: 'Conversatorios',                   image: '/icons/conversatorios.svg'   },
@@ -46,9 +34,6 @@ const MOMENTOS_FALLBACK = [
   { num: '03', label: 'Días de Marketplace',              image: '/icons/dias_marletplace.svg' },
   { num: '09', label: 'Universidades aliadas',            image: '/icons/uni_aliadas.svg'      },
 ]
-
-// ─── NOTA: Usa MOMENTOS si tienes las fotos en R2, o MOMENTOS_FALLBACK con los SVGs locales
-const MOMENTOS_DATA = MOMENTOS_FALLBACK
 
 const IMPACTO = [
   { num: '1209', label: 'Asistentes Presenciales y Virtuales', icon: '/icons/icon_asistentes.svg'                   },
@@ -137,8 +122,6 @@ const ENTREVISTAS = [
 // Se alternan: par → #ADC6D9, impar → #4886B5
 function MomentoCard({ num, label, image, index }: { num: string; label: string; image: string; index: number }) {
   const accentColor = index % 2 === 0 ? '#ADC6D9' : '#4886B5'
-  // Path del Figma escalado a CSS clip-path — usamos border-radius asimétrico
-  // que reproduce el mismo efecto: top-left grande, top-right pequeño, bottom-right grande, bottom-left pequeño
   return (
     <FadeIn delay={index * 0.05}>
       <div style={{ position: 'relative' }}>
@@ -165,7 +148,7 @@ function MomentoCard({ num, label, image, index }: { num: string; label: string;
             alt={label}
             style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
             onError={(e) => {
-              // Si la imagen no carga (R2 vacío), pone un fondo degradado
+              // Si la imagen no carga, pone un fondo degradado
               const el = e.currentTarget as HTMLImageElement
               el.style.display = 'none'
               if (el.parentElement) {
@@ -175,15 +158,23 @@ function MomentoCard({ num, label, image, index }: { num: string; label: string;
               }
             }}
           />
-          {/* Overlay degradado inferior */}
+          {/* Overlay degradado inferior — más oscuro y alto para que el texto SIEMPRE se lea */}
           <div style={{
             position: 'absolute', bottom: 0, left: 0, right: 0,
-            background: 'linear-gradient(0deg, rgba(9,52,78,0.92) 0%, transparent 55%)',
-            padding: '40px 18px 18px',
-            display: 'flex', alignItems: 'flex-end', gap: 8,
+            background: 'linear-gradient(0deg, rgba(9,52,78,0.97) 0%, rgba(9,52,78,0.72) 32%, rgba(9,52,78,0.25) 62%, transparent 100%)',
+            padding: '60px 20px 20px',
+            display: 'flex', alignItems: 'flex-end', gap: 10,
           }}>
-            <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 38, fontWeight: 700, color: '#fff', lineHeight: 1 }}>{num}</span>
-            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.88)', lineHeight: 1.3, paddingBottom: 4, maxWidth: 90 }}>{label}</span>
+            <span style={{
+              fontFamily: 'Poppins, sans-serif', fontSize: 46, fontWeight: 800,
+              color: '#AEE5DA', lineHeight: 0.92,
+              textShadow: '0 2px 12px rgba(0,0,0,0.55)',
+            }}>{num}</span>
+            <span style={{
+              fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 600,
+              color: '#ffffff', lineHeight: 1.3, paddingBottom: 5, maxWidth: 130,
+              textShadow: '0 1px 6px rgba(0,0,0,0.75)',
+            }}>{label}</span>
           </div>
         </div>
       </div>
@@ -285,17 +276,17 @@ export default function SegundoIceoPage() {
 
       {/* ══ HERO ════════════════════════════════════════════════════════════════ */}
       <HeroIceo
-  badge="Edición 2026 · Cali, Colombia"
-  title={<>Memoria <span style={{ color: '#ffffff' }}>2do ICEO</span></>}
-  description={<>Descubre el impacto de la segunda edición del congreso<br />y el movimiento que transforma territorios en LATAM</>}
-  cta={{ label: 'VER MEMORIA →', href: '/docs/memoria_2iceo.pdf', target: '_blank' }}
-  image="/icons/2do_iceo.svg"
-  imageAlt="2° ICEO LATAM · Cali 2026"
-  imageLabel="2° ICEO · 2026 · Cali"
-  imageScale={1.40}
-  waveVariant="default"
-  waveColor="#ffffff"
-/>
+        badge="Edición 2026 · Cali, Colombia"
+        title={<>Memoria <span style={{ color: '#ffffff' }}>2do ICEO</span></>}
+        description={<>Descubre el impacto de la segunda edición del congreso<br />y el movimiento que transforma territorios en LATAM</>}
+        cta={{ label: 'VER MEMORIA →', href: '/docs/memoria_2iceo.pdf', target: '_blank' }}
+        image="/icons/2do_iceo.svg"
+        imageAlt="2° ICEO LATAM · Cali 2026"
+        imageLabel="2° ICEO · 2026 · Cali"
+        imageScale={1.40}
+        waveVariant="default"
+        waveColor="#ffffff"
+      />
 
       {/* ══ MOMENTOS ══════════════════════════════════════════════════════════════
           Cards con esquinas asimétricas del Figma:
@@ -311,17 +302,14 @@ export default function SegundoIceoPage() {
           </FadeIn>
           {/* padding extra para que las sombras desplazadas no se corten */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 32, padding: '0 8px 16px' }} className="momentos-grid">
-            {MOMENTOS_DATA.map((m, i) => (
+            {MOMENTOS.map((m, i) => (
               <MomentoCard key={i} num={m.num} label={m.label} image={m.image} index={i} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* ══ IMPACTO ═══════════════════════════════════════════════════════════════
-          Todas las cards con exactamente el mismo ancho fijo (160px) y alto (auto)
-          usando grid en lugar de flex para que las medidas sean iguales
-      ════════════════════════════════════════════════════════════════════════════ */}
+      {/* ══ IMPACTO ═══════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#F7F6F3', padding: '80px 0' }}>
         <div className="container-brand" style={{ padding: '0 48px' }}>
           <FadeIn>
@@ -344,9 +332,7 @@ export default function SegundoIceoPage() {
         </div>
       </section>
 
-      {/* ══ REDES ═════════════════════════════════════════════════════════════════
-          Grid de 4 columnas iguales → todos los rectángulos con las mismas medidas
-      ════════════════════════════════════════════════════════════════════════════ */}
+      {/* ══ REDES ═════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#fff', padding: '80px 0' }}>
         <div className="container-brand" style={{ padding: '0 48px' }}>
           <FadeIn>
@@ -375,9 +361,7 @@ export default function SegundoIceoPage() {
         </svg>
       </div>
 
-      {/* ══ PERSONALIDADES ════════════════════════════════════════════════════════
-          Banderas como <img> de flagcdn.com — funciona en todos los navegadores y SO
-      ════════════════════════════════════════════════════════════════════════════ */}
+      {/* ══ PERSONALIDADES ════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#09344e', padding: '80px 0' }}>
         <div className="container-brand" style={{ padding: '0 48px' }}>
           <FadeIn>
@@ -396,10 +380,7 @@ export default function SegundoIceoPage() {
         </svg>
       </div>
 
-      {/* ══ VOCES DEL CONGRESO ═════════════════════════════════════════════════════
-          El texto izquierdo cambia dinámicamente según el video seleccionado.
-          Se elige la entrevista activa y se muestra su quote y descripción.
-      ════════════════════════════════════════════════════════════════════════════ */}
+      {/* ══ VOCES DEL CONGRESO ═════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#F7F6F3', padding: '80px 0' }}>
         <div className="container-brand" style={{ padding: '0 48px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60, alignItems: 'start' }} className="voces-grid">
@@ -466,9 +447,7 @@ export default function SegundoIceoPage() {
         </div>
       </section>
 
-      {/* ══ RELEVANCIA ════════════════════════════════════════════════════════════
-          imageScale={1.40} para que la imagen llene bien el contenedor
-      ════════════════════════════════════════════════════════════════════════════ */}
+      {/* ══ RELEVANCIA ════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#09344e', padding: '80px 0', overflow: 'hidden' }}>
         <div className="container-brand" style={{ padding: '0 48px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: 60, alignItems: 'center' }} className="relevancia-grid">
@@ -507,21 +486,21 @@ export default function SegundoIceoPage() {
 
       {/* ══ CTA MEMORIA ═══════════════════════════════════════════════════════════ */}
       <section style={{ background: 'linear-gradient(135deg, #03A383 0%, #3C625B 100%)', padding: '72px 48px', textAlign: 'center' }}>
-  <FadeIn>
-    <h2 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 28, fontWeight: 600, color: '#fff', marginBottom: 28 }}>
-      Lee la memoria del 2° ICEO completa
-    </h2>
-    <Link href="/docs/memoria_2iceo.pdf" target="_blank"
-      style={{ display: 'inline-flex', alignItems: 'center', gap: 10, backgroundColor: '#fff', color: '#03A383', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, padding: '13px 32px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em', textTransform: 'uppercase', boxShadow: '0 4px 20px rgba(0,0,0,0.15)' }}>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="#03A383" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M14 2v6h6M9 13h6M9 17h4" stroke="#03A383" strokeWidth="1.8" strokeLinecap="round"/>
-        <path d="M7 9h2" stroke="#03A383" strokeWidth="1.8" strokeLinecap="round"/>
-      </svg>
-      Descargar Memoria PDF
-    </Link>
-  </FadeIn>
-</section>
+        <FadeIn>
+          <h2 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 28, fontWeight: 600, color: '#fff', marginBottom: 28 }}>
+            Lee la memoria del 2° ICEO completa
+          </h2>
+          <Link href="/docs/memoria_2iceo.pdf" target="_blank"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 10, backgroundColor: '#fff', color: '#03A383', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, padding: '13px 32px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em', textTransform: 'uppercase', boxShadow: '0 4px 20px rgba(0,0,0,0.15)' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="#03A383" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M14 2v6h6M9 13h6M9 17h4" stroke="#03A383" strokeWidth="1.8" strokeLinecap="round"/>
+              <path d="M7 9h2" stroke="#03A383" strokeWidth="1.8" strokeLinecap="round"/>
+            </svg>
+            Descargar Memoria PDF
+          </Link>
+        </FadeIn>
+      </section>
 
       {/* ══ DONACIÓN — componente unificado ══════════════════════════════════════ */}
       <SectionDonacion

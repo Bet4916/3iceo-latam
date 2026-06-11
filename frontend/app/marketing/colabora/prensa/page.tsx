@@ -54,48 +54,31 @@ const PHONE_CODES: Record<string, string> = {
   US: '1', BR: '55', FR: '33', DE: '49', IT: '39', GB: '44', PT: '351',
 }
 
-// ─── HELPERS ──────────────────────────────────────────────────────────────────
-function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay }}
-    >
-      {children}
-    </motion.div>
-  )
+// ─── SHARED STYLE SYSTEM (matches registro form) ──────────────────────────────
+const S = {
+  label:    { fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 500, color: '#09344e', display: 'block', marginBottom: 6 } as React.CSSProperties,
+  input:    { width: '100%', height: 48, padding: '0 14px', borderRadius: 8, border: '1.5px solid #C3DED9', backgroundColor: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 15, color: '#12303E', outline: 'none', boxSizing: 'border-box' as const, transition: 'border-color 0.2s' } as React.CSSProperties,
+  select:   { width: '100%', height: 48, padding: '0 14px', borderRadius: 8, border: '1.5px solid #C3DED9', backgroundColor: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, color: '#12303E', outline: 'none', cursor: 'pointer', boxSizing: 'border-box' as const, appearance: 'auto' as const } as React.CSSProperties,
+  textarea: { width: '100%', minHeight: 110, padding: '12px 14px', borderRadius: 8, border: '1.5px solid #C3DED9', backgroundColor: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 15, color: '#12303E', outline: 'none', boxSizing: 'border-box' as const, resize: 'vertical' as const } as React.CSSProperties,
+  hint:     { fontFamily: 'Poppins, sans-serif', fontSize: 11, color: '#097589', marginTop: 4, display: 'block' } as React.CSSProperties,
+  optional: { fontFamily: 'Poppins, sans-serif', fontSize: 11, color: '#5A6E77', marginTop: 4, display: 'block' } as React.CSSProperties,
+  error:    { fontFamily: 'Poppins, sans-serif', fontSize: 11, color: '#A7170C', marginTop: 4, display: 'block' } as React.CSSProperties,
+  field:    { display: 'flex', flexDirection: 'column' as const, gap: 0 },
 }
 
-const inputStyle = (error?: string): React.CSSProperties => ({
-  width: '100%', display: 'block', boxSizing: 'border-box',
-  border: `1.5px solid ${error ? '#A7170C' : '#D1D9DD'}`,
-  borderRadius: 10, padding: '12px 14px',
-  fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#12303E',
-  outline: 'none', backgroundColor: '#fff', transition: 'border-color 0.2s',
-})
-
-const labelStyle: React.CSSProperties = {
-  fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600,
-  color: '#09344e', display: 'block', marginBottom: 6,
+function SectionTitle({ children }: { children: React.ReactNode }) {
+  return <h3 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 16, fontWeight: 600, color: '#09344e', marginBottom: 16, paddingLeft: 10, borderLeft: '3px solid #097589' }}>{children}</h3>
 }
 
-function FieldGroup({ children, half }: { children: React.ReactNode; half?: boolean }) {
-  return <div style={{ gridColumn: half ? 'span 1' : 'span 2' }}>{children}</div>
-}
-
-function ErrorMsg({ msg }: { msg?: string }) {
-  return msg
-    ? <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: '#A7170C', marginTop: 4 }}>{msg}</p>
-    : null
+function Divider() {
+  return <div style={{ height: 1, backgroundColor: '#EFF4F7', margin: '24px -32px 24px' }} />
 }
 
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
 export default function PrensaPage() {
-  const [form, setForm]         = useState<Form>(INITIAL)
-  const [errors, setErrors]     = useState<Record<string, string>>({})
-  const [submitted, setSubmitted] = useState(false)
+  const [form, setForm]             = useState<Form>(INITIAL)
+  const [errors, setErrors]         = useState<Record<string, string>>({})
+  const [submitted, setSubmitted]   = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
 
@@ -110,7 +93,7 @@ export default function PrensaPage() {
     const e: Record<string, string> = {}
     if (!form.nombre.trim())    e.nombre    = 'El nombre es requerido'
     if (!form.apellidos.trim()) e.apellidos = 'Los apellidos son requeridos'
-    if (!form.email || !/\S+@\S+\.\S+/.test(form.email)) e.email = 'Email no válido'
+    if (!form.email || !/\S+@\S+\.\S+/.test(form.email)) e.email = 'Introduce un email válido'
     if (!form.telefono.trim())  e.telefono  = 'El teléfono es requerido'
     if (!form.pais)             e.pais      = 'Selecciona tu país'
     if (!form.ciudad.trim())    e.ciudad    = 'La ciudad es requerida'
@@ -128,11 +111,9 @@ export default function PrensaPage() {
     if (!validate()) return
     setSubmitting(true)
     setSubmitError(null)
-
     try {
-      const phoneCode = PHONE_CODES[form.codigoPais] ?? '34'
+      const phoneCode  = PHONE_CODES[form.codigoPais] ?? '34'
       const nombreCompleto = `${form.nombre.trim()} ${form.apellidos.trim()}`
-
       const sfData = new URLSearchParams()
       sfData.append('orgid',      '00D7Q0000092UMO')
       sfData.append('retURL',     'https://congreso.somosawaq.org/')
@@ -161,40 +142,42 @@ export default function PrensaPage() {
         form.temasInteres ? `Temas de interés: ${form.temasInteres}` : null,
         form.comentariosAdicionales ? `Comentarios: ${form.comentariosAdicionales}` : null,
       ].filter(Boolean).join('\n'))
-
       await fetch(
         'https://webto.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8&orgId=00D7Q0000092UMO',
         { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: sfData.toString() }
       )
       setSubmitted(true)
     } catch {
-      setSubmitError('No se pudo enviar. Verifica tu conexión e intenta de nuevo.')
+      setSubmitError('No se pudo conectar con el servidor. Verifica tu conexión e intenta de nuevo.')
     } finally {
       setSubmitting(false)
     }
   }
 
+  // ── SUCCESS ──────────────────────────────────────────────────────────────────
   if (submitted) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#F5FBFA', paddingTop: 80 }}>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#E6F3EE', paddingTop: 80 }}>
         <motion.div
-          initial={{ opacity: 0, scale: 0.92 }}
+          initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          style={{ backgroundColor: '#fff', borderRadius: 24, padding: '56px 48px', textAlign: 'center', maxWidth: 480, boxShadow: '4px 8px 40px rgba(9,52,78,0.12)' }}
+          transition={{ duration: 0.4 }}
+          style={{ backgroundColor: '#fff', borderRadius: 12, padding: '56px 48px', textAlign: 'center', maxWidth: 480, boxShadow: '2px 2px 24px rgba(9,52,78,0.08)' }}
         >
-          <div style={{ width: 64, height: 64, borderRadius: '50%', backgroundColor: '#437287', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
-            <svg width={32} height={32} viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M20 6L9 17l-5-5"/>
-            </svg>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
+            <img src="/icons/drop_hands.svg" alt="Solicitud recibida" style={{ width: 100, height: 100, objectFit: 'contain' }} />
           </div>
-          <h2 style={{ fontFamily: 'Gloock, Georgia, serif', fontSize: 28, fontWeight: 400, color: '#09344e', marginBottom: 12 }}>
+          <h2 style={{ fontFamily: '"Gloock", Georgia, serif', fontSize: 28, fontWeight: 400, color: '#09344e', marginBottom: 12, lineHeight: 1.2 }}>
             ¡Solicitud enviada!
           </h2>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 15, color: '#5A6E77', lineHeight: 1.7, marginBottom: 32 }}>
-            Hemos recibido tu solicitud de acreditación. El equipo de comunicaciones del 3ICEO LATAM 2027 se pondrá en contacto contigo a la brevedad.
+          <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 15, color: '#437287', lineHeight: 1.7, marginBottom: 8 }}>
+            Hemos recibido tu solicitud de acreditación de prensa para el <strong style={{ color: '#09344e' }}>3ICEO LATAM 2027</strong>.
           </p>
-          <Link href="/marketing/colabora" style={{ display: 'inline-flex', alignItems: 'center', backgroundColor: '#09344e', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, padding: '12px 28px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em' }}>
+          <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14, color: '#5A6E77', marginBottom: 4 }}>
+            Te responderemos en un plazo aproximado de 24–48h.
+          </p>
+          <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 12, color: '#9EADB4', marginBottom: 32 }}>Revisa también tu carpeta de spam.</p>
+          <Link href="/marketing/colabora" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '12px 28px', borderRadius: 50, backgroundColor: '#097589', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700, textDecoration: 'none', letterSpacing: '0.04em' }}>
             Volver a Colabora
           </Link>
         </motion.div>
@@ -202,185 +185,208 @@ export default function PrensaPage() {
     )
   }
 
+  // ── FORM ─────────────────────────────────────────────────────────────────────
   return (
-    <div style={{ backgroundColor: '#F5FBFA', minHeight: '100vh', paddingTop: 80 }}>
-      <div style={{ maxWidth: 860, margin: '0 auto', padding: '48px 24px 80px' }}>
+    <div style={{ backgroundColor: '#E6F3EE', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
 
-        {/* Back */}
-        <FadeIn>
-          <Link href="/marketing/colabora" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: 'Poppins, sans-serif', fontSize: 13, color: '#437287', textDecoration: 'none', marginBottom: 32, fontWeight: 500 }}>
+      {/* HERO */}
+      <section style={{ paddingTop: 96, paddingBottom: 40, textAlign: 'center', background: 'linear-gradient(180deg, #E6F3EE 0%, #d8eee6 100%)', borderBottom: '1px solid rgba(9,52,78,0.06)' }}>
+        <div style={{ maxWidth: 760, margin: '0 auto', padding: '0 24px' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, backgroundColor: '#097589', color: '#fff', borderRadius: 50, padding: '5px 16px', fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 600, letterSpacing: '0.04em', marginBottom: 16 }}>
+            Prensa y Medios
+          </div>
+          <h1 style={{ fontFamily: '"Gloock", Georgia, serif', fontSize: 'clamp(28px, 4.5vw, 44px)', fontWeight: 400, color: '#09344e', marginBottom: 16, lineHeight: 1.2 }}>
+            Solicitud de acreditación
+          </h1>
+          <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 16, color: '#437287', marginBottom: 10, lineHeight: 1.6 }}>
+            Completa tus datos para solicitar acreditación o proponer una colaboración de difusión para el 3ICEO LATAM 2027.
+          </p>
+          <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 500, color: '#5A6E77', lineHeight: 1.5 }}>
+            * El equipo de comunicaciones revisará tu solicitud y se pondrá en contacto contigo a la brevedad.
+          </p>
+        </div>
+      </section>
+
+      {/* FORM */}
+      <section style={{ flex: 1, padding: '40px 24px 80px' }}>
+        <div style={{ maxWidth: 640, margin: '0 auto' }}>
+
+          {/* Back link */}
+          <Link href="/marketing/colabora" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: 'Poppins, sans-serif', fontSize: 13, color: '#437287', textDecoration: 'none', marginBottom: 24, fontWeight: 500 }}>
             <svg width={16} height={16} viewBox="0 0 16 16" fill="none"><path d="M10 3L6 8l4 5" stroke="#437287" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
             Volver a Colabora
           </Link>
-        </FadeIn>
 
-        <FadeIn delay={0.05}>
-          <div style={{ backgroundColor: '#fff', borderRadius: 24, padding: '48px 44px', boxShadow: '2px 4px 32px rgba(9,52,78,0.09)', border: '1px solid #E4EAED' }}>
+          <div style={{ backgroundColor: '#fff', borderRadius: 12, padding: '32px', boxShadow: '2px 2px 24px rgba(9,52,78,0.08)', marginBottom: 20 }}>
 
-            {/* Badge */}
-            <div style={{ display: 'inline-flex', alignItems: 'center', backgroundColor: 'rgba(67,114,135,0.08)', border: '1px solid rgba(67,114,135,0.22)', borderRadius: 999, padding: '4px 12px', marginBottom: 20 }}>
-              <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700, color: '#437287', letterSpacing: '0.12em', textTransform: 'uppercase' }}>FORMULARIO NUEVO</span>
-            </div>
+            {/* ── DATOS PERSONALES ── */}
+            <SectionTitle>Datos personales</SectionTitle>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20, marginBottom: 4 }}>
 
-            <h1 style={{ fontFamily: 'Gloock, Georgia, serif', fontWeight: 400, fontSize: 'clamp(24px,3.5vw,34px)', color: '#09344e', marginBottom: 10, lineHeight: 1.1 }}>
-              Solicitud de acreditación · Prensa y Medios
-            </h1>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#5A6E77', lineHeight: 1.7, marginBottom: 36 }}>
-              Completa tus datos para solicitar acreditación o proponer una colaboración de difusión para el 3ICEO LATAM 2027.
-            </p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                <div style={S.field}>
+                  <label style={S.label}>Nombre *</label>
+                  <input style={{ ...S.input, borderColor: errors.nombre ? '#A7170C' : '#C3DED9' }} type="text" placeholder="Tu nombre" value={form.nombre} onChange={e => set('nombre', e.target.value)} />
+                  {errors.nombre ? <span style={S.error}>{errors.nombre}</span> : <span style={S.hint}>Requerido</span>}
+                </div>
+                <div style={S.field}>
+                  <label style={S.label}>Apellidos *</label>
+                  <input style={{ ...S.input, borderColor: errors.apellidos ? '#A7170C' : '#C3DED9' }} type="text" placeholder="Tus apellidos" value={form.apellidos} onChange={e => set('apellidos', e.target.value)} />
+                  {errors.apellidos ? <span style={S.error}>{errors.apellidos}</span> : <span style={S.hint}>Requerido</span>}
+                </div>
+              </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px 24px' }}>
+              <div style={S.field}>
+                <label style={S.label}>E-mail *</label>
+                <input style={{ ...S.input, borderColor: errors.email ? '#A7170C' : '#C3DED9' }} type="email" placeholder="correo@electronico.com" value={form.email} onChange={e => set('email', e.target.value)} />
+                {errors.email ? <span style={S.error}>{errors.email}</span> : <span style={S.hint}>Requerido</span>}
+              </div>
 
-              <FieldGroup half>
-                <label style={labelStyle}>1. Nombre</label>
-                <input type="text" placeholder="Ingresa tu nombre" value={form.nombre} onChange={e => set('nombre', e.target.value)} style={inputStyle(errors.nombre)} />
-                <ErrorMsg msg={errors.nombre} />
-              </FieldGroup>
-
-              <FieldGroup half>
-                <label style={labelStyle}>2. Apellidos</label>
-                <input type="text" placeholder="Ingresa tus apellidos" value={form.apellidos} onChange={e => set('apellidos', e.target.value)} style={inputStyle(errors.apellidos)} />
-                <ErrorMsg msg={errors.apellidos} />
-              </FieldGroup>
-
-              <FieldGroup half>
-                <label style={labelStyle}>3. Correo electrónico</label>
-                <input type="email" placeholder="ejemplo@correo.com" value={form.email} onChange={e => set('email', e.target.value)} style={inputStyle(errors.email)} />
-                <ErrorMsg msg={errors.email} />
-              </FieldGroup>
-
-              <FieldGroup half>
-                <label style={labelStyle}>4. Código país &nbsp;&nbsp; 5. Teléfono</label>
-                <div style={{ display: 'grid', gridTemplateColumns: '100px 1fr', gap: 8 }}>
-                  <select value={form.codigoPais} onChange={e => set('codigoPais', e.target.value)} style={{ ...inputStyle(), padding: '12px 8px' }}>
+              <div style={S.field}>
+                <label style={S.label}>Nº Teléfono *</label>
+                <div style={{ display: 'grid', gridTemplateColumns: '110px 1fr', gap: 8 }}>
+                  <select value={form.codigoPais} onChange={e => set('codigoPais', e.target.value)} style={{ ...S.select }}>
                     {Object.entries(PHONE_CODES).map(([iso, code]) => (
-                      <option key={iso} value={iso}>+{code}</option>
+                      <option key={iso} value={iso}>{iso} +{code}</option>
                     ))}
                   </select>
-                  <input type="tel" placeholder="Número de teléfono" value={form.telefono} onChange={e => set('telefono', e.target.value)} style={inputStyle(errors.telefono)} />
+                  <input style={{ ...S.input, borderColor: errors.telefono ? '#A7170C' : '#C3DED9' }} type="tel" placeholder="000 000 0000" value={form.telefono} onChange={e => set('telefono', e.target.value)} />
                 </div>
-                <ErrorMsg msg={errors.telefono} />
-              </FieldGroup>
+                {errors.telefono ? <span style={S.error}>{errors.telefono}</span> : <span style={S.hint}>Requerido</span>}
+              </div>
 
-              <FieldGroup half>
-                <label style={labelStyle}>6. País</label>
-                <select value={form.pais} onChange={e => set('pais', e.target.value)} style={inputStyle(errors.pais)}>
-                  <option value="">Selecciona tu país</option>
-                  {countries.map(c => <option key={c.isoCode} value={c.name}>{c.name}</option>)}
-                </select>
-                <ErrorMsg msg={errors.pais} />
-              </FieldGroup>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                <div style={S.field}>
+                  <label style={S.label}>País *</label>
+                  <select style={{ ...S.select, borderColor: errors.pais ? '#A7170C' : '#C3DED9' }} value={form.pais} onChange={e => set('pais', e.target.value)}>
+                    <option value="">Selecciona tu país</option>
+                    {countries.map(c => <option key={c.isoCode} value={c.name}>{c.name}</option>)}
+                  </select>
+                  {errors.pais ? <span style={S.error}>{errors.pais}</span> : <span style={S.hint}>Requerido</span>}
+                </div>
+                <div style={S.field}>
+                  <label style={S.label}>Ciudad *</label>
+                  <input style={{ ...S.input, borderColor: errors.ciudad ? '#A7170C' : '#C3DED9' }} type="text" placeholder="Tu ciudad" value={form.ciudad} onChange={e => set('ciudad', e.target.value)} />
+                  {errors.ciudad ? <span style={S.error}>{errors.ciudad}</span> : <span style={S.hint}>Requerido</span>}
+                </div>
+              </div>
+            </div>
 
-              <FieldGroup half>
-                <label style={labelStyle}>7. Ciudad</label>
-                <input type="text" placeholder="Ingresa tu ciudad" value={form.ciudad} onChange={e => set('ciudad', e.target.value)} style={inputStyle(errors.ciudad)} />
-                <ErrorMsg msg={errors.ciudad} />
-              </FieldGroup>
+            <Divider />
 
-              <FieldGroup half>
-                <label style={labelStyle}>8. Nombre del medio / organización</label>
-                <input type="text" placeholder="Nombre del medio u organización" value={form.nombreMedio} onChange={e => set('nombreMedio', e.target.value)} style={inputStyle(errors.nombreMedio)} />
-                <ErrorMsg msg={errors.nombreMedio} />
-              </FieldGroup>
+            {/* ── DATOS DEL MEDIO ── */}
+            <SectionTitle>Datos del medio</SectionTitle>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20, marginBottom: 4 }}>
 
-              <FieldGroup half>
-                <label style={labelStyle}>9. Cargo o rol</label>
-                <input type="text" placeholder="Tu cargo o rol actual" value={form.cargoRol} onChange={e => set('cargoRol', e.target.value)} style={inputStyle(errors.cargoRol)} />
-                <ErrorMsg msg={errors.cargoRol} />
-              </FieldGroup>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                <div style={S.field}>
+                  <label style={S.label}>Nombre del medio / organización *</label>
+                  <input style={{ ...S.input, borderColor: errors.nombreMedio ? '#A7170C' : '#C3DED9' }} type="text" placeholder="Nombre del medio" value={form.nombreMedio} onChange={e => set('nombreMedio', e.target.value)} />
+                  {errors.nombreMedio ? <span style={S.error}>{errors.nombreMedio}</span> : <span style={S.hint}>Requerido</span>}
+                </div>
+                <div style={S.field}>
+                  <label style={S.label}>Cargo o rol *</label>
+                  <input style={{ ...S.input, borderColor: errors.cargoRol ? '#A7170C' : '#C3DED9' }} type="text" placeholder="Ej: Periodista ambiental" value={form.cargoRol} onChange={e => set('cargoRol', e.target.value)} />
+                  {errors.cargoRol ? <span style={S.error}>{errors.cargoRol}</span> : <span style={S.hint}>Requerido</span>}
+                </div>
+              </div>
 
-              <FieldGroup half>
-                <label style={labelStyle}>10. Sitio web o perfil profesional</label>
-                <input type="url" placeholder="https://sitio-web.com o @usuario" value={form.sitioweb} onChange={e => set('sitioweb', e.target.value)} style={inputStyle()} />
-              </FieldGroup>
+              <div style={S.field}>
+                <label style={S.label}>Sitio web o perfil profesional</label>
+                <input style={S.input} type="url" placeholder="https://sitio-web.com o @usuario" value={form.sitioweb} onChange={e => set('sitioweb', e.target.value)} />
+                <span style={S.optional}>Opcional</span>
+              </div>
 
-              <FieldGroup half>
-                <label style={labelStyle}>11. Tipo de colaboración</label>
-                <select value={form.tipoColaboracion} onChange={e => set('tipoColaboracion', e.target.value)} style={inputStyle(errors.tipoColaboracion)}>
-                  <option value="">Selecciona el tipo</option>
-                  {TIPOS_COLABORACION.map(t => <option key={t} value={t}>{t}</option>)}
-                </select>
-                <ErrorMsg msg={errors.tipoColaboracion} />
-              </FieldGroup>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                <div style={S.field}>
+                  <label style={S.label}>Tipo de medio *</label>
+                  <select style={{ ...S.select, borderColor: errors.tipoMedio ? '#A7170C' : '#C3DED9' }} value={form.tipoMedio} onChange={e => set('tipoMedio', e.target.value)}>
+                    <option value="">Selecciona el tipo</option>
+                    {TIPOS_MEDIO.map(t => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                  {errors.tipoMedio ? <span style={S.error}>{errors.tipoMedio}</span> : <span style={S.hint}>Requerido</span>}
+                </div>
+                <div style={S.field}>
+                  <label style={S.label}>Tipo de colaboración *</label>
+                  <select style={{ ...S.select, borderColor: errors.tipoColaboracion ? '#A7170C' : '#C3DED9' }} value={form.tipoColaboracion} onChange={e => set('tipoColaboracion', e.target.value)}>
+                    <option value="">Selecciona el tipo</option>
+                    {TIPOS_COLABORACION.map(t => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                  {errors.tipoColaboracion ? <span style={S.error}>{errors.tipoColaboracion}</span> : <span style={S.hint}>Requerido</span>}
+                </div>
+              </div>
 
-              <FieldGroup half>
-                <label style={labelStyle}>12. Tipo de medio</label>
-                <select value={form.tipoMedio} onChange={e => set('tipoMedio', e.target.value)} style={inputStyle(errors.tipoMedio)}>
-                  <option value="">Selecciona el tipo de medio</option>
-                  {TIPOS_MEDIO.map(t => <option key={t} value={t}>{t}</option>)}
-                </select>
-                <ErrorMsg msg={errors.tipoMedio} />
-              </FieldGroup>
-
-              <FieldGroup half>
-                <label style={labelStyle}>13. Días de cobertura</label>
-                <select value={form.diasCobertura} onChange={e => set('diasCobertura', e.target.value)} style={inputStyle(errors.diasCobertura)}>
+              <div style={S.field}>
+                <label style={S.label}>Días de cobertura *</label>
+                <select style={{ ...S.select, borderColor: errors.diasCobertura ? '#A7170C' : '#C3DED9' }} value={form.diasCobertura} onChange={e => set('diasCobertura', e.target.value)}>
                   <option value="">Selecciona los días</option>
                   {DIAS.map(d => <option key={d} value={d}>{d}</option>)}
                 </select>
-                <ErrorMsg msg={errors.diasCobertura} />
-              </FieldGroup>
-
-              <FieldGroup half>
-                <label style={labelStyle}>14. Temas de interés</label>
-                <textarea rows={4} placeholder="Describe los temas que te interesan cubrir durante el 3ICEO LATAM 2027." value={form.temasInteres} onChange={e => set('temasInteres', e.target.value)} style={{ ...inputStyle(), resize: 'vertical' }} />
-              </FieldGroup>
-
-              <FieldGroup half>
-                <label style={labelStyle}>15. Comentarios adicionales</label>
-                <textarea rows={4} placeholder="Cualquier información adicional que consideres relevante." value={form.comentariosAdicionales} onChange={e => set('comentariosAdicionales', e.target.value)} style={{ ...inputStyle(), resize: 'vertical' }} />
-              </FieldGroup>
-
+                {errors.diasCobertura ? <span style={S.error}>{errors.diasCobertura}</span> : <span style={S.hint}>Requerido</span>}
+              </div>
             </div>
 
-            {/* Checkboxes */}
-            <div style={{ marginTop: 28, display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {[
-                { key: 'aceptaPrivacidad' as const,     label: <>Acepto la <a href="/privacidad" style={{ color: '#437287' }}>política de privacidad</a>.</> },
-                { key: 'aceptaComunicaciones' as const,  label: 'Acepto recibir comunicaciones sobre mi solicitud.' },
-              ].map(({ key, label }) => (
-                <label key={key} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, cursor: 'pointer' }}>
-                  <input type="checkbox" checked={form[key] as boolean} onChange={e => set(key, e.target.checked)} style={{ marginTop: 3, accentColor: '#437287', width: 16, height: 16, flexShrink: 0 }} />
-                  <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#12303E', lineHeight: 1.5 }}>{label}</span>
-                </label>
-              ))}
-              <ErrorMsg msg={errors.aceptaPrivacidad} />
+            <Divider />
+
+            {/* ── PROPUESTA ── */}
+            <SectionTitle>Propuesta de cobertura</SectionTitle>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20, marginBottom: 4 }}>
+              <div style={S.field}>
+                <label style={S.label}>Temas de interés</label>
+                <textarea style={S.textarea} placeholder="Describe los temas que te interesan cubrir durante el 3ICEO LATAM 2027." value={form.temasInteres} onChange={e => set('temasInteres', e.target.value)} />
+                <span style={S.optional}>Opcional — recomendado para agilizar la acreditación</span>
+              </div>
+              <div style={S.field}>
+                <label style={S.label}>Comentarios adicionales</label>
+                <textarea style={S.textarea} placeholder="Cualquier información adicional que consideres relevante." value={form.comentariosAdicionales} onChange={e => set('comentariosAdicionales', e.target.value)} />
+                <span style={S.optional}>Opcional</span>
+              </div>
+            </div>
+
+            <Divider />
+
+            {/* ── CONSENTIMIENTOS ── */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, paddingTop: 4 }}>
+              <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, cursor: 'pointer', padding: '10px 12px', borderRadius: 8, border: errors.aceptaPrivacidad ? '1.5px solid #A7170C' : '1.5px solid #EFF4F7', backgroundColor: errors.aceptaPrivacidad ? '#fff8f7' : 'transparent' }}>
+                <input type="checkbox" checked={form.aceptaPrivacidad} onChange={e => set('aceptaPrivacidad', e.target.checked)} style={{ width: 16, height: 16, accentColor: '#097589', flexShrink: 0, marginTop: 2 }} />
+                <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, color: '#12303E' }}>
+                  * He leído y acepto las <Link href="/privacidad" style={{ color: '#097589', fontWeight: 600 }}>políticas de privacidad.</Link> <span style={{ color: '#097589' }}>Requerido.</span>
+                </span>
+              </label>
+              {errors.aceptaPrivacidad && <span style={{ ...S.error, marginTop: -6 }}>{errors.aceptaPrivacidad}</span>}
+              <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, cursor: 'pointer', padding: '10px 12px', borderRadius: 8, border: '1.5px solid #EFF4F7' }}>
+                <input type="checkbox" checked={form.aceptaComunicaciones} onChange={e => set('aceptaComunicaciones', e.target.checked)} style={{ width: 16, height: 16, accentColor: '#097589', flexShrink: 0, marginTop: 2 }} />
+                <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, color: '#12303E' }}>Acepto recibir comunicaciones de Awaq ONGD sobre el 3ICEO y futuros eventos.</span>
+              </label>
             </div>
 
             {submitError && (
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#A7170C', marginTop: 16, padding: '10px 14px', backgroundColor: '#FFF0EE', borderRadius: 8 }}>
-                {submitError}
-              </p>
+              <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
+                style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, color: '#A7170C', backgroundColor: '#fff8f7', border: '1px solid #f5c2c0', borderRadius: 8, padding: '10px 14px', margin: '16px 0 0' }}>
+                ⚠️ {submitError}
+              </motion.p>
             )}
 
-            <div style={{ display: 'flex', gap: 12, marginTop: 32, flexWrap: 'wrap' }}>
-              <button
-                onClick={handleSubmit}
-                disabled={submitting}
-                style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700, color: '#fff', backgroundColor: submitting ? '#437287' : '#09344e', border: 'none', borderRadius: 999, padding: '13px 32px', cursor: submitting ? 'not-allowed' : 'pointer', letterSpacing: '0.03em', transition: 'background .2s' }}
-              >
-                {submitting ? 'Enviando...' : 'Solicitar acreditación'}
-              </button>
-              <Link href="/marketing/colabora" style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 600, color: '#437287', border: '1.5px solid #C3DED9', borderRadius: 999, padding: '13px 32px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center', paddingTop: 24 }}>
+              <Link href="/marketing/colabora"
+                style={{ padding: '12px 20px', borderRadius: 50, border: '1.5px solid #C3DED9', color: '#097589', backgroundColor: 'transparent', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600, cursor: 'pointer', letterSpacing: '0.03em', display: 'flex', alignItems: 'center', gap: 6, textDecoration: 'none' }}>
                 Volver
               </Link>
+              <button onClick={handleSubmit} disabled={submitting}
+                style={{ padding: '13px 32px', borderRadius: 50, border: 'none', backgroundColor: submitting ? '#74B4A7' : '#097589', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700, cursor: submitting ? 'not-allowed' : 'pointer', letterSpacing: '0.04em', boxShadow: submitting ? 'none' : '0 2px 12px rgba(9,117,137,0.3)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                {submitting ? (
+                  <>
+                    <span style={{ width: 14, height: 14, border: '2px solid rgba(255,255,255,0.4)', borderTopColor: '#fff', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.7s linear infinite' }} />
+                    ENVIANDO...
+                  </>
+                ) : 'SOLICITAR ACREDITACIÓN'}
+              </button>
             </div>
           </div>
-        </FadeIn>
+        </div>
+      </section>
 
-        {/* Nota */}
-        <FadeIn delay={0.15}>
-          <div style={{ marginTop: 24, backgroundColor: 'rgba(67,114,135,0.06)', border: '1px solid rgba(67,114,135,0.18)', borderRadius: 12, padding: '14px 20px', display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-            <svg width={18} height={18} viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: 1 }}>
-              <circle cx="12" cy="12" r="10" stroke="#437287" strokeWidth="1.8"/>
-              <path d="M12 16v-4M12 8h.01" stroke="#437287" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-            <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 12, color: '#09344e', lineHeight: 1.6 }}>
-              <strong>Campo nuevo clave:</strong> desplegable 'Tipo de colaboración' para identificar si la solicitud es de cobertura periodística, entrevistas, difusión previa, alianza de medios, creación de contenido u otros.
-            </p>
-          </div>
-        </FadeIn>
-      </div>
+      <style suppressHydrationWarning>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   )
 }

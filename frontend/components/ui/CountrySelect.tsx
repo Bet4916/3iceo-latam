@@ -120,6 +120,15 @@ const selectStyles = {
     fontFamily: 'Poppins, sans-serif',
     fontSize: 14,
     color: '#12303E',
+    // El cursor/texto que escribes va por encima y bien visible
+    opacity: 1,
+  }),
+  // ── NUEVO: al abrir el menú (clic/escribir) el valor elegido se atenúa
+  //    para que se vea claramente el cursor de texto y se pueda buscar. ──
+  singleValue: (base: object, state: { selectProps: { menuIsOpen: boolean } }) => ({
+    ...base,
+    opacity: state.selectProps.menuIsOpen ? 0.35 : 1,
+    transition: 'opacity 0.15s ease',
   }),
   indicatorSeparator: () => ({ display: 'none' }),
   dropdownIndicator: (base: object) => ({
@@ -206,6 +215,23 @@ const PhoneSingleValue = (props: SingleValueProps<CountryOption>) => (
   </components.SingleValue>
 )
 
+// ── Permite buscar el prefijo por número (con o sin "+") o por nombre de país ──
+const phoneFilterOption = (
+  option: { label: string; value: string; data: CountryOption },
+  rawInput: string
+) => {
+  const q = rawInput.toLowerCase().trim()
+  if (!q) return true
+  const qNoPlus = q.replace(/^\+/, '')
+  const name = option.data.label.toLowerCase()
+  const code = String(option.data.phonecode).replace(/^\+/, '')
+  return (
+    name.includes(q) ||           // por nombre: "colombia"
+    code.includes(qNoPlus) ||     // por número: "57"
+    ('+' + code).includes(q)      // por número con +: "+57"
+  )
+}
+
 interface PhoneCodeSelectProps {
   value: string
   onChange: (isoCode: string) => void
@@ -223,6 +249,7 @@ export function PhoneCodeSelect({ value, onChange }: PhoneCodeSelectProps) {
         components={{ Option: PhoneOption, SingleValue: PhoneSingleValue }}
         styles={selectStyles as object}
         isSearchable
+        filterOption={phoneFilterOption as never}
         noOptionsMessage={() => 'No encontrado'}
       />
     </div>
