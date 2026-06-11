@@ -237,18 +237,25 @@ export default function AgendaPage() {
 
       {/* ══ 1. HERO — usando HeroIceo unificado, igual que el resto de páginas ══ */}
       <HeroIceo
-        badge="3ª Edición · Cali, Colombia"
-        title={<>Programa · <span style={{ color: '#ffffff' }}>3ICEO</span></>}
-        description={<>Tres días de conferencias, paneles, talleres<br />y experiencias para activar soluciones hídricas</>}
-        cta={{ label: 'QUIERO ASISTIR →', href: '/marketing/registro' }}
-        ctaSecondary={{ label: 'VER AGENDA', href: '#programa' }}
-        image="/icons/panelistas.svg"
-        imageAlt="Panelistas 3ICEO"
-        imageLabel="3° ICEO · 17-19 Ago · Cali"
-        imageScale={1.30}
-        waveVariant="overlap"
-        waveColor="#F0F4F7"
-      >
+  badge="3ª Edición · Cali, Colombia"
+  title={
+    <>
+      Programa{' '}
+      <span style={{ color: '#ffffff', fontVariantNumeric: 'lining-nums' }}>
+        3er ICEO
+      </span>
+    </>
+  }
+  description={<>Tres días de conferencias, paneles, talleres<br />y experiencias para activar soluciones hídricas</>}
+  cta={{ label: 'QUIERO ASISTIR →', href: '/marketing/registro' }}
+  ctaSecondary={{ label: 'VER LÍNEAS TEMÁTICAS', href: "/marketing/lineas-tematicas" }}
+  image="/icons/panelistas.svg"
+  imageAlt="Panelistas 3ICEO"
+  imageLabel="3° ICEO · 17-19 Ago · Cali"
+  imageScale={1.30}
+  waveVariant="overlap"
+  waveColor="#F0F4F7"
+>
         {/* Selector de días — pill unificado, redondeado */}
         <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 20, paddingBottom: 0 }}>
           <div style={{

@@ -11,6 +11,9 @@
  *  showWave     → muestra la ola inferior (triple wave). Default: true
  *  showTopWave  → muestra la ola de entrada superior. Default: false
  *  topWaveFrom  → color de fondo de la sección anterior (para la ola superior). Default: '#ffffff'
+ *  ctaHref      → destino del botón principal. Default: '/marketing/donaciones#form-donacion'
+ *                 (lleva al formulario en CUALQUIER página, sin props extra)
+ *  onCtaClick   → handler opcional (solo si quieres scroll suave dentro de la misma página)
  */
 
 import { motion } from 'framer-motion'
@@ -34,6 +37,8 @@ export interface SectionDonacionProps {
   showWave?: boolean
   showTopWave?: boolean
   topWaveFrom?: string
+  ctaHref?: string
+  onCtaClick?: (e: React.MouseEvent) => void
 }
 
 export default function SectionDonacion({
@@ -43,6 +48,8 @@ export default function SectionDonacion({
   showWave = true,
   showTopWave = false,
   topWaveFrom = '#ffffff',
+  ctaHref = '/marketing/donaciones#form-donacion',
+  onCtaClick,
 }: SectionDonacionProps) {
 
   const eyebrow   = theme === 'dark' ? '#74B4A7'                 : '#097589'
@@ -99,7 +106,8 @@ export default function SectionDonacion({
               </p>
               <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
                 <Link
-                  href="/marketing/donaciones"
+                  href={ctaHref}
+                  onClick={onCtaClick}
                   style={{
                     display: 'inline-flex', alignItems: 'center', gap: 8,
                     backgroundColor: '#B53077', color: '#fff',
@@ -109,6 +117,15 @@ export default function SectionDonacion({
                     boxShadow: '0 4px 24px rgba(181,48,119,0.45)',
                   }}
                 >
+                  {/* ── Ícono de PayPal (mismo que el HeroIceo) ── */}
+                  <img
+                    src="/icons/icon_paypal.svg"
+                    alt=""
+                    width={18}
+                    height={18}
+                    style={{ display: 'block', objectFit: 'contain' }}
+                    onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+                  />
                   DONA AHORA →
                 </Link>
                 <Link

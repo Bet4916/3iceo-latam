@@ -80,7 +80,14 @@ export default function ColaboraPage() {
       ════════════════════════════════════════════════════════════════════ */}
       <HeroIceo
         badge="Colabora con el 3ICEO LATAM 2027"
-        title={<>Colabora · <span style={{ color: '#ffffff' }}>3° ICEO</span></>}
+        title={
+        <>
+            Colabora{' '}
+            <span style={{ color: '#ffffff', fontVariantNumeric: 'lining-nums' }}>
+              3er ICEO
+            </span>
+        </>
+        }
         description="Súmate como voluntario virtual, aliado estratégico o medio acreditado para ampliar el impacto territorial del congreso."
         cta={{ label: 'Ser voluntario', href: '#como-colaborar' }}
         ctaSecondary={{ label: 'Donar', href: '/marketing/donaciones' }}
@@ -342,8 +349,8 @@ export default function ColaboraPage() {
       {/* ════════════════════════════════════════════════════════════════════
           DONACIÓN + REDES
       ════════════════════════════════════════════════════════════════════ */}
-      <SectionDonacion bg="#09344e" theme="dark" waveColor="#F7F6F3" showWave />
-      <SectionRedes bg="#F7F6F3" theme="light" />
+      <SectionDonacion bg="#09344e" theme="dark" waveColor="#FFFFFF" showWave />
+      <SectionRedes bg="#FFFFFF" theme="light" />
 
       {/* ─── RESPONSIVE ── */}
       <style suppressHydrationWarning>{`

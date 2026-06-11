@@ -286,7 +286,7 @@ export default function SegundoIceoPage() {
       {/* ══ HERO ════════════════════════════════════════════════════════════════ */}
       <HeroIceo
   badge="Edición 2026 · Cali, Colombia"
-  title={<>Memoria <span style={{ color: '#ffffff' }}>2° ICEO</span></>}
+  title={<>Memoria <span style={{ color: '#ffffff' }}>2do ICEO</span></>}
   description={<>Descubre el impacto de la segunda edición del congreso<br />y el movimiento que transforma territorios en LATAM</>}
   cta={{ label: 'VER MEMORIA →', href: '/docs/memoria_2iceo.pdf', target: '_blank' }}
   image="/icons/2do_iceo.svg"
@@ -525,13 +525,13 @@ export default function SegundoIceoPage() {
 
       {/* ══ DONACIÓN — componente unificado ══════════════════════════════════════ */}
       <SectionDonacion
-        bg="#ffffff"
+        bg="#F7F6F3"
         theme="light"
         showWave={false}
       />
 
       {/* ══ REDES SOCIALES — componente unificado ════════════════════════════════ */}
-      <SectionRedes bg="#F7F6F3" theme="light" />
+      <SectionRedes bg="#FFFFFF" theme="light" />
 
       {/* ── Responsive ── */}
       <style suppressHydrationWarning>{`

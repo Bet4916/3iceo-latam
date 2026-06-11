@@ -221,7 +221,7 @@ export default function HeroIceo({
                   fontFamily: 'Inter, sans-serif',
                   fontSize: 'clamp(16px, 1.8vw, 20px)',
                   fontWeight: 400,
-                  color: 'rgba(9,52,78,0.80)',
+                  color: '#12303E',
                   lineHeight: 1.55,
                   maxWidth: 550,
                   marginBottom: 36,

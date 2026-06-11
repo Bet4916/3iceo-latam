@@ -4,9 +4,12 @@ import { useState } from 'react'
 import Link from 'next/link'
 
 // ─── WAVES ────────────────────────────────────────────────────────────────────
-function FooterWaves() {
+// topColor = color que se ve DETRÁS de las olas (en los huecos transparentes).
+// Debe coincidir con el color de la sección que va justo encima del footer
+// (p. ej. el bg del SectionRedes) para que conecten sin espacio blanco.
+function FooterWaves({ topColor }: { topColor: string }) {
   return (
-    <div style={{ lineHeight: 0, display: 'block', marginBottom: -4, overflow: 'hidden' }}>
+    <div style={{ lineHeight: 0, display: 'block', marginBottom: -4, overflow: 'hidden', backgroundColor: topColor }}>
       <svg
         width="100%"
         height="100"
@@ -50,15 +53,17 @@ const inputDarkStyle: React.CSSProperties = {
 }
 
 // ─── FOOTER COMPONENT ─────────────────────────────────────────────────────────
-export default function Footer() {
+// topColor → color de la sección que va justo encima (default blanco).
+//            Pásale el mismo bg que tu SectionRedes para que conecten.
+export default function Footer({ topColor = '#ffffff' }: { topColor?: string }) {
   const [email,   setEmail]   = useState('')
   const [mensaje, setMensaje] = useState('')
   const [sent,    setSent]    = useState(false)
   const [sending, setSending] = useState(false)
-  // ── NUEVO: errores por campo ──────────────────────────────────────────────
+  // ── errores por campo ──────────────────────────────────────────────
   const [errors, setErrors]   = useState<{ email?: string; mensaje?: string }>({})
 
-  // ── NUEVO: validación real + fetch a /api/contact ─────────────────────────
+  // ── validación real + fetch a /api/contact ─────────────────────────
   const handleSend = async () => {
     const e: { email?: string; mensaje?: string } = {}
     if (!email.trim()) {
@@ -96,7 +101,7 @@ export default function Footer() {
 
   return (
     <footer>
-      <FooterWaves />
+      <FooterWaves topColor={topColor} />
 
       {/* ── Cuerpo del footer — sin separación con las waves ── */}
       <div style={{ backgroundColor: '#09354E', marginTop: 0 }}>
@@ -167,7 +172,6 @@ export default function Footer() {
                     placeholder="correo@electrónico.com"
                     style={{ ...inputDarkStyle, borderColor: errors.email ? '#F07070' : 'rgba(255,255,255,0.2)' }}
                   />
-                  {/* ── NUEVO: error en rojo ── */}
                   {errors.email
                     ? <span style={errStyle}>{errors.email}</span>
                     : <span style={hintStyle}>Requerido</span>
@@ -182,7 +186,6 @@ export default function Footer() {
                     rows={5}
                     style={{ ...inputDarkStyle, resize: 'vertical', borderColor: errors.mensaje ? '#F07070' : 'rgba(255,255,255,0.2)' }}
                   />
-                  {/* ── NUEVO: error en rojo ── */}
                   {errors.mensaje
                     ? <span style={errStyle}>{errors.mensaje}</span>
                     : <span style={hintStyle}>Requerido</span>
@@ -234,7 +237,7 @@ export default function Footer() {
             <div>
               <p style={colTitleStyle}>Streaming</p>
               <a
-                href="https://youtube.com/@awaqong"
+                href="https://www.youtube.com/@somosawaq"
                 target="_blank" rel="noopener noreferrer"
                 style={{ ...colLinkStyle, display: 'flex', alignItems: 'center', gap: 8 }}
                 onMouseEnter={e => (e.currentTarget.style.color = 'white')}
@@ -262,7 +265,6 @@ export default function Footer() {
               <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14, color: 'rgba(255,255,255,0.35)' }}>
                 © {new Date().getFullYear()} Awaq ONG
               </span>
-              {/* ── NUEVO: rutas reales en lugar de # ── */}
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'center' }}>
                 {[
                   { label: 'Políticas de privacidad', href: '/marketing/privacidad'          },
@@ -312,7 +314,6 @@ const hintStyle: React.CSSProperties = {
   marginTop: 4,
   display: 'block',
 }
-// ── NUEVO ──────────────────────────────────────────────────────────────────────
 const errStyle: React.CSSProperties = {
   fontFamily: 'Poppins, sans-serif',
   fontSize: 12,

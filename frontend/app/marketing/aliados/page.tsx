@@ -149,7 +149,14 @@ export default function AliadosPage() {
       {/* ══ 1. HERO — Excel: H1 corto (1-2 palabras), H2 dos líneas exactas ══ */}
       <HeroIceo
         badge="3ICEO · LATAM"
-        title={<>Aliados <span style={{ color: '#ffffff' }}>3° ICEO</span></>}
+        title={
+    <>
+      Aliados{' '}
+      <span style={{ color: '#ffffff', fontVariantNumeric: 'lining-nums' }}>
+        3er ICEO
+      </span>
+    </>
+  }
         description={<>Una red de instituciones y organizaciones comprometidas<br />con el futuro de las fuentes hídricas</>}
         cta={{ label: 'QUIERO ASISTIR →', href: '/marketing/registro' }}
         ctaSecondary={{ label: 'Ver programa', href: '/marketing/agenda' }}

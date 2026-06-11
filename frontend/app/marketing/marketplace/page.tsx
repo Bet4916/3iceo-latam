@@ -120,7 +120,14 @@ export default function MarketplacePage() {
       ════════════════════════════════════════════════════════════════════ */}
       <HeroIceo
         badge="Marketplace Circular · 3ICEO"
-        title={<>Marketplace <span style={{ color: '#ffffff' }}>3ICEO</span></>}
+        title={
+        <>
+            Marketplace{' '}
+            <span style={{ color: '#ffffff', fontVariantNumeric: 'lining-nums' }}>
+              3er ICEO
+            </span>
+        </>
+        }
         description={<>Escaparate de organizaciones y soluciones sostenibles<br />del congreso ambiental más importante de LATAM</>}
         cta={{ label: 'EXPLORAR ECOWORLD →', href: '#ecoworld' }}
         ctaSecondary={{ label: 'Reserva tu stand', href: '/marketing/registro?tipo=asistencia&stand=true' }}

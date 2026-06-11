@@ -97,7 +97,14 @@ export default function UniversidadPage() {
       ══════════════════════════════════════════════════════════════════ */}
       <HeroIceo
         badge="Universidad de San Buenaventura · Cali"
-        title={<>Sede del <span style={{ color: '#ffffff' }}>3° ICEO</span></>}
+        title={
+        <>
+            Sede del{' '}
+            <span style={{ color: '#ffffff', fontVariantNumeric: 'lining-nums' }}>
+              3er ICEO
+            </span>
+        </>
+        }
         description={<>Conoce el campus e instalaciones donde nos reuniremos<br />para celebrar este encuentro ambiental</>}
         cta={{ label: 'QUIERO ASISTIR →', href: '/marketing/registro' }}
         image="https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?w=1400&q=75"
@@ -599,16 +606,13 @@ export default function UniversidadPage() {
 
       {/* ══════════════════════════════════════════════════════════════════
           DONACIÓN
-          ✅ CAMBIO: emoji 🌱 → market_ex.svg
       ══════════════════════════════════════════════════════════════════ */}
       <SectionDonacion bg="#09344e" theme="dark" showWave={true} showTopWave topWaveFrom="#ffffff" />
 
       {/* ══════════════════════════════════════════════════════════════════
           REDES SOCIALES
-          ✅ CAMBIO 1: emojis 📸👍💼 → icon_instagram/facebook/linkedin.svg
-          ✅ CAMBIO 2: texto "FOLLOW US!" eliminado → follow.svg ya lo tiene
       ══════════════════════════════════════════════════════════════════ */}
-      <SectionRedes bg="#F7F6F3" theme="light" />
+      <SectionRedes bg="#FFFFFF" theme="light" />
       {/* ── RESPONSIVE ── */}
       <style suppressHydrationWarning>{`
         @media (max-width: 1024px) {

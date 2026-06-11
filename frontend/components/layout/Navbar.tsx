@@ -7,16 +7,15 @@ import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 
 // ─── RUTAS ───────────────────────────────────────────────────────────────────
-// ✅ = página ya desarrollada   🔵 = placeholder (ruta creada, contenido pendiente)
 const NAV_LINKS = [
-  { label: 'Agenda',           href: '/marketing/agenda' },
-  { label: 'Líneas temáticas', href: '/marketing/lineas-tematicas' },
-  { label: 'Aliados',          href: '/marketing/aliados' },
-  { label: 'Segundo ICEO',     href: '/marketing/segundo-iceo' },
-  { label: 'Marketplace',      href: '/marketing/marketplace' },
-  { label: 'Sede del evento',  href: '/marketing/universidad' },
-  { label: 'Prensa',           href: '/marketing/comunicaciones' },
-  { label: 'Colabora',         href: '/marketing/colabora' },
+  { label: 'Agenda',       href: '/marketing/agenda' },
+  { label: 'Temáticas',    href: '/marketing/lineas-tematicas' },
+  { label: 'Aliados',      href: '/marketing/aliados' },
+  { label: 'Segundo ICEO', href: '/marketing/segundo-iceo' },
+  { label: 'Marketplace',  href: '/marketing/marketplace' },
+  { label: 'Sede',         href: '/marketing/universidad' },
+  { label: 'Prensa',       href: '/marketing/comunicaciones' },
+  { label: 'Colabora',     href: '/marketing/colabora' },
 ]
 
 // ─── ICONOS ───────────────────────────────────────────────────────────────────
@@ -35,6 +34,7 @@ const IconArrow = () => (
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [menuOpen, setMenuOpen]     = useState(false)
+  const [logoActive, setLogoActive] = useState(false) // ← hover o focus del logo
   const pathname = usePathname()
 
   useEffect(() => {
@@ -50,8 +50,9 @@ export default function Navbar() {
   return (
     <>
       {/* ── HEADER ─────────────────────────────────────────────────────────
-          El header tiene overflow visible para que el logo circular
-          sobresalga ligeramente por debajo (efecto "pliegue" del Figma).
+          overflow visible para que el logo PUEDA sobresalir, pero el logo
+          solo sobresale cuando está activo (cursor encima o foco de teclado).
+          En reposo queda contenido y entero dentro de la barra.
       ── */}
       <header
         style={{
@@ -60,8 +61,8 @@ export default function Navbar() {
           left: 0,
           right: 0,
           zIndex: 50,
-          overflow: 'visible',           // ← permite que el logo sobresalga
-          backgroundColor: 'transparent', // el fondo blanco va en el inner div
+          overflow: 'visible',
+          backgroundColor: 'transparent',
         }}
       >
         {/* ── White bar — con border-bottom-left-radius para el "pliegue" ── */}
@@ -70,7 +71,6 @@ export default function Navbar() {
             backgroundColor: '#ffffff',
             boxShadow: isScrolled ? '0 2px 20px rgba(9,52,78,0.10)' : '0 1px 0 rgba(9,52,78,0.06)',
             transition: 'box-shadow 0.3s',
-            // El pliegue: radio solo en la esquina inferior izquierda
             borderBottomLeftRadius: 24,
           }}
         >
@@ -83,32 +83,49 @@ export default function Navbar() {
               justifyContent: 'space-between',
               gap: 16,
               height: 64,
-              overflow: 'visible',  // ← el logo puede sobresalir
+              overflow: 'visible',
             }}
           >
-            {/* ── LOGO ───────────────────────────────────────────────────── */}
-           <Link href="/" style={{ outline: 'none' }}>  {/* ← quita outline del Link */}
+            {/* ── LOGO ─────────────────────────────────────────────────────
+                52px dentro de una barra de 64px → siempre se ve entero y con
+                aire. Solo crece y sobresale un poco hacia abajo en hover/focus.
+            ── */}
+            <Link
+              href="/"
+              onFocus={() => setLogoActive(true)}
+              onBlur={() => setLogoActive(false)}
+              style={{ outline: 'none', flexShrink: 0 }}
+            >
               <div
+                onMouseEnter={() => setLogoActive(true)}
+                onMouseLeave={() => setLogoActive(false)}
                 style={{
-                  width: 56,           // ← más pequeño (era 74)
-                  height: 56,
+                  width: 52,
+                  height: 52,
                   borderRadius: '50%',
                   backgroundColor: '#ffffff',
-                  boxShadow: '0 2px 12px rgba(9,52,78,0.12)',
+                  boxShadow: logoActive
+                    ? '0 6px 20px rgba(9,52,78,0.22)'
+                    : '0 2px 12px rgba(9,52,78,0.12)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  transition: 'transform 0.2s ease',
-                  outline: 'none',     // ← quita el outline azul al hacer click
+                  // En reposo: contenido. Activo: crece y baja un poco para
+                  // "salir" de la navbar sobre el contenido.
+                  transform: logoActive ? 'translateY(4px) scale(1.22)' : 'translateY(0) scale(1)',
+                  transformOrigin: 'center',
+                  transition: 'transform 0.22s ease, box-shadow 0.22s ease',
+                  cursor: 'pointer',
+                  outline: 'none',
+                  position: 'relative',
+                  zIndex: 1,
                 }}
-                onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.1)')}
-                onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
               >
                 <Image
                   src="/icons/logo-awaq.svg"
                   alt="AWAQ Logo"
-                  width={46}           // ← más pequeño (era 60)
-                  height={46}
+                  width={42}
+                  height={42}
                   style={{ objectFit: 'contain', display: 'block' }}
                   priority
                 />
@@ -116,7 +133,7 @@ export default function Navbar() {
             </Link>
 
             {/* ── DESKTOP NAV ────────────────────────────────────────────── */}
-            <nav className="hidden xl:flex items-center" style={{ gap: 28 }}>
+            <nav className="hidden xl:flex items-center" style={{ gap: 40 }}>
               {NAV_LINKS.map(link => (
                 <Link
                   key={link.href}

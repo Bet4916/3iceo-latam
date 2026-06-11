@@ -111,7 +111,14 @@ export default function ComunicacionesPage() {
       ════════════════════════════════════════════════════════════════ */}
       <HeroIceo
         badge="Centro de Comunicaciones ICEO"
-        title={<>Noticias · <span style={{ color: '#ffffff' }}>3° ICEO</span></>}
+        title={
+        <>
+            Noticias{' '}
+            <span style={{ color: '#ffffff', fontVariantNumeric: 'lining-nums' }}>
+              3er ICEO
+            </span>
+        </>
+        }
         description="Descubre lo que dicen de nosotros en nuestro Centro de ICEO de Comunicaciones y Repositorio Multimedia."
         cta={{ label: 'Ver noticias', href: '#noticias' }}
         ctaSecondary={{ label: 'Síguenos', href: '#redes' }}
