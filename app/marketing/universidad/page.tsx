@@ -67,7 +67,7 @@ const ESPACIOS_MAP = [
 
 // URL del build de Unity embebido (carpeta /public/unity/index.html).
 // Cuando tengas el build final, solo reemplazas la carpeta /public/unity.
-const UNITY_EMBED_URL = '/unity/index.html'
+const UNITY_EMBED_URL = '/unity-game/sede/index.html'
 
 // ─── PLANO DEL ESPACIO + RECORRIDO VIRTUAL ────────────────────────────────────
 function PlanoDelEspacio() {

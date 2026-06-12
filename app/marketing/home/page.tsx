@@ -1,10 +1,17 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import SectionDonacion from '@/components/sections/SectionDonacion'
 import SectionRedes from '@/components/sections/SectionRedes'
+
+// EcoWorldMundo cargado dinámicamente (sin SSR) — mismo patrón que EcoWorldEmbed en marketplace
+const EcoWorldMundo = dynamic(
+  () => import('@/components/ui/EcoWorldMundo'),
+  { ssr: false }
+)
 
 // ─── ANIMATION HELPER ─────────────────────────────────────────────────────────
 function FadeIn({
@@ -101,10 +108,6 @@ const WaveUp = ({ from, to, height = 72 }: { from: string; to: string; height?: 
 )
 
 // ─── DATOS ────────────────────────────────────────────────────────────────────
-
-// STATS — 6 recuadros del Legado 2°ICEO con imagen R2 en lugar de ícono SVG.
-// Imagen pequeña centrada arriba (40×40, border-radius 10, objectFit cover),
-// número grande y label debajo — mismo diseño de tarjeta que antes.
 const STATS = [
   { num: '1.209+', label: 'Asistentes',        image: '/icons/talleres.svg'       },
   { num: '192',    label: 'Organizaciones',     image: '/icons/convenios.svg'       },
@@ -114,11 +117,6 @@ const STATS = [
   { num: '28',     label: 'Stands Marketplace', image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Marketplace.png'     },
 ]
 
-// ────────────────────────────────────────────────────────────────────────────
-// AGENDA — 3 días mismo formato.
-// Día 19: sin badge "etiqueta", texto de jornada va en la descripción.
-// Colores: #097589 (teal oficial), #09344e (navy oficial), #B58A00 (dorado).
-// ────────────────────────────────────────────────────────────────────────────
 const AGENDA_DIAS = [
   {
     dia: '17', mes: 'FEB', diasemana: 'Martes',
@@ -154,7 +152,6 @@ const AGENDA_DIAS = [
     dia: '19', mes: 'FEB', diasemana: 'Jueves',
     tema: 'Conclusiones',
     color: '#B58A00',
-    // ← CAMBIO 2: sin etiqueta badge; texto integrado en la descripción
     desc: 'Jornada de conclusiones: una jornada más breve para convertir aprendizajes y acuerdos en memoria útil, conclusiones compartidas y una hoja de ruta para futuras alianzas.',
     sesiones: [
       'Apertura breve y recapitulación general',
@@ -250,34 +247,39 @@ const ENTREVISTAS = [
   },
 ]
 
+// instrucciones del mundo (igual que marketplace)
+const INSTRUCCIONES_MUNDO = [
+  { key: 'Click',    label: 'Interactuar',     desc: '¡Conoce a los asistentes, no te lo pierdas!' },
+]
+
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
 export default function HomePage() {
   const [activeVideo, setActiveVideo] = useState(0)
-const [noticiasHome, setNoticiasHome] = useState(NOTICIAS_FALLBACK)
+  const [noticiasHome, setNoticiasHome] = useState(NOTICIAS_FALLBACK)
 
-useEffect(() => {
-  fetch('/api/salesforce/noticias')
-    .then(r => r.json())
-    .then(data => {
-      if (data.noticias?.length > 0) {
-        const BADGE_COLOR: Record<string, string> = {
-          video: '#097589', streaming: '#B53077',
-          'notas sociales': '#437287', anuncio: '#B58A00',
+  useEffect(() => {
+    fetch('/api/salesforce/noticias')
+      .then(r => r.json())
+      .then(data => {
+        if (data.noticias?.length > 0) {
+          const BADGE_COLOR: Record<string, string> = {
+            video: '#097589', streaming: '#B53077',
+            'notas sociales': '#437287', anuncio: '#B58A00',
+          }
+          setNoticiasHome(data.noticias.slice(0, 3).map((n: Record<string, unknown>) => ({
+            tag:      ((n.categoria as string) || 'Noticia').charAt(0).toUpperCase() + ((n.categoria as string) || '').slice(1),
+            tagColor: BADGE_COLOR[n.categoria as string] || '#097589',
+            titulo:   n.titulo,
+            desc:     n.extracto,
+            fecha:    n.fecha,
+            href:     '/marketing/comunicaciones',
+            img:      n.img,
+            imgBg:    n.imgBg,
+          })))
         }
-        setNoticiasHome(data.noticias.slice(0, 3).map((n: Record<string, unknown>) => ({
-          tag:      ((n.categoria as string) || 'Noticia').charAt(0).toUpperCase() + ((n.categoria as string) || '').slice(1),
-          tagColor: BADGE_COLOR[n.categoria as string] || '#097589',
-          titulo:   n.titulo,
-          desc:     n.extracto,
-          fecha:    n.fecha,
-          href:     '/marketing/comunicaciones',
-          img:      n.img,
-          imgBg:    n.imgBg,
-        })))
-      }
-    })
-    .catch(() => {})
-}, [])
+      })
+      .catch(() => {})
+  }, [])
 
   return (
     <div style={{ backgroundColor: '#fff', minHeight: '100vh' }}>
@@ -376,9 +378,7 @@ useEffect(() => {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════════
-          2. AGENDA OFICIAL — primera sección después del hero
-          CAMBIO 1: era sección 3, ahora es la primera después del hero.
-          CAMBIO 2: día 19 sin badge "etiqueta", mismo formato que los 3.
+          2. AGENDA OFICIAL
       ══════════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#ffffff', padding: '72px 48px 80px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
@@ -394,10 +394,9 @@ useEffect(() => {
             </div>
           </FadeIn>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, alignItems: 'stretch' }} className="agenda-grid">
-          {AGENDA_DIAS.map((dia, i) => (
-            <FadeIn key={dia.dia} delay={i * 0.12} style={{ height: '100%' }}>
-              <div style={{ borderRadius: 16, overflow: 'hidden', boxShadow: '2px 2px 16px rgba(9,52,78,0.10)', border: '1px solid rgba(9,52,78,0.07)', display: 'flex', flexDirection: 'column', height: '100%' }}>
-                  {/* Header coloreado — mismo formato los 3, sin badge */}
+            {AGENDA_DIAS.map((dia, i) => (
+              <FadeIn key={dia.dia} delay={i * 0.12} style={{ height: '100%' }}>
+                <div style={{ borderRadius: 16, overflow: 'hidden', boxShadow: '2px 2px 16px rgba(9,52,78,0.10)', border: '1px solid rgba(9,52,78,0.07)', display: 'flex', flexDirection: 'column', height: '100%' }}>
                   <div style={{ backgroundColor: dia.color, padding: '24px 24px 20px', flexShrink: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8 }}>
                       <div>
@@ -408,7 +407,6 @@ useEffect(() => {
                     </div>
                     <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, color: '#fff', lineHeight: 1.3, marginTop: 4 }}>{dia.tema}</div>
                   </div>
-                  {/* Cuerpo blanco */}
                   <div style={{ backgroundColor: '#fff', padding: '20px 24px', flex: 1, display: 'flex', flexDirection: 'column', gap: 14 }}>
                     <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#5A6E77', lineHeight: 1.65 }}>{dia.desc}</p>
                     <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 7 }}>
@@ -479,7 +477,6 @@ useEffect(() => {
 
       {/* ══════════════════════════════════════════════════════════════════════
           4. PONENTES DESTACADOS
-          CAMBIO 4: botón "Ver todos los ponentes" → /marketing/agenda#ponentes
       ══════════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#ffffff', padding: '72px 48px 80px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
@@ -509,7 +506,6 @@ useEffect(() => {
           </div>
           <FadeIn delay={0.55}>
             <div style={{ textAlign: 'center', marginTop: 36 }}>
-              {/* CAMBIO 4: lleva a /marketing/agenda#ponentes para bajar a la sección de ponentes */}
               <Link href="/marketing/agenda#ponentes" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '2px solid #097589', color: '#097589', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 600, padding: '12px 30px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em' }}>Ver todos los ponentes →</Link>
             </div>
           </FadeIn>
@@ -547,10 +543,136 @@ useEffect(() => {
         </div>
       </section>
 
-      <WaveUp from="#F0F4F7" to="#ffffff" />
+      {/* Wave Aliados → EcoWorld Mundo */}
+      <div style={{ lineHeight: 0, backgroundColor: '#F0F4F7' }}>
+        <svg viewBox="0 0 1440 64" preserveAspectRatio="none" style={{ width: '100%', height: 64, display: 'block' }}>
+          <path d="M0,0 C240,64 480,0 720,40 C960,64 1200,16 1440,44 L1440,64 L0,64 Z" fill="#09344e"/>
+        </svg>
+      </div>
 
       {/* ══════════════════════════════════════════════════════════════════════
-          6. MARKETPLACE
+          6. ⭐ ECOWORLD MUNDO — NUEVA SECCIÓN
+          Invita a explorar el mundo virtual con todos los asistentes
+      ══════════════════════════════════════════════════════════════════════ */}
+      <section id="ecoworld-mundo" style={{ backgroundColor: '#09344e', padding: '80px 48px 88px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+
+          {/* Cabecera centrada */}
+          <FadeIn>
+            <div style={{ textAlign: 'center', marginBottom: 52 }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: 'rgba(255,255,255,0.10)', border: '1px solid rgba(174,229,218,0.25)', borderRadius: 999, padding: '5px 16px', marginBottom: 20 }}>
+                <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700, color: '#AEE5DA', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                  Experiencia inmersiva · EcoWorld Mundo
+                </span>
+              </div>
+              <h2 style={{ fontFamily: 'Gloock, Georgia, serif', fontWeight: 400, fontSize: 'clamp(30px, 4vw, 52px)', color: '#ffffff', lineHeight: 1.08, marginBottom: 20 }}>
+                Encuentra a los asistentes<br />
+                <span style={{ color: '#AEE5DA' }}>en el mismo mundo</span>
+              </h2>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 15, color: 'rgba(255,255,255,0.68)', lineHeight: 1.75, maxWidth: 580, margin: '0 auto 0' }}>
+                EcoWorld Mundo es el espacio virtual donde conviven todos los participantes del 3ICEO.
+                Navega en 3D, explora el entorno del congreso y conecta con organizaciones, ponentes y comunidades de 9 países.
+              </p>
+            </div>
+          </FadeIn>
+
+          {/* Tres puntos destacados antes del juego */}
+          <FadeIn delay={0.08}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 44 }} className="mundo-features-grid">
+              {[
+                {
+                  icon: (
+                    <svg width={24} height={24} viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" stroke="#AEE5DA" strokeWidth="1.8"/>
+                      <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10A15.3 15.3 0 0 1 8 12 15.3 15.3 0 0 1 12 2z" stroke="#AEE5DA" strokeWidth="1.8" strokeLinecap="round"/>
+                    </svg>
+                  ),
+                  title: '9 países, un mismo mundo',
+                  desc: 'Representantes de organizaciones latinoamericanas y europeas comparten el mismo espacio virtual.',
+                },
+                {
+                  icon: (
+                    <svg width={24} height={24} viewBox="0 0 24 24" fill="none">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="#AEE5DA" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                      <circle cx="9" cy="7" r="4" stroke="#AEE5DA" strokeWidth="1.8"/>
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="#AEE5DA" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  ),
+                  title: 'Más de 1.200 asistentes',
+                  desc: 'Explora el espacio del congreso tal como lo vivirás en Cali: stands, escenarios y zonas de encuentro.',
+                },
+                {
+                  icon: (
+                    <svg width={24} height={24} viewBox="0 0 24 24" fill="none">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" stroke="#AEE5DA" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  ),
+                  title: 'Inmersión antes del congreso',
+                  desc: 'Familiarízate con la sede, las zonas temáticas y los stands del Marketplace antes de llegar a Cali.',
+                },
+              ].map(({ icon, title, desc }) => (
+                <div key={title} style={{ display: 'flex', alignItems: 'flex-start', gap: 16, backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(174,229,218,0.14)', borderRadius: 16, padding: '22px 20px' }}>
+                  <div style={{ width: 44, height: 44, borderRadius: 12, backgroundColor: 'rgba(9,117,137,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    {icon}
+                  </div>
+                  <div>
+                    <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, color: '#fff', lineHeight: 1.3, marginBottom: 6 }}>{title}</div>
+                    <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.55)', lineHeight: 1.6 }}>{desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </FadeIn>
+
+          {/* Instrucciones de teclado */}
+          <FadeIn delay={0.14}>
+            <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 36 }}>
+              {INSTRUCCIONES_MUNDO.map(({ key, label, desc }) => (
+                <div key={key} style={{ display: 'flex', alignItems: 'center', gap: 10, backgroundColor: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 12, padding: '10px 18px' }}>
+                  <div style={{ backgroundColor: '#097589', borderRadius: 8, padding: '4px 10px', fontFamily: 'monospace', fontSize: 14, fontWeight: 700, color: '#fff', letterSpacing: '0.06em', minWidth: 36, textAlign: 'center' }}>{key}</div>
+                  <div>
+                    <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600, color: '#fff', lineHeight: 1.2 }}>{label}</div>
+                    <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.50)', lineHeight: 1.3 }}>{desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </FadeIn>
+
+          {/* Embed del juego */}
+          <FadeIn delay={0.20}>
+            <div style={{ borderRadius: 20, overflow: 'hidden', border: '1.5px solid rgba(174,229,218,0.18)', boxShadow: '0 8px 48px rgba(0,0,0,0.4)' }}>
+              <EcoWorldMundo />
+            </div>
+          </FadeIn>
+
+          {/* CTA secundario debajo del juego */}
+          <FadeIn delay={0.26}>
+            <div style={{ textAlign: 'center', marginTop: 36 }}>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.50)', marginBottom: 18, lineHeight: 1.6 }}>
+                ¿Quieres aparecer en EcoWorld con tu organización?
+              </p>
+              <Link
+                href="/marketing/registro?tipo=asistencia&stand=true"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: '#B53077', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, padding: '12px 28px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.05em', boxShadow: '0 2px 16px rgba(181,48,119,0.35)' }}
+              >
+                RESERVA TU STAND EN EL MUNDO →
+              </Link>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* Wave EcoWorld Mundo → Marketplace */}
+      <div style={{ lineHeight: 0, backgroundColor: '#09344e' }}>
+        <svg viewBox="0 0 1440 64" preserveAspectRatio="none" style={{ width: '100%', height: 64, display: 'block' }}>
+          <path d="M0,64 C360,0 1080,64 1440,24 L1440,0 L0,0 Z" fill="#09344e"/>
+          <path d="M0,64 C360,0 1080,64 1440,24 L1440,64 L0,64 Z" fill="rgba(9,52,78,0.95)"/>
+        </svg>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          7. MARKETPLACE
       ══════════════════════════════════════════════════════════════════════ */}
       <section style={{ position: 'relative', overflow: 'hidden', minHeight: 480, display: 'flex', alignItems: 'center' }}>
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg,#09344e 0%,#1C495C 60%,#097589 100%)' }} />
@@ -597,7 +719,7 @@ useEffect(() => {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════════
-          7. SEDE DEL EVENTO
+          8. SEDE DEL EVENTO
       ══════════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#E6F3EE', padding: '72px 48px 80px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
@@ -639,26 +761,9 @@ useEffect(() => {
                     <img src="/icons/icon-location.svg" alt="" width={13} height={13} style={{ filter: 'brightness(0) invert(1)' }} />
                     Ver en el mapa
                   </a>
-                  <a
-                  href="https://usbcali.edu.co/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    border: '1.5px solid #097589',
-                    color: '#097589',
-                    fontFamily: 'Poppins, sans-serif',
-                    fontSize: 13,
-                    fontWeight: 600,
-                    padding: '12px 20px',
-                    borderRadius: 999,
-                    textDecoration: 'none'
-                  }}
-                >
-                  Ir al sitio de la universidad ↗
-                </a>
+                  <a href="https://usbcali.edu.co/" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, border: '1.5px solid #097589', color: '#097589', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600, padding: '12px 20px', borderRadius: 999, textDecoration: 'none' }}>
+                    Ir al sitio de la universidad ↗
+                  </a>
                 </div>
                 <div style={{ borderTop: '1.5px solid #E6F3EE', margin: '28px 0' }} />
                 <Link href="/marketing/registro" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: '#09344e', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700, padding: '13px 28px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em', alignSelf: 'flex-start', boxShadow: '0 2px 16px rgba(9,52,78,0.25)' }}>
@@ -670,14 +775,10 @@ useEffect(() => {
         </div>
       </section>
 
-      {/* Ola separadora: Sede (#E6F3EE) → Legado (#ffffff) */}
       <WaveDown from="#E6F3EE" to="#ffffff" />
 
       {/* ══════════════════════════════════════════════════════════════════════
-          8. LEGADO DEL 2° ICEO
-             6 tarjetas: imagen ocupa TODO el card (full-cover),
-             overlay degradado abajo, número grande + label encima.
-             Fondo blanco para diferenciarse de Sede (#E6F3EE).
+          9. LEGADO DEL 2° ICEO
       ══════════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#ffffff', padding: '20px 48px 60px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
@@ -689,59 +790,12 @@ useEffect(() => {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12 }} className="stats-grid">
             {STATS.map((s, i) => (
               <FadeIn key={s.label} delay={i * 0.07}>
-                {/* Tarjeta: imagen full-cover, overlay suave abajo, número + label superpuestos */}
-                <div style={{
-                  position: 'relative',
-                  borderRadius: 14,
-                  overflow: 'hidden',
-                  aspectRatio: '3/4',
-                  boxShadow: '2px 2px 12px rgba(9,52,78,0.12)',
-                  backgroundColor: '#09344e',
-                }}>
-                  {/* Imagen ocupa todo el card */}
-                  <img
-                    src={s.image}
-                    alt={s.label}
-                    style={{
-                      position: 'absolute', inset: 0,
-                      width: '100%', height: '100%',
-                      objectFit: 'cover',
-                      objectPosition: 'center',
-                      display: 'block',
-                    }}
-                  />
-                  {/* Overlay degradado de abajo para legibilidad del texto */}
-                  <div style={{
-                    position: 'absolute', inset: 0,
-                    background: 'linear-gradient(to top, rgba(9,52,78,0.88) 0%, rgba(9,52,78,0.40) 50%, rgba(9,52,78,0.08) 100%)',
-                  }} />
-                  {/* Número + label en la parte inferior */}
-                  <div style={{
-                    position: 'absolute', bottom: 0, left: 0, right: 0,
-                    padding: '14px 14px 16px',
-                    textAlign: 'center',
-                  }}>
-                    <div style={{
-                      fontFamily: 'Gloock, Georgia, serif',
-                      fontSize: 'clamp(24px, 2.5vw, 32px)',
-                      fontWeight: 400,
-                      color: '#ffffff',
-                      lineHeight: 1,
-                      marginBottom: 4,
-                      textShadow: '0 1px 6px rgba(0,0,0,0.4)',
-                    }}>
-                      {s.num}
-                    </div>
-                    <div style={{
-                      fontFamily: 'Inter, sans-serif',
-                      fontSize: 11,
-                      fontWeight: 500,
-                      color: 'rgba(255,255,255,0.88)',
-                      lineHeight: 1.3,
-                      textShadow: '0 1px 4px rgba(0,0,0,0.4)',
-                    }}>
-                      {s.label}
-                    </div>
+                <div style={{ position: 'relative', borderRadius: 14, overflow: 'hidden', aspectRatio: '3/4', boxShadow: '2px 2px 12px rgba(9,52,78,0.12)', backgroundColor: '#09344e' }}>
+                  <img src={s.image} alt={s.label} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
+                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(9,52,78,0.88) 0%, rgba(9,52,78,0.40) 50%, rgba(9,52,78,0.08) 100%)' }} />
+                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '14px 14px 16px', textAlign: 'center' }}>
+                    <div style={{ fontFamily: 'Gloock, Georgia, serif', fontSize: 'clamp(24px, 2.5vw, 32px)', fontWeight: 400, color: '#ffffff', lineHeight: 1, marginBottom: 4, textShadow: '0 1px 6px rgba(0,0,0,0.4)' }}>{s.num}</div>
+                    <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, fontWeight: 500, color: 'rgba(255,255,255,0.88)', lineHeight: 1.3, textShadow: '0 1px 4px rgba(0,0,0,0.4)' }}>{s.label}</div>
                   </div>
                 </div>
               </FadeIn>
@@ -757,11 +811,10 @@ useEffect(() => {
         </div>
       </section>
 
-      {/* Ola separadora: Legado (#ffffff) → Voces (#F7F6F3) */}
       <WaveDown from="#ffffff" to="#F7F6F3" />
 
       {/* ══════════════════════════════════════════════════════════════════════
-          9. VOCES DEL 2° ICEO
+          10. VOCES DEL 2° ICEO
       ══════════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#F7F6F3', padding: '72px 48px 80px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
@@ -775,24 +828,13 @@ useEffect(() => {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60, alignItems: 'start' }} className="voces-grid">
             <FadeIn>
-              <motion.div
-                key={activeVideo}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, ease: 'easeOut' }}
-              >
+              <motion.div key={activeVideo} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: 'easeOut' }}>
                 <blockquote style={{ borderLeft: '3px solid #03A383', paddingLeft: 18, margin: '0 0 16px', fontFamily: 'Inter, sans-serif', fontSize: 15, fontStyle: 'italic', color: '#5A6E77', lineHeight: 1.75 }}>
                   {ENTREVISTAS[activeVideo].quote}
                 </blockquote>
-                <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, color: '#03A383', marginBottom: 6 }}>
-                  — {ENTREVISTAS[activeVideo].label}
-                </p>
-                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: '#097589', fontWeight: 600, marginBottom: 6 }}>
-                  {ENTREVISTAS[activeVideo].org}
-                </p>
-                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#5A6E77', lineHeight: 1.65 }}>
-                  {ENTREVISTAS[activeVideo].texto}
-                </p>
+                <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, color: '#03A383', marginBottom: 6 }}>— {ENTREVISTAS[activeVideo].label}</p>
+                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: '#097589', fontWeight: 600, marginBottom: 6 }}>{ENTREVISTAS[activeVideo].org}</p>
+                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#5A6E77', lineHeight: 1.65 }}>{ENTREVISTAS[activeVideo].texto}</p>
               </motion.div>
             </FadeIn>
 
@@ -800,21 +842,13 @@ useEffect(() => {
               <div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 14 }}>
                   {ENTREVISTAS.map((e, i) => (
-                    <button
-                      key={e.id}
-                      onClick={() => setActiveVideo(i)}
-                      style={{ padding: '8px 4px', borderRadius: 8, border: activeVideo === i ? '2px solid #03A383' : '2px solid #C3DED9', backgroundColor: activeVideo === i ? '#03A383' : '#fff', color: activeVideo === i ? '#fff' : '#5A6E77', fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s', letterSpacing: '0.02em' }}
-                    >
+                    <button key={e.id} onClick={() => setActiveVideo(i)} style={{ padding: '8px 4px', borderRadius: 8, border: activeVideo === i ? '2px solid #03A383' : '2px solid #C3DED9', backgroundColor: activeVideo === i ? '#03A383' : '#fff', color: activeVideo === i ? '#fff' : '#5A6E77', fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s', letterSpacing: '0.02em' }}>
                       {e.label}
                     </button>
                   ))}
                 </div>
                 <div style={{ borderRadius: 14, overflow: 'hidden', boxShadow: '4px 4px 24px rgba(9,52,78,0.2)', backgroundColor: '#000', aspectRatio: '16/9' }}>
-                  <video
-                    key={ENTREVISTAS[activeVideo].src}
-                    controls
-                    style={{ width: '100%', height: '100%', display: 'block', objectFit: 'contain', backgroundColor: '#000' }}
-                  >
+                  <video key={ENTREVISTAS[activeVideo].src} controls style={{ width: '100%', height: '100%', display: 'block', objectFit: 'contain', backgroundColor: '#000' }}>
                     <source src={ENTREVISTAS[activeVideo].src} type="video/mp4" />
                   </video>
                 </div>
@@ -838,9 +872,7 @@ useEffect(() => {
       <WaveDown from="#F7F6F3" to="#ffffff" />
 
       {/* ══════════════════════════════════════════════════════════════════════
-          10. NOTICIAS
-          CAMBIO 3: sección "Momentos que definieron el 2° ICEO" ELIMINADA.
-          Las noticias van directamente después de Voces.
+          11. NOTICIAS
       ══════════════════════════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#ffffff', padding: '72px 48px 80px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
@@ -859,11 +891,11 @@ useEffect(() => {
                 <Link href={n.href} style={{ textDecoration: 'none' }}>
                   <div style={{ borderRadius: 16, overflow: 'hidden', backgroundColor: '#fff', boxShadow: '2px 2px 12px rgba(9,52,78,0.08)', border: '1px solid rgba(9,52,78,0.06)', height: '100%', display: 'flex', flexDirection: 'column' }}>
                     <div style={{ height: 140, background: n.imgBg, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {(n.img as string)?.startsWith('http')
-                      ? <img src={n.img as string} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                      : <img src={n.img as string} alt="" width={52} height={52} style={{ display: 'block', filter: 'brightness(0) invert(1)', opacity: 0.45 }} />
-                    }
-                  </div>
+                      {(n.img as string)?.startsWith('http')
+                        ? <img src={n.img as string} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                        : <img src={n.img as string} alt="" width={52} height={52} style={{ display: 'block', filter: 'brightness(0) invert(1)', opacity: 0.45 }} />
+                      }
+                    </div>
                     <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column', gap: 10 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between' }}>
                         <span style={{ backgroundColor: `${n.tagColor}18`, color: n.tagColor, fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', borderRadius: 999, padding: '3px 10px' }}>{n.tag}</span>
@@ -881,37 +913,32 @@ useEffect(() => {
         </div>
       </section>
 
-      <SectionDonacion
-        bg="#09344e"
-        theme="dark"
-        showTopWave={true}
-        topWaveFrom="#ffffff"
-      />
+      <SectionDonacion bg="#09344e" theme="dark" showTopWave={true} topWaveFrom="#ffffff" />
       <SectionRedes bg="#ffffff" theme="light" />
 
       {/* ── Responsive ── */}
       <style suppressHydrationWarning>{`
         @media (max-width: 1100px) {
-          .lineas-grid   { grid-template-columns: repeat(3,1fr) !important; }
-          .speakers-grid { grid-template-columns: repeat(3,1fr) !important; }
-          .logos-grid    { grid-template-columns: repeat(3,1fr) !important; }
-          .stats-grid    { grid-template-columns: repeat(3,1fr) !important; }
+          .lineas-grid         { grid-template-columns: repeat(3,1fr) !important; }
+          .speakers-grid       { grid-template-columns: repeat(3,1fr) !important; }
+          .logos-grid          { grid-template-columns: repeat(3,1fr) !important; }
+          .stats-grid          { grid-template-columns: repeat(3,1fr) !important; }
+          .mundo-features-grid { grid-template-columns: 1fr !important; }
         }
         @media (max-width: 900px) {
-          .agenda-grid       { grid-template-columns: 1fr !important; }
-          .marketplace-grid  { grid-template-columns: 1fr !important; }
-          .sede-grid         { grid-template-columns: 1fr !important; }
-          .noticias-grid     { grid-template-columns: 1fr !important; }
-          .speakers-grid     { grid-template-columns: repeat(2,1fr) !important; }
-          .voces-grid        { grid-template-columns: 1fr !important; }
-          .momentos-grid     { grid-template-columns: repeat(2,1fr) !important; }
+          .agenda-grid         { grid-template-columns: 1fr !important; }
+          .marketplace-grid    { grid-template-columns: 1fr !important; }
+          .sede-grid           { grid-template-columns: 1fr !important; }
+          .noticias-grid       { grid-template-columns: 1fr !important; }
+          .speakers-grid       { grid-template-columns: repeat(2,1fr) !important; }
+          .voces-grid          { grid-template-columns: 1fr !important; }
+          .mundo-features-grid { grid-template-columns: 1fr !important; }
         }
         @media (max-width: 640px) {
           .lineas-grid   { grid-template-columns: 1fr 1fr !important; }
           .logos-grid    { grid-template-columns: 1fr 1fr !important; }
           .stats-grid    { grid-template-columns: repeat(2,1fr) !important; }
           .speakers-grid { grid-template-columns: 1fr 1fr !important; }
-          .momentos-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </div>

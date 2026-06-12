@@ -116,12 +116,19 @@
         createUnityInstance(canvas, config, (progress) => {
           document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
               }).then((unityInstance) => {
-                document.querySelector("#unity-loading-bar").style.display = "none";
-                document.querySelector("#unity-fullscreen-button").onclick = () => {
-                  unityInstance.SetFullscreen(1);
-                };
+              document.querySelector("#unity-loading-bar").style.display = "none";
+              window.unityInstance = unityInstance;
+              var fsBtn = document.querySelector("#unity-fullscreen-button");
+              if (fsBtn) fsBtn.onclick = () => unityInstance.SetFullscreen(1);
 
-              }).catch((message) => {
+              // Evita que el juego se quede en negro al entrar a pantalla completa:
+              // al cambiar de modo le devolvemos el foco al canvas para que siga renderizando.
+              canvas.setAttribute("tabindex", "0");
+              function focusCanvas() { try { canvas.focus(); } catch (e) {} }
+              ["fullscreenchange", "webkitfullscreenchange"].forEach(function (ev) {
+                document.addEventListener(ev, function () { setTimeout(focusCanvas, 60); });
+              });
+            }).catch((message) => {
                 alert(message);
               });
             };
