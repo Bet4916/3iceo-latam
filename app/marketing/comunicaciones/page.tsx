@@ -42,7 +42,7 @@ const NOTICIAS_FALLBACK: Noticia[] = [
     fecha: '01/06/26',
     img: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/general/iceo-hero.jpg',
     imgBg: 'linear-gradient(135deg, #09344e 0%, #097589 100%)',
-    url_redirect: 'https://congreso.somosawaq.org/marketing/registro',
+    url_redirect: '/marketing/registro',
     tipo_redirect: 'web',
   },
   {
@@ -51,7 +51,7 @@ const NOTICIAS_FALLBACK: Noticia[] = [
     titulo: 'Awaq ONGD y la Universidad de San Buenaventura unen fuerzas para el 3ICEO',
     extracto: 'La alianza entre Awaq ONGD y la USB consolida el escenario perfecto para reunir a organizaciones ambientales de toda Latinoamérica y Europa en agosto de 2026.',
     fecha: '15/05/26',
-    img: '',
+    img: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80',
     imgBg: 'linear-gradient(135deg, #1C495C 0%, #74B4A7 100%)',
     url_redirect: 'https://www.instagram.com/awaqong',
     tipo_redirect: 'instagram',
@@ -62,7 +62,7 @@ const NOTICIAS_FALLBACK: Noticia[] = [
     titulo: 'Primer vídeo oficial del 3ICEO ya disponible en YouTube',
     extracto: 'Descubre qué es el Congreso Internacional de Organizaciones Ambientales de Latinoamérica y por qué esta edición en Cali será histórica.',
     fecha: '10/05/26',
-    img: '',
+    img: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80',
     imgBg: 'linear-gradient(135deg, #097589 0%, #AEE5DA 100%)',
     url_redirect: 'https://www.youtube.com/@awaqong',
     tipo_redirect: 'youtube',
@@ -73,7 +73,7 @@ const NOTICIAS_FALLBACK: Noticia[] = [
     titulo: 'Streaming en vivo — Apertura del 3ICEO',
     extracto: 'Sigue en directo la ceremonia de apertura del 3er Congreso Internacional de Organizaciones Ambientales.',
     fecha: '17/08/26',
-    img: '',
+    img: 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&q=80',
     imgBg: 'linear-gradient(135deg, #B53077 0%, #437287 100%)',
     url_redirect: 'N/A',
     tipo_redirect: 'N/A',
@@ -314,18 +314,7 @@ export default function ComunicacionesPage() {
 
                       {/* Imagen fija */}
                       <div style={{ position: 'relative', overflow: 'hidden', background: destacada.imgBg, flexShrink: 0 }}>
-                      {destacada.img && destacada.img !== '' && destacada.img !== 'N/A'
-                        ? <img src={destacada.img} alt={destacada.titulo} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                        : (
-                          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 48 }}>
-                            <img
-                              src="/icons/AWAQ_aliado.svg"
-                              alt="ICEO"
-                              style={{ width: '100%', height: '100%', objectFit: 'contain', opacity: 0.85 }}
-                            />
-                          </div>
-                        )
-                      }
+                      <img src={destacada.img} alt={destacada.titulo} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                     </div>
 
                       {/* Contenido */}
@@ -365,18 +354,8 @@ export default function ComunicacionesPage() {
                       >
                         {/* Imagen */}
                         <div style={{ height: 180, background: n.imgBg, flexShrink: 0, overflow: 'hidden', position: 'relative' }}>
-                          {n.img && n.img !== '' && n.img !== 'N/A'
-                            ? <img src={n.img} alt={n.titulo} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                            : (
-                              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                <span style={{ fontSize: 44 }}>
-                                  {n.categoria === 'video' ? '▶' : n.categoria === 'streaming' ? '◉' : n.categoria === 'anuncio' ? '◈' : '◎'}
-                                </span>
-                              </div>
-                            )
-                          }
-                          {/* Badge sobre imagen */}
-                          <span style={{ position: 'absolute', top: 12, left: 12, display: 'inline-flex', alignItems: 'center', gap: 4, backgroundColor: BADGE_COLOR[n.categoria] || '#097589', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 9, fontWeight: 700, padding: '3px 9px', borderRadius: 50, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                      <img src={n.img} alt={n.titulo} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                      <span style={{ position: 'absolute', top: 12, left: 12, display: 'inline-flex', alignItems: 'center', gap: 4, backgroundColor: BADGE_COLOR[n.categoria] || '#097589', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 9, fontWeight: 700, padding: '3px 9px', borderRadius: 50, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
                             <BadgeIcon tipo={n.categoria} />
                             {n.categoria}
                           </span>

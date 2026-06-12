@@ -9,14 +9,14 @@ function formatFecha(iso: string): string {
   return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getFullYear()).slice(2)}`
 }
 
-function defaultEmoji(categoria: string): string {
+function defaultImg(categoria: string): string {
   const map: Record<string, string> = {
-    video:            '🎥',
-    streaming:        '📡',
-    'notas sociales': '📰',
-    anuncio:          '📢',
+    video:            'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80',
+    streaming:        'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&q=80',
+    'notas sociales': 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80',
+    anuncio:          'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&q=80',
   }
-  return map[categoria] || '📄'
+  return map[categoria] || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&q=80'
 }
 
 function defaultGradient(i: number): string {
@@ -52,9 +52,9 @@ export async function GET() {
       extracto:     r.extracto__c     || '',
       categoria:    r.categoria__c    || 'anuncio',
       fecha:        formatFecha(r.fecha__c as string),
-      img:          (r.imagen_url__c && r.imagen_url__c !== 'N/A')
-                      ? r.imagen_url__c
-                      : defaultEmoji(r.categoria__c as string),
+      img: (r.imagen_url__c && r.imagen_url__c !== 'N/A')
+       ? r.imagen_url__c
+       : defaultImg(r.categoria_del__c as string),
       imgBg:        defaultGradient(i),
       slug:         r.Id,
       url_redirect:  r.url_redirect__c  || 'N/A',

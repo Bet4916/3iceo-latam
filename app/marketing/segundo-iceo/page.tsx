@@ -28,7 +28,7 @@ const MOMENTOS = [
   { num: '14', label: 'Conferencias',                     image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Conferencias.jpg'     },
   { num: '02', label: 'Conversatorios',                   image: '/icons/conversatorios.svg'   },
   { num: '28', label: 'Organizaciones en el Marketplace', image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Marketplace.png'  },
-  { num: '02', label: 'Convenios',                        image: '/icons/convenios.svg'        },
+  { num: '02', label: 'Convenios',                        image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Convenios.jpeg'        },
   { num: '05', label: 'Talleres',                         image: '/icons/talleres.svg'         },
   { num: '17', label: 'Entidades aliadas',                image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Aliados.png'      },
   { num: '03', label: 'Días de Marketplace',              image: '/icons/dias_marketplace.svg' },

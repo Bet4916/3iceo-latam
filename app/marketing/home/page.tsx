@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import SectionDonacion from '@/components/sections/SectionDonacion'
@@ -202,13 +202,25 @@ const ALIADOS_LOGOS = [
   { src: '/icons/sc_sophic.svg',             name: 'SoPhIC'                             },
 ]
 
-const NOTICIAS = [
-  { tag: 'Impacto', tagColor: '#097589', titulo: '1.209 asistentes marcaron historia en el 2ICEO',
-    desc: 'El segundo congreso superó todas las expectativas con participación de 192 organizaciones ambientales de 9 países latinoamericanos.', fecha: 'Dic 2026', href: '/marketing/comunicaciones', img: '/icons/panelistas.svg' },
-  { tag: 'Alianzas', tagColor: '#B53077', titulo: 'Nueva alianza con la Gobernación del Valle del Cauca',
-    desc: 'El Valle del Cauca se suma como socio institucional clave del 3ICEO, reforzando el vínculo entre el congreso y el territorio anfitrión.', fecha: 'Ene 2027', href: '/marketing/comunicaciones', img: '/icons/ent_aliados.svg' },
-  { tag: 'Programa', tagColor: '#4886B5', titulo: 'Líneas temáticas del 3ICEO: agua, cooperación y conclusiones',
-    desc: 'Presentamos el marco conceptual que guiará los tres días del congreso: de los resultados de COP a los territorios vivos.', fecha: 'Feb 2027', href: '/marketing/comunicaciones', img: '/icons/conferencias.svg' },
+const NOTICIAS_FALLBACK = [
+  { tag: 'Impacto', tagColor: '#097589',
+    titulo: '1.209 asistentes marcaron historia en el 2ICEO',
+    desc: 'El segundo congreso superó todas las expectativas con participación de 192 organizaciones ambientales de 9 países latinoamericanos.',
+    fecha: 'Dic 2026', href: '/marketing/comunicaciones', img: '/icons/panelistas.svg',
+    imgBg: 'linear-gradient(135deg, #09344e 0%, #097589 100%)',
+  },
+  { tag: 'Alianzas', tagColor: '#B53077',
+    titulo: 'Nueva alianza con la Gobernación del Valle del Cauca',
+    desc: 'El Valle del Cauca se suma como socio institucional clave del 3ICEO.',
+    fecha: 'Ene 2027', href: '/marketing/comunicaciones', img: '/icons/ent_aliados.svg',
+    imgBg: 'linear-gradient(135deg, #1C495C 0%, #74B4A7 100%)',
+  },
+  { tag: 'Programa', tagColor: '#4886B5',
+    titulo: 'Líneas temáticas del 3ICEO: agua, cooperación y conclusiones',
+    desc: 'Presentamos el marco conceptual que guiará los tres días del congreso.',
+    fecha: 'Feb 2027', href: '/marketing/comunicaciones', img: '/icons/conferencias.svg',
+    imgBg: 'linear-gradient(135deg, #097589 0%, #AEE5DA 100%)',
+  },
 ]
 
 const ENTREVISTAS = [
@@ -241,6 +253,31 @@ const ENTREVISTAS = [
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
 export default function HomePage() {
   const [activeVideo, setActiveVideo] = useState(0)
+const [noticiasHome, setNoticiasHome] = useState(NOTICIAS_FALLBACK)
+
+useEffect(() => {
+  fetch('/api/salesforce/noticias')
+    .then(r => r.json())
+    .then(data => {
+      if (data.noticias?.length > 0) {
+        const BADGE_COLOR: Record<string, string> = {
+          video: '#097589', streaming: '#B53077',
+          'notas sociales': '#437287', anuncio: '#B58A00',
+        }
+        setNoticiasHome(data.noticias.slice(0, 3).map((n: Record<string, unknown>) => ({
+          tag:      ((n.categoria as string) || 'Noticia').charAt(0).toUpperCase() + ((n.categoria as string) || '').slice(1),
+          tagColor: BADGE_COLOR[n.categoria as string] || '#097589',
+          titulo:   n.titulo,
+          desc:     n.extracto,
+          fecha:    n.fecha,
+          href:     '/marketing/comunicaciones',
+          img:      n.img,
+          imgBg:    n.imgBg,
+        })))
+      }
+    })
+    .catch(() => {})
+}, [])
 
   return (
     <div style={{ backgroundColor: '#fff', minHeight: '100vh' }}>
@@ -356,10 +393,10 @@ export default function HomePage() {
               </p>
             </div>
           </FadeIn>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }} className="agenda-grid">
-            {AGENDA_DIAS.map((dia, i) => (
-              <FadeIn key={dia.dia} delay={i * 0.12}>
-                <div style={{ borderRadius: 16, overflow: 'hidden', boxShadow: '2px 2px 16px rgba(9,52,78,0.10)', border: '1px solid rgba(9,52,78,0.07)', display: 'flex', flexDirection: 'column', height: '100%' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, alignItems: 'stretch' }} className="agenda-grid">
+          {AGENDA_DIAS.map((dia, i) => (
+            <FadeIn key={dia.dia} delay={i * 0.12} style={{ height: '100%' }}>
+              <div style={{ borderRadius: 16, overflow: 'hidden', boxShadow: '2px 2px 16px rgba(9,52,78,0.10)', border: '1px solid rgba(9,52,78,0.07)', display: 'flex', flexDirection: 'column', height: '100%' }}>
                   {/* Header coloreado — mismo formato los 3, sin badge */}
                   <div style={{ backgroundColor: dia.color, padding: '24px 24px 20px', flexShrink: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8 }}>
@@ -817,13 +854,16 @@ export default function HomePage() {
             </div>
           </FadeIn>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }} className="noticias-grid">
-            {NOTICIAS.map((n, i) => (
+            {noticiasHome.map((n, i) => (
               <FadeIn key={n.titulo} delay={i * 0.1}>
                 <Link href={n.href} style={{ textDecoration: 'none' }}>
                   <div style={{ borderRadius: 16, overflow: 'hidden', backgroundColor: '#fff', boxShadow: '2px 2px 12px rgba(9,52,78,0.08)', border: '1px solid rgba(9,52,78,0.06)', height: '100%', display: 'flex', flexDirection: 'column' }}>
-                    <div style={{ height: 140, background: 'linear-gradient(135deg,#09344e 0%,#1C495C 60%,#097589 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <img src={n.img} alt="" width={52} height={52} style={{ display: 'block', filter: 'brightness(0) invert(1)', opacity: 0.45 }} />
-                    </div>
+                    <div style={{ height: 140, background: n.imgBg, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {(n.img as string)?.startsWith('http')
+                      ? <img src={n.img as string} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                      : <img src={n.img as string} alt="" width={52} height={52} style={{ display: 'block', filter: 'brightness(0) invert(1)', opacity: 0.45 }} />
+                    }
+                  </div>
                     <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column', gap: 10 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between' }}>
                         <span style={{ backgroundColor: `${n.tagColor}18`, color: n.tagColor, fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', borderRadius: 999, padding: '3px 10px' }}>{n.tag}</span>
