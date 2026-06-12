@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import HeroIceo from '@/components/sections/HeroIceo'
@@ -19,71 +20,48 @@ function FadeIn({ children, delay = 0, style, className }: { children: React.Rea
   )
 }
 
+// ─── Tipo unificado para socios ───────────────────────────────────────────────
+interface Socio {
+  name:     string
+  desc:     string
+  logo:     string
+  href:     string
+  accentBg: string
+  isJpg:    boolean
+}
+
+// ─── Organizadores — hardcodeados, nunca cambian ──────────────────────────────
 const ORGANIZADORES = [
   {
-    logo: '/icons/AWAQ_aliado.svg',
-    name: 'Awaq ONGD',
-    href: 'https://www.somosawaq.org/',
-    desc: 'Awaq es una organización de cooperación internacional que, desde 2019, se dedica al desarrollo de proyectos de investigación científica y conservación de ecosistemas en comunidades menos favorecidas. A través de Estaciones Biológicas, Awaq implementa modelos económicos alternativos con el objetivo de mejorar la calidad de vida de los habitantes de estas comunidades.',
+    logo:     '/icons/AWAQ_aliado.svg',
+    name:     'Awaq ONGD',
+    href:     'https://www.somosawaq.org/',
+    desc:     'Awaq es una organización de cooperación internacional que, desde 2019, se dedica al desarrollo de proyectos de investigación científica y conservación de ecosistemas en comunidades menos favorecidas. A través de Estaciones Biológicas, Awaq implementa modelos económicos alternativos con el objetivo de mejorar la calidad de vida de los habitantes de estas comunidades.',
     accentBg: '#ADC6D9',
   },
   {
-    logo: '/icons/humans_pro.svg',
-    name: 'HumansPRO®',
-    href: 'https://www.humanspro.org/',
-    desc: 'Como Ente de Acreditación Internacional, promovemos la confianza y la transparencia en los procesos de certificación, garantizando que nuestras acreditaciones reflejen competencia, excelencia y cumplimiento de estándares internacionales. Colaboramos con diversos sectores como industria, tecnología, educación y salud.',
+    logo:     '/icons/humans_pro.svg',
+    name:     'HumansPRO®',
+    href:     'https://www.humanspro.org/',
+    desc:     'Como Ente de Acreditación Internacional, promovemos la confianza y la transparencia en los procesos de certificación, garantizando que nuestras acreditaciones reflejen competencia, excelencia y cumplimiento de estándares internacionales. Colaboramos con diversos sectores como industria, tecnología, educación y salud.',
     accentBg: '#4886B5',
   },
   {
-    logo: '/icons/logo_uni_USB.svg',
-    name: 'Universidad de San Buenaventura',
-    href: 'https://usb.edu.co/',
-    desc: 'La Universidad de San Buenaventura en Cali es una institución de educación superior que se distingue por su enfoque católico y franciscano, buscando la formación integral del ser humano y la transformación de la sociedad. Fue fundada por la comunidad Franciscana y ha contribuido al desarrollo de la educación colombiana desde su creación.',
+    logo:     '/icons/logo_uni_USB.svg',
+    name:     'Universidad de San Buenaventura',
+    href:     'https://usb.edu.co/',
+    desc:     'La Universidad de San Buenaventura en Cali es una institución de educación superior que se distingue por su enfoque católico y franciscano, buscando la formación integral del ser humano y la transformación de la sociedad. Fue fundada por la comunidad Franciscana y ha contribuido al desarrollo de la educación colombiana desde su creación.',
     accentBg: '#ADC6D9',
   },
 ]
 
-const SOCIOS = [
-  {
-    logo: '/icons/gob_valle_cauca.svg',
-    isJpg: false,
-    name: 'Gobernación del Valle del Cauca',
-    desc: 'Máxima autoridad administrativa del departamento, promueve el desarrollo integral, la prosperidad y la preservación cultural de sus habitantes.',
-    href: 'https://www.valledelcauca.gov.co/',
-    accentBg: '#097589',
-  },
-  {
-    logo: '/icons/sc_uni_lasalle_utopia.svg',
-    isJpg: false,
-    name: 'Proyecto Utopía · Universidad de La Salle',
-    desc: 'Referente de transformación territorial y agroecología con sentido social. Modelo educativo rural orientado a la paz y la sostenibilidad.',
-    href: 'https://lasalle.edu.co/es/campus-unisalle/campus-yopal/proyecto-utopia',
-    accentBg: '#4886B5',
-  },
-  {
-    logo: '/icons/sc_proyecto_colombia.svg',
-    isJpg: false,
-    name: 'Proyectando Colombia',
-    desc: 'Integra regiones y fortalece la imagen de PMI® en Colombia, contribuyendo al desarrollo sostenible a través de la gestión de proyectos.',
-    href: 'https://www.proyectandocolombia.org/',
-    accentBg: '#ADC6D9',
-  },
-  {
-    logo: '/icons/sc_sophic.svg',
-    isJpg: false,
-    name: 'SoPhIC — Sociedad Filosófica Iberoamérica-Colombia',
-    desc: 'Asociación gremial de doctores e investigadores de Colombia, generando impacto social, económico y científico a nivel nacional e internacional.',
-    href: 'https://www.sophicol.org/',
-    accentBg: '#74B4A7',
-  },
-  {
-    logo: '/icons/sc_juanDcastellanos.jpg',
-    isJpg: true,
-    name: 'Fundación Universitaria Juan de Castellanos',
-    desc: 'Aliada en la articulación entre academia, sostenibilidad y acción comunitaria. Comprometida con el desarrollo rural y la conservación ambiental.',
-    href: 'https://www.jdc.edu.co/',
-    accentBg: '#097589',
-  },
+// ─── Socios fallback hardcodeados ─────────────────────────────────────────────
+const SOCIOS_FALLBACK: Socio[] = [
+  { logo: '/icons/gob_valle_cauca.svg',      isJpg: false, name: 'Gobernación del Valle del Cauca',             desc: 'Máxima autoridad administrativa del departamento, promueve el desarrollo integral, la prosperidad y la preservación cultural de sus habitantes.',                              href: 'https://www.valledelcauca.gov.co/',                                    accentBg: '#097589' },
+  { logo: '/icons/sc_uni_lasalle_utopia.svg', isJpg: false, name: 'Proyecto Utopía · Universidad de La Salle',   desc: 'Referente de transformación territorial y agroecología con sentido social. Modelo educativo rural orientado a la paz y la sostenibilidad.',                                   href: 'https://lasalle.edu.co/es/campus-unisalle/campus-yopal/proyecto-utopia', accentBg: '#4886B5' },
+  { logo: '/icons/sc_proyecto_colombia.svg',  isJpg: false, name: 'Proyectando Colombia',                         desc: 'Integra regiones y fortalece la imagen de PMI® en Colombia, contribuyendo al desarrollo sostenible a través de la gestión de proyectos.',                                   href: 'https://www.proyectandocolombia.org/',                                  accentBg: '#ADC6D9' },
+  { logo: '/icons/sc_sophic.svg',             isJpg: false, name: 'SoPhIC — Sociedad Filosófica Iberoamérica-Colombia', desc: 'Asociación gremial de doctores e investigadores de Colombia, generando impacto social, económico y científico a nivel nacional e internacional.',               href: 'https://www.sophicol.org/',                                            accentBg: '#74B4A7' },
+  { logo: '/icons/sc_juanDcastellanos.jpg',   isJpg: true,  name: 'Fundación Universitaria Juan de Castellanos',  desc: 'Aliada en la articulación entre academia, sostenibilidad y acción comunitaria. Comprometida con el desarrollo rural y la conservación ambiental.',                        href: 'https://www.jdc.edu.co/',                                              accentBg: '#097589' },
 ]
 
 function OrgCard({ org, delay = 0 }: { org: typeof ORGANIZADORES[0]; delay?: number }) {
@@ -114,7 +92,7 @@ function OrgCard({ org, delay = 0 }: { org: typeof ORGANIZADORES[0]; delay?: num
   )
 }
 
-function SocioCard({ socio, index }: { socio: typeof SOCIOS[0]; index: number }) {
+function SocioCard({ socio, index }: { socio: Socio; index: number }) {
   return (
     <FadeIn delay={index * 0.06} style={{ height: '100%' }}>
       <div style={{ position: 'relative', height: '100%' }}>
@@ -143,20 +121,30 @@ function SocioCard({ socio, index }: { socio: typeof SOCIOS[0]; index: number })
 }
 
 export default function AliadosPage() {
+  const [socios, setSocios] = useState<Socio[]>(SOCIOS_FALLBACK)
+
+  // ── Carga socios desde Salesforce, combina con fallback ──
+  useEffect(() => {
+    fetch('/api/salesforce/socios')
+      .then(r => r.json())
+      .then(data => {
+        if (data.socios?.length > 0) {
+          setSocios(prev => {
+            const sfNombres = new Set(data.socios.map((s: Socio) => s.name))
+            const soloFallback = prev.filter(s => !sfNombres.has(s.name))
+            return [...soloFallback, ...data.socios]
+          })
+        }
+      })
+      .catch(() => { /* mantiene fallback */ })
+  }, [])
+
   return (
     <div style={{ backgroundColor: '#ffffff', minHeight: '100vh' }}>
 
-      {/* ══ 1. HERO — Excel: H1 corto (1-2 palabras), H2 dos líneas exactas ══ */}
       <HeroIceo
         badge="3ICEO · LATAM"
-        title={
-    <>
-      Aliados{' '}
-      <span style={{ color: '#ffffff', fontVariantNumeric: 'lining-nums' }}>
-        3er ICEO
-      </span>
-    </>
-  }
+        title={<>Aliados{' '}<span style={{ color: '#ffffff', fontVariantNumeric: 'lining-nums' }}>3er ICEO</span></>}
         description={<>Una red de instituciones y organizaciones comprometidas<br />con el futuro de las fuentes hídricas</>}
         cta={{ label: 'QUIERO ASISTIR →', href: '/marketing/registro' }}
         ctaSecondary={{ label: 'Ver programa', href: '/marketing/agenda' }}
@@ -168,7 +156,7 @@ export default function AliadosPage() {
         waveColor="#F0F4F7"
       />
 
-      {/* ══ 2. ORGANIZADORES ══════════════════════════════════════════════════ */}
+      {/* ══ ORGANIZADORES — hardcodeados, nunca cambian ══════════════════════ */}
       <section style={{ backgroundColor: '#F0F4F7', padding: '80px 48px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <FadeIn>
@@ -182,14 +170,13 @@ export default function AliadosPage() {
         </div>
       </section>
 
-      {/* ── Wave #F0F4F7 → blanca ── */}
       <div style={{ lineHeight: 0, backgroundColor: '#F0F4F7' }}>
         <svg viewBox="0 0 1440 56" preserveAspectRatio="none" style={{ width: '100%', height: 56, display: 'block' }}>
           <path d="M0,56 C240,0 480,56 720,28 C960,0 1200,48 1440,20 L1440,56 L0,56 Z" fill="#ffffff" />
         </svg>
       </div>
 
-      {/* ══ 3. SOCIOS COLABORADORES ═══════════════════════════════════════════ */}
+      {/* ══ SOCIOS COLABORADORES — dinámicos desde Salesforce ════════════════ */}
       <section style={{ backgroundColor: '#ffffff', padding: '80px 48px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <FadeIn>
@@ -203,12 +190,12 @@ export default function AliadosPage() {
             </div>
           </FadeIn>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 28, alignItems: 'stretch', padding: '0 8px 16px' }} className="socios-grid">
-            {SOCIOS.map((socio, i) => <SocioCard key={socio.name} socio={socio} index={i} />)}
+            {socios.map((socio, i) => <SocioCard key={socio.name} socio={socio} index={i} />)}
           </div>
         </div>
       </section>
 
-      {/* ══ 4. LLAMADO A ALIADOS — inspirado en CTA Ponentes ════════════════ */}
+      {/* ══ LLAMADO A ALIADOS ════════════════════════════════════════════════ */}
       <section style={{ backgroundColor: '#E6F3EE', padding: '72px 48px 80px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <div className="cta-aliados-grid" style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 48, alignItems: 'center' }}>
@@ -240,38 +227,29 @@ export default function AliadosPage() {
               </div>
             </FadeIn>
 
-            {/* Beneficios de ser aliado */}
-<FadeIn delay={0.12}>
-  <div style={{ display: 'flex', flexDirection: 'column', gap: 10, flexShrink: 0 }} className="aliados-beneficios">
-    {[
-      { num: '01', label: 'Visibilidad institucional ante más de 1.000 asistentes',
-        icon: <svg width={16} height={16} viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#fff" strokeWidth="1.8"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/></svg> },
-      { num: '02', label: 'Red de cooperación Europa–Latinoamérica',
-        icon: <svg width={16} height={16} viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" strokeWidth="1.8"/><path d="M12 3C12 3 8 8 8 12s4 9 4 9M12 3c0 0 4 5 4 9s-4 9-4 9M3 12h18" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/></svg> },
-      { num: '03', label: 'Espacio en agenda: paneles, talleres o conferencias',
-        icon: <svg width={16} height={16} viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="17" rx="2" stroke="#fff" strokeWidth="1.8"/><path d="M16 2v4M8 2v4M3 10h18" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/></svg> },
-      { num: '04', label: 'Stand en el Marketplace Territorial',
-        icon: <svg width={16} height={16} viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#fff" strokeWidth="1.8" strokeLinejoin="round"/><path d="M9 22V12h6v10" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/></svg> },
-      { num: '05', label: 'Difusión en redes y comunicaciones del congreso',
-        icon: <svg width={16} height={16} viewBox="0 0 24 24" fill="none"><path d="M22 4s-3 3-8 3-9 2-9 7 4 7 8 7c2 0 4-.5 5-1" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/><circle cx="5" cy="19" r="2" stroke="#fff" strokeWidth="1.8"/><path d="M14 9c0 0-4 1-6 5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/></svg> },
-    ].map((b, i) => (
-      <div key={i} style={{ backgroundColor: '#fff', border: '1.5px solid #AEE5DA', borderRadius: 12, padding: '12px 18px', display: 'flex', alignItems: 'center', gap: 12, boxShadow: '2px 2px 8px rgba(9,52,78,0.06)', minWidth: 280 }}>
-        <div style={{ width: 32, height: 32, borderRadius: 8, flexShrink: 0, backgroundColor: '#097589', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          {b.icon}
-        </div>
-        <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 500, color: '#09344e', lineHeight: 1.35 }}>{b.label}</span>
-      </div>
-    ))}
-  </div>
-</FadeIn>
+            <FadeIn delay={0.12}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, flexShrink: 0 }} className="aliados-beneficios">
+                {[
+                  { label: 'Visibilidad institucional ante más de 1.000 asistentes',    icon: <svg width={16} height={16} viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#fff" strokeWidth="1.8"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/></svg> },
+                  { label: 'Red de cooperación Europa–Latinoamérica',                   icon: <svg width={16} height={16} viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" strokeWidth="1.8"/><path d="M12 3C12 3 8 8 8 12s4 9 4 9M12 3c0 0 4 5 4 9s-4 9-4 9M3 12h18" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/></svg> },
+                  { label: 'Espacio en agenda: paneles, talleres o conferencias',        icon: <svg width={16} height={16} viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="17" rx="2" stroke="#fff" strokeWidth="1.8"/><path d="M16 2v4M8 2v4M3 10h18" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/></svg> },
+                  { label: 'Stand en el Marketplace Territorial',                        icon: <svg width={16} height={16} viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#fff" strokeWidth="1.8" strokeLinejoin="round"/><path d="M9 22V12h6v10" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/></svg> },
+                  { label: 'Difusión en redes y comunicaciones del congreso',            icon: <svg width={16} height={16} viewBox="0 0 24 24" fill="none"><path d="M22 4s-3 3-8 3-9 2-9 7 4 7 8 7c2 0 4-.5 5-1" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/><circle cx="5" cy="19" r="2" stroke="#fff" strokeWidth="1.8"/><path d="M14 9c0 0-4 1-6 5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/></svg> },
+                ].map((b, i) => (
+                  <div key={i} style={{ backgroundColor: '#fff', border: '1.5px solid #AEE5DA', borderRadius: 12, padding: '12px 18px', display: 'flex', alignItems: 'center', gap: 12, boxShadow: '2px 2px 8px rgba(9,52,78,0.06)', minWidth: 280 }}>
+                    <div style={{ width: 32, height: 32, borderRadius: 8, flexShrink: 0, backgroundColor: '#097589', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {b.icon}
+                    </div>
+                    <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 500, color: '#09344e', lineHeight: 1.35 }}>{b.label}</span>
+                  </div>
+                ))}
+              </div>
+            </FadeIn>
           </div>
         </div>
       </section>
 
-      {/* ══ 5. DONACIÓN ═══════════════════════════════════════════════════════ */}
       <SectionDonacion bg="#09344e" theme="dark" showWave={false} showTopWave topWaveFrom="#E6F3EE" />
-
-      {/* ══ 6. REDES SOCIALES ════════════════════════════════════════════════ */}
       <SectionRedes bg="#ffffff" theme="light" />
 
       <style suppressHydrationWarning>{`

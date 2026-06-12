@@ -45,7 +45,6 @@ export default function Navbar() {
 
   return (
     <>
-      {/* ── CSS puro para el hover del logo — sin estado React ── */}
       <style>{`
         .navbar-logo {
           transition: transform 0.22s ease, box-shadow 0.22s ease;
@@ -87,9 +86,9 @@ export default function Navbar() {
             }}
           >
             {/* ── BLOQUE ÚNICO: logo + nav todo junto ── */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 40 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 40, flex: 1 }}>
 
-              {/* LOGO — hover 100% CSS, sin estado */}
+              {/* LOGO */}
               <Link href="/" style={{ outline: 'none', flexShrink: 0 }}>
                 <div
                   className="navbar-logo"
@@ -118,10 +117,10 @@ export default function Navbar() {
                 </div>
               </Link>
 
-              {/* NAV — pegado al logo, todo junto */}
+              {/* NAV */}
               <nav
                 className="hidden xl:flex items-center"
-                style={{ gap: 44 }}
+                style={{ gap: 40, flex: 1, justifyContent: 'center' }}
               >
                 {NAV_LINKS.map(link => (
                   <Link
@@ -129,8 +128,10 @@ export default function Navbar() {
                     href={link.href}
                     style={{
                       fontFamily: 'Poppins, sans-serif',
-                      fontSize: 19,
+                      fontSize: 17.5,
                       fontWeight: isActive(link.href) ? 600 : 400,
+                      letterSpacing: '0.02em',  // ← único cambio
+                      lineHeight: 1.5,           // ← único cambio
                       color: isActive(link.href) ? '#09344e' : '#12303E',
                       textDecoration: 'none',
                       whiteSpace: 'nowrap',
@@ -156,27 +157,29 @@ export default function Navbar() {
             {/* ── CTAs ── */}
             <div
               className="hidden xl:flex items-center"
-              style={{ gap: 12, flexShrink: 0 }}
+              style={{ gap: 16, flexShrink: 0 }}
             >
+              {/* Selector de idioma */}
               <button
                 style={{
                   display: 'flex', alignItems: 'center', gap: 6,
-                  fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 500,
+                  fontFamily: 'Poppins, sans-serif', fontSize: 16, fontWeight: 500,
                   color: '#097589', background: 'transparent',
                   border: '1.5px solid #C3DED9', borderRadius: 50,
-                  padding: '8px 16px', cursor: 'pointer',
+                  padding: '10px 20px', cursor: 'pointer',
                 }}
               >
                 ES <IconChevron />
               </button>
 
+              {/* DONAR */}
               <Link
                 href="/marketing/donaciones"
                 style={{
-                  fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700,
+                  fontFamily: 'Poppins, sans-serif', fontSize: 17, fontWeight: 700,
                   color: '#B53077', backgroundColor: 'transparent',
                   border: '2px solid #B53077', borderRadius: 50,
-                  padding: '8px 24px', textDecoration: 'none', letterSpacing: '0.04em',
+                  padding: '10px 28px', textDecoration: 'none', letterSpacing: '0.04em',
                   transition: 'background-color 0.2s, color 0.2s',
                   whiteSpace: 'nowrap',
                 }}
@@ -194,12 +197,13 @@ export default function Navbar() {
                 DONAR
               </Link>
 
+              {/* QUIERO ASISTIR */}
               <Link
                 href="/marketing/registro"
                 style={{
-                  fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700,
+                  fontFamily: 'Poppins, sans-serif', fontSize: 17, fontWeight: 700,
                   color: '#ffffff', backgroundColor: '#B53077',
-                  borderRadius: 50, padding: '10px 24px',
+                  borderRadius: 50, padding: '12px 28px',
                   textDecoration: 'none', letterSpacing: '0.04em',
                   transition: 'background-color 0.2s, box-shadow 0.2s',
                   boxShadow: '0 2px 12px rgba(181,48,119,0.25)',

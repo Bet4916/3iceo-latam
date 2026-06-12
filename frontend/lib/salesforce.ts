@@ -47,7 +47,8 @@ export async function sfQuery(soql: string, revalidate = 86400) {
 
   const res = await fetch(url, {
     headers: { Authorization: `Bearer ${token.access_token}` },
-    next: { revalidate },
+    cache: 'no-store',
+    //next: { revalidate }
   })
 
   if (!res.ok) {

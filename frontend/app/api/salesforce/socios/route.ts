@@ -13,7 +13,6 @@ export async function GET() {
         logo_url__c,
         url_pagina__c
       FROM Socio__c
-      WHERE activo__c = true
       ORDER BY Name ASC
     `, 604800)
 

@@ -38,32 +38,32 @@ export async function GET() {
         extracto__c,
         categoria__c,
         fecha__c,
-        imagen_url__c
+        imagen_url__c,
+        url_redirect__c,
+        tipo_redirect__c
       FROM Noticia__c
-      WHERE activo__c = true
       ORDER BY fecha__c DESC
       LIMIT 50
     `, 3600)
 
     const noticias = data.records.map((r: Record<string, unknown>, i: number) => ({
-      id:        r.Id,
-      titulo:    r.Name,
-      extracto:  r.extracto__c,
-      categoria: r.categoria__c,
-      fecha:     formatFecha(r.fecha__c as string),
-      img:       r.imagen_url__c || defaultEmoji(r.categoria__c as string),
-      imgBg:     defaultGradient(i),
-      slug:      r.Id,
+      id:           r.Id,
+      titulo:       r.Name,
+      extracto:     r.extracto__c     || '',
+      categoria:    r.categoria__c    || 'anuncio',
+      fecha:        formatFecha(r.fecha__c as string),
+      img:          (r.imagen_url__c && r.imagen_url__c !== 'N/A')
+                      ? r.imagen_url__c
+                      : defaultEmoji(r.categoria__c as string),
+      imgBg:        defaultGradient(i),
+      slug:         r.Id,
+      url_redirect:  r.url_redirect__c  || 'N/A',
+      tipo_redirect: r.tipo_redirect__c || 'web',
     }))
 
     return NextResponse.json(
       { noticias, updatedAt: new Date().toISOString() },
-      {
-        headers: {
-          'Cache-Control':
-            'public, s-maxage=3600, stale-while-revalidate=600',
-        },
-      }
+      { headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=600' } }
     )
   } catch (error) {
     console.error('Error fetching noticias:', error)
