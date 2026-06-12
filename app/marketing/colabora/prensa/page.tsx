@@ -182,7 +182,7 @@ export default function PrensaPage() {
           style={{ backgroundColor: '#fff', borderRadius: 12, padding: '56px 48px', textAlign: 'center', maxWidth: 480, boxShadow: '2px 2px 24px rgba(9,52,78,0.08)' }}
         >
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
-            <img src="/icons/drop_hands.svg" alt="Solicitud recibida" style={{ width: 100, height: 100, objectFit: 'contain' }} />
+            <img src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/drop-hands.svg" alt="Solicitud recibida" style={{ width: 100, height: 100, objectFit: 'contain' }} />
           </div>
           <h2 style={{ fontFamily: '"Gloock", Georgia, serif', fontSize: 28, fontWeight: 400, color: '#09344e', marginBottom: 12, lineHeight: 1.2 }}>
             ¡Solicitud enviada!

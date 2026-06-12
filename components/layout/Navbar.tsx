@@ -107,7 +107,7 @@ export default function Navbar() {
                   }}
                 >
                   <Image
-                    src="/icons/logo-awaq.svg"
+                    src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Logo%20ICEO.png"
                     alt="AWAQ Logo"
                     width={42}
                     height={42}

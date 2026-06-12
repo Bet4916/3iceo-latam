@@ -496,7 +496,7 @@ export default function DonacionesPage() {
                       margin: '0 auto 20px',
                     }}>
                       <Icon
-                        src="/icons/drop_hands.svg"
+                        src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/drop-hands.svg"
                         size={40}
                         filter="brightness(0) saturate(100%) invert(75%) sepia(30%) saturate(400%) hue-rotate(120deg)"
                       />
@@ -629,7 +629,7 @@ export default function DonacionesPage() {
               </p>
               <div style={{ marginTop: 36 }}>
                 <Icon
-                  src="/icons/drop_hands.svg" size={100} alt="Manos de apoyo"
+                  src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/drop-hands.svg" size={100} alt="Manos de apoyo"
                   style={{ width: 100, height: 'auto', opacity: 0.85 }}
                 />
               </div>

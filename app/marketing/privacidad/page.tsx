@@ -56,7 +56,7 @@ export default function PrivacidadPage() {
         title={<>Política de <span style={{ color: '#ffffff' }}>Privacidad</span></>}
         description={<>Transparencia sobre cómo recopilamos, usamos<br />y protegemos tu información personal</>}
         cta={{ label: 'CONTACTAR →', href: 'mailto:info@somosawaq.org' }}
-        image="/icons/lineas_tematicas.svg"
+        image="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/lineastematicas/f33b89706341181f7d85db74412e5beacc75f0b7.jpg"
         imageAlt="Política de privacidad"
         imageScale={1.30}
         waveVariant="default"

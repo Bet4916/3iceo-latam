@@ -1,9 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: [],
+    domains: [
+      'pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev',
+    ],
     formats: ['image/avif', 'image/webp'],
   },
+
   async redirects() {
     return [
       {
@@ -13,9 +16,9 @@ const nextConfig = {
       },
     ]
   },
+
   async headers() {
     return [
-      // ── Tu regla existente para el juego (COOP/COEP) ──────────────────────
       {
         source: '/unity-game/:path*',
         headers: [
@@ -24,9 +27,6 @@ const nextConfig = {
         ],
       },
 
-      // ── NUEVO: sirve los archivos Brotli (.br) con el header correcto ─────
-      //    Sin esto, el navegador recibe el .br en crudo y Unity falla con
-      //    "Unable to parse ... .br" / "SyntaxError". Aplica en next dev y Vercel.
       {
         source: '/:path*.data.br',
         headers: [

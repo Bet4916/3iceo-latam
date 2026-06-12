@@ -25,7 +25,7 @@ export default function AcuerdoConvivenciaPage() {
         title={<>Acuerdo de <span style={{ color: '#ffffff' }}>Convivencia</span></>}
         description={<>Principios que garantizan un ambiente respetuoso,<br />colaborativo y productivo en el congreso</>}
         cta={{ label: 'VER AGENDA →', href: '/marketing/agenda' }}
-        image="/icons/lineas_tematicas.svg"
+        image="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/lineastematicas/f33b89706341181f7d85db74412e5beacc75f0b7.jpg"
         imageAlt="Acuerdo de convivencia"
         imageScale={1.30}
         waveVariant="default"

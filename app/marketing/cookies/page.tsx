@@ -24,7 +24,7 @@ export default function CookiesPage() {
         title={<>Política de <span style={{ color: '#ffffff' }}>Cookies</span></>}
         description={<>Información sobre las cookies que utilizamos<br />y cómo puedes gestionarlas</>}
         cta={{ label: 'CONTACTAR →', href: 'mailto:info@somosawaq.org' }}
-        image="/icons/lineas_tematicas.svg"
+        image="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/lineastematicas/f33b89706341181f7d85db74412e5beacc75f0b7.jpg"
         imageAlt="Política de cookies"
         imageScale={1.30}
         waveVariant="default"

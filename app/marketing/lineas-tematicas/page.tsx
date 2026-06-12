@@ -202,7 +202,7 @@ export default function LineasTematicasPage() {
         description={<>Agua, cooperación e innovación para<br />transformar los territorios vivos de LATAM</>}
         cta={{ label: 'QUIERO ASISTIR →', href: '/marketing/registro' }}
         ctaSecondary={{ label: 'Ver agenda', href: '/marketing/agenda' }}
-        image="/icons/lineas_tematicas.svg"
+        image="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/lineastematicas/f33b89706341181f7d85db74412e5beacc75f0b7.jpg"
         imageAlt="Líneas temáticas del 3ICEO"
         imageLabel="3° ICEO · Líneas Temáticas"
         waveVariant="default"

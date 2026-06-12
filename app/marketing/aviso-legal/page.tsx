@@ -48,7 +48,7 @@ export default function AvisoLegalPage() {
         title={<>Aviso <span style={{ color: '#ffffff' }}>Legal</span></>}
         description={<>Condiciones generales de uso del sitio web<br />www.somosawaq.org y sus subdominios</>}
         cta={{ label: 'CONTACTAR →', href: 'mailto:info@somosawaq.org' }}
-        image="/icons/lineas_tematicas.svg"
+        image="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/lineastematicas/f33b89706341181f7d85db74412e5beacc75f0b7.jpg"
         imageAlt="Aviso legal"
         imageScale={1.30}
         waveVariant="default"

@@ -37,10 +37,10 @@ function FadeIn({
 
 // ─── DATOS ────────────────────────────────────────────────────────────────────
 const INSTALACIONES = [
-  { label: 'Auditorio Central',    bg: 'linear-gradient(135deg,#09344e 0%,#1C495C 100%)', imgSrc: '/icons/instalaciones_1.svg' },
-  { label: 'Auditorio 103 B Lago', bg: 'linear-gradient(135deg,#097589 0%,#03A383 100%)', imgSrc: '/icons/instalaciones_2.svg' },
-  { label: 'Auditorio 108 Lago',   bg: 'linear-gradient(135deg,#4886B5 0%,#097589 100%)', imgSrc: '/icons/instalaciones_3.svg' },
-  { label: 'Auditorio 103 A Lago', bg: 'linear-gradient(135deg,#12303E 0%,#437287 100%)', imgSrc: '/icons/instalaciones_4.svg' },
+  { label: 'Auditorio Central',    bg: 'linear-gradient(135deg,#09344e 0%,#1C495C 100%)', imgSrc: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/donaciones/instalaciones_1.svg' },
+  { label: 'Auditorio 103 B Lago', bg: 'linear-gradient(135deg,#097589 0%,#03A383 100%)', imgSrc: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/donaciones/instalaciones_2.svg' },
+  { label: 'Auditorio 108 Lago',   bg: 'linear-gradient(135deg,#4886B5 0%,#097589 100%)', imgSrc: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/donaciones/instalaciones_3.svg' },
+  { label: 'Auditorio 103 A Lago', bg: 'linear-gradient(135deg,#12303E 0%,#437287 100%)', imgSrc: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/donaciones/instalaciones_4.svg' },
 ]
 
 const SERVICIOS = [
@@ -165,7 +165,7 @@ function PlanoDelEspacio() {
 
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
               <a
-                href="/icons/mapa_uni.pdf"
+                href="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/sedecongreso/mapa_uni.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
@@ -288,7 +288,7 @@ function PlanoDelEspacio() {
                 }}
               >
                 <img
-                  src="/icons/sede_vista_acortada.svg"
+                  src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/sedecongreso/sede_vista_acortada.svg"
                   alt="Plano Universidad de San Buenaventura Cali"
                   style={{ width: '100%', height: 'auto', display: 'block' }}
                 />

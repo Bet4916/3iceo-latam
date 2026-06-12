@@ -593,7 +593,7 @@ export default function RegistroPage() {
                 <Card>
                   <div style={{ textAlign: 'center', padding: '16px 16px 32px' }}>
                     <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
-                      <img src="/icons/drop_hands.svg" alt="Solicitud recibida" style={{ width: 120, height: 120, objectFit: 'contain' }} />
+                      <img src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/drop-hands.svg" alt="Solicitud recibida" style={{ width: 120, height: 120, objectFit: 'contain' }} />
                     </div>
                     <h1 style={{ fontFamily: '"Gloock", Georgia, serif', fontSize: 'clamp(22px, 4vw, 34px)', fontWeight: 400, color: '#09344e', marginBottom: 16, lineHeight: 1.25 }}>
                       ¡Solicitud enviada con éxito!
@@ -700,7 +700,7 @@ export default function RegistroPage() {
                     </Link>
                   </div>
                   <div style={{ background: 'linear-gradient(135deg, #AEE5DA 0%, #74B4A7 50%, #097589 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <img src="/icons/drop_hands.svg" alt="" style={{ width: 80, height: 80, objectFit: 'contain', opacity: 0.85 }} />
+                    <img src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/drop-hands.svg" alt="" style={{ width: 80, height: 80, objectFit: 'contain', opacity: 0.85 }} />
                   </div>
                 </div>
               </motion.div>
