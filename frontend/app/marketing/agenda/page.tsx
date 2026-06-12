@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import HeroIceo from '@/components/sections/HeroIceo'
@@ -32,26 +32,34 @@ function Flag({ code }: { code: string }) {
   )
 }
 
-const PONENTES = [
-  { foto: '/icons/jose_serrano.svg',                          nombre: 'José Serrano Serna',              pais: 'es', org: 'Awaq ONGD',                      rol: 'CEO-Presidente Awaq ONGD',                          social: 'https://www.linkedin.com/in/jsserna5575/', socialType: 'linkedin' as const },
-  { foto: '/icons/luis_alfonso.svg',                          nombre: 'Luis Alfonso Aguirre',            pais: 'co', org: 'PMI® Colombia',                  rol: 'Program Manager PMI® Colombia',                    social: 'https://www.linkedin.com/in/luis-alfonso-aguirre-montealegre-0770a91a/', socialType: 'linkedin' as const },
-  { foto: '/icons/begona_hera.svg',                           nombre: 'Begoña de la Hera',               pais: 'es', org: 'Awaq ONGD',                      rol: 'Directora Programa TEDI · Directora Proyecto ABT', social: 'https://www.linkedin.com/in/bego%C3%B1a-de-la-hera-25ba801a/', socialType: 'linkedin' as const },
-  { foto: '/icons/rolando_evelio.jpg',                        nombre: 'Rolando Evelio Pérez Versón',     pais: 'mx', org: 'Tecnológico de Monterrey',        rol: 'Profesor Planta · Director Técnico ABT',            social: 'https://www.linkedin.com/in/rolando-evelio-p%C3%A9rez-vers%C3%B3n-4137a8264/', socialType: 'linkedin' as const },
-  { foto: '/images/ponentes_Camilo_Andrés_Aguilar.jpeg',      nombre: 'Hno. Camilo Andrés Aguilar',      pais: 'co', org: 'Universidad de La Salle',        rol: 'Coordinador de Utopía',                             social: 'https://www.linkedin.com/in/camilo-andr%C3%A9s-aguilar-g%C3%B3mez-437a32258/', socialType: 'linkedin' as const },
-  { foto: '/images/ponentes_Gustavo_Herrera.jpeg',            nombre: 'Mtro. Gustavo Herrera Caballero', pais: 'co', org: 'SELA',                           rol: 'Coordinador Desarrollo Social',                     social: 'https://www.linkedin.com/in/gustavo-herrera-3528a979/', socialType: 'linkedin' as const },
-  { foto: '/images/ponentes_Liza_Rodriguez_Galvis.jpeg',      nombre: 'Liza Rodríguez Galvis',           pais: 'co', org: 'Gobernación Valle del Cauca',    rol: 'Secretaria General',                                social: 'https://www.instagram.com/lizarodriguez18', socialType: 'instagram' as const },
-  { foto: '/images/ponentes_Nasly_Vidales.jpeg',              nombre: 'Nasly Fernanda Gonzales Vidales', pais: 'co', org: 'Secretaría Ambiente Valle Cauca', rol: 'Subsecretaria Desarrollo Sostenible',               social: 'https://www.linkedin.com/in/nasly-fernanda-vidales-gonz%C3%A1lez-1080b5b6/', socialType: 'linkedin' as const },
-  { foto: '/images/ponentes_Jhonatan_Alexander_Becerra.jpeg', nombre: 'Jhonatan Alexander Becerra',      pais: 'co', org: 'F.U. Juan de Castellanos',       rol: 'Líder Desarrollo Tecnológico',                      social: 'https://www.linkedin.com/in/jhonatan-alexander-becerra-duitama/', socialType: 'linkedin' as const },
-  { foto: '/images/ponentes_William_Fernando_Bernal.jpeg',    nombre: 'William Fernando Bernal Suárez',  pais: 'co', org: 'F.U. Juan de Castellanos',       rol: 'Líder Desarrollo Tecnológico',                      social: 'https://www.linkedin.com/in/william-bernal-13457b60/', socialType: 'linkedin' as const },
-  { foto: '/images/ponentes_Magda_Lorena_Pineda.jpeg',        nombre: 'Magda Lorena Pineda Rodríguez',   pais: 'co', org: 'F.U. Juan de Castellanos',       rol: 'Líder Desarrollo Tecnológico',                      social: 'https://www.linkedin.com/in/magda-pineda-rodriguez/', socialType: 'linkedin' as const },
-  { foto: '/images/ponente_Cristhian_Utopía.jpeg',            nombre: 'John Cristhian Fernández',        pais: 'co', org: 'F.U. Juan de Castellanos',       rol: 'Líder Desarrollo Tecnológico',                      social: 'https://www.linkedin.com/in/john-cristhian-fernandez-lizarazo-a7230047/', socialType: 'linkedin' as const },
-  { foto: '/images/ponentes_Santiago_Granados.jpg',           nombre: 'Santiago Granados Gutiérrez',     pais: 'co', org: 'CEPAL-ONU',                      rol: 'Consultor',                                         social: 'https://www.linkedin.com/in/santiago-granados-guti%C3%A9rrez-94a65a21/', socialType: 'linkedin' as const },
+// ─── Tipo unificado para ponentes ─────────────────────────────────────────────
+interface Ponente {
+  foto:       string
+  nombre:     string
+  pais:       string
+  org:        string
+  rol:        string
+  social:     string
+  socialType: 'linkedin' | 'instagram'
+}
+
+// ─── Fallback hardcodeado ─────────────────────────────────────────────────────
+const PONENTES_FALLBACK: Ponente[] = [
+  { foto: '/icons/jose_serrano.svg',                          nombre: 'José Serrano Serna',              pais: 'es', org: 'Awaq ONGD',                      rol: 'CEO-Presidente Awaq ONGD',                          social: 'https://www.linkedin.com/in/jsserna5575/',                                                          socialType: 'linkedin'  },
+  { foto: '/icons/luis_alfonso.svg',                          nombre: 'Luis Alfonso Aguirre',            pais: 'co', org: 'PMI® Colombia',                  rol: 'Program Manager PMI® Colombia',                    social: 'https://www.linkedin.com/in/luis-alfonso-aguirre-montealegre-0770a91a/',                             socialType: 'linkedin'  },
+  { foto: '/icons/begona_hera.svg',                           nombre: 'Begoña de la Hera',               pais: 'es', org: 'Awaq ONGD',                      rol: 'Directora Programa TEDI · Directora Proyecto ABT', social: 'https://www.linkedin.com/in/bego%C3%B1a-de-la-hera-25ba801a/',                                      socialType: 'linkedin'  },
+  { foto: '/icons/rolando_evelio.jpg',                        nombre: 'Rolando Evelio Pérez Versón',     pais: 'mx', org: 'Tecnológico de Monterrey',        rol: 'Profesor Planta · Director Técnico ABT',            social: 'https://www.linkedin.com/in/rolando-evelio-p%C3%A9rez-vers%C3%B3n-4137a8264/',                       socialType: 'linkedin'  },
+  { foto: '/images/ponentes_Camilo_Andrés_Aguilar.jpeg',      nombre: 'Hno. Camilo Andrés Aguilar',      pais: 'co', org: 'Universidad de La Salle',        rol: 'Coordinador de Utopía',                             social: 'https://www.linkedin.com/in/camilo-andr%C3%A9s-aguilar-g%C3%B3mez-437a32258/',                       socialType: 'linkedin'  },
+  { foto: '/images/ponentes_Gustavo_Herrera.jpeg',            nombre: 'Mtro. Gustavo Herrera Caballero', pais: 'co', org: 'SELA',                           rol: 'Coordinador Desarrollo Social',                     social: 'https://www.linkedin.com/in/gustavo-herrera-3528a979/',                                             socialType: 'linkedin'  },
+  { foto: '/images/ponentes_Liza_Rodriguez_Galvis.jpeg',      nombre: 'Liza Rodríguez Galvis',           pais: 'co', org: 'Gobernación Valle del Cauca',    rol: 'Secretaria General',                                social: 'https://www.instagram.com/lizarodriguez18',                                                         socialType: 'instagram' },
+  { foto: '/images/ponentes_Nasly_Vidales.jpeg',              nombre: 'Nasly Fernanda Gonzales Vidales', pais: 'co', org: 'Secretaría Ambiente Valle Cauca', rol: 'Subsecretaria Desarrollo Sostenible',               social: 'https://www.linkedin.com/in/nasly-fernanda-vidales-gonz%C3%A1lez-1080b5b6/',                         socialType: 'linkedin'  },
+  { foto: '/images/ponentes_Jhonatan_Alexander_Becerra.jpeg', nombre: 'Jhonatan Alexander Becerra',      pais: 'co', org: 'F.U. Juan de Castellanos',       rol: 'Líder Desarrollo Tecnológico',                      social: 'https://www.linkedin.com/in/jhonatan-alexander-becerra-duitama/',                                    socialType: 'linkedin'  },
+  { foto: '/images/ponentes_William_Fernando_Bernal.jpeg',    nombre: 'William Fernando Bernal Suárez',  pais: 'co', org: 'F.U. Juan de Castellanos',       rol: 'Líder Desarrollo Tecnológico',                      social: 'https://www.linkedin.com/in/william-bernal-13457b60/',                                              socialType: 'linkedin'  },
+  { foto: '/images/ponentes_Magda_Lorena_Pineda.jpeg',        nombre: 'Magda Lorena Pineda Rodríguez',   pais: 'co', org: 'F.U. Juan de Castellanos',       rol: 'Líder Desarrollo Tecnológico',                      social: 'https://www.linkedin.com/in/magda-pineda-rodriguez/',                                               socialType: 'linkedin'  },
+  { foto: '/images/ponente_Cristhian_Utopía.jpeg',            nombre: 'John Cristhian Fernández',        pais: 'co', org: 'F.U. Juan de Castellanos',       rol: 'Líder Desarrollo Tecnológico',                      social: 'https://www.linkedin.com/in/john-cristhian-fernandez-lizarazo-a7230047/',                            socialType: 'linkedin'  },
+  { foto: '/images/ponentes_Santiago_Granados.jpg',           nombre: 'Santiago Granados Gutiérrez',     pais: 'co', org: 'CEPAL-ONU',                      rol: 'Consultor',                                         social: 'https://www.linkedin.com/in/santiago-granados-guti%C3%A9rrez-94a65a21/',                             socialType: 'linkedin'  },
 ]
 
-// ─── COLORES POR DÍA ──────────────────────────────────────────────────────────
-// Día 1 Martes  17 → #097589  sombra trasera: #C0EAE0 (verde agua muy claro)
-// Día 2 Miérc.  18 → #09344e  sombra trasera: #B8CDD6 (azul grisáceo claro)
-// Día 3 Jueves  19 → #B58A00  sombra trasera: #E8D9A0 (dorado pálido)
 const DIAS = [
   {
     id: 'martes', diaSemana: 'MARTES', diaNum: '17', mes: 'AGOSTO',
@@ -60,15 +68,7 @@ const DIAS = [
     desc: 'Un primer día para comprender la situación actual de las fuentes hídricas, compartir una visión de futuro y explorar qué iniciativas hacen falta para activar soluciones desde los territorios.',
     colorAccent: '#097589',
     accentShadow: '#C0EAE0',
-    bullets: [
-      'Apertura institucional y bienvenida',
-      'Conferencia magistral: estado actual de las fuentes hídricas',
-      'Panel: comunidades, biodiversidad y cultura territorial',
-      'Espacio de networking y articulación',
-      'Mesas o sesiones temáticas por retos del territorio',
-      'Taller colaborativo: visión compartida y prioridades de acción',
-      'Síntesis del Día 1',
-    ],
+    bullets: ['Apertura institucional y bienvenida','Conferencia magistral: estado actual de las fuentes hídricas','Panel: comunidades, biodiversidad y cultura territorial','Espacio de networking y articulación','Mesas o sesiones temáticas por retos del territorio','Taller colaborativo: visión compartida y prioridades de acción','Síntesis del Día 1'],
     manana: [
       { hora: '07:00 – 08:00', titulo: 'Registro de asistentes',           tipo: 'registro' as const    },
       { hora: '08:00 – 09:00', titulo: 'Apertura y bienvenida',             tipo: 'apertura' as const    },
@@ -90,15 +90,7 @@ const DIAS = [
     desc: 'Un segundo día orientado a conectar cooperación, transferencia de conocimiento e innovación aplicada para impulsar soluciones territoriales, bioeconomía y desarrollo rural sostenible.',
     colorAccent: '#09344e',
     accentShadow: '#B8CDD6',
-    bullets: [
-      'Apertura del Día 2 y recapitulación',
-      'Conferencia magistral: innovación para territorios vivos',
-      'Panel: cooperación al desarrollo y alianzas Europa–LATAM',
-      'Espacio de presentaciones, proyectos o pitches',
-      'Mesas temáticas: universidad, territorio y tecnología aplicada',
-      'Rueda de articulación y colaboración institucional',
-      'Síntesis del Día 2',
-    ],
+    bullets: ['Apertura del Día 2 y recapitulación','Conferencia magistral: innovación para territorios vivos','Panel: cooperación al desarrollo y alianzas Europa–LATAM','Espacio de presentaciones, proyectos o pitches','Mesas temáticas: universidad, territorio y tecnología aplicada','Rueda de articulación y colaboración institucional','Síntesis del Día 2'],
     manana: [
       { hora: '07:00 – 08:00', titulo: 'Registro de asistentes',           tipo: 'registro' as const    },
       { hora: '08:00 – 08:45', titulo: 'Apertura Fabio Cardozo Montealegre · Gestor de Paz', tipo: 'apertura' as const },
@@ -120,13 +112,7 @@ const DIAS = [
     desc: 'Una jornada más breve para convertir aprendizajes y acuerdos en memoria útil, conclusiones compartidas y una hoja de ruta para futuras alianzas.',
     colorAccent: '#B58A00',
     accentShadow: '#E8D9A0',
-    bullets: [
-      'Apertura breve y recapitulación general',
-      'Relatoría y aprendizajes clave del congreso',
-      'Mesa de conclusiones y acuerdos',
-      'Construcción de hoja de ruta compartida',
-      'Cierre institucional y próximos pasos',
-    ],
+    bullets: ['Apertura breve y recapitulación general','Relatoría y aprendizajes clave del congreso','Mesa de conclusiones y acuerdos','Construcción de hoja de ruta compartida','Cierre institucional y próximos pasos'],
     manana: [
       { hora: '07:00 – 08:00', titulo: 'Registro de asistentes',           tipo: 'registro' as const    },
       { hora: '08:00 – 08:30', titulo: 'Presentación José Serna | Awaq ONGD', tipo: 'apertura' as const },
@@ -177,7 +163,7 @@ function SesionRow({ s }: { s: { hora: string; titulo: string; tipo: TipoSesion 
   )
 }
 
-function PonenteCard({ p }: { p: typeof PONENTES[0] }) {
+function PonenteCard({ p }: { p: Ponente }) {
   return (
     <div style={{ backgroundColor: '#F0F4F7', borderRadius: 40, padding: '32px 24px 28px', display: 'flex', flexDirection: 'column', alignItems: 'center', width: 310, flexShrink: 0, boxShadow: '2px 2px 10px rgba(9,52,78,0.08)', transition: 'transform 0.22s, box-shadow 0.22s' }}
       onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-4px)'; (e.currentTarget as HTMLDivElement).style.boxShadow = '2px 8px 22px rgba(9,52,78,0.14)' }}
@@ -207,7 +193,7 @@ function PonenteCard({ p }: { p: typeof PONENTES[0] }) {
   )
 }
 
-function PonenteCarousel() {
+function PonenteCarousel({ ponentes }: { ponentes: Ponente[] }) {
   const trackRef = useRef<HTMLDivElement>(null)
   const [pos, setPos] = useState(0)
   const scrollTo = useCallback((dir: 1 | -1) => {
@@ -220,7 +206,7 @@ function PonenteCarousel() {
   return (
     <div style={{ position: 'relative' }}>
       <div ref={trackRef} onScroll={onScroll} style={{ display: 'flex', gap: 20, overflowX: 'auto', paddingBottom: 8, scrollbarWidth: 'none', paddingInline: 4 }}>
-        {PONENTES.map(p => <PonenteCard key={p.nombre} p={p} />)}
+        {ponentes.map(p => <PonenteCard key={p.nombre} p={p} />)}
       </div>
       {canPrev && <button onClick={() => scrollTo(-1)} aria-label="Anterior" style={{ position: 'absolute', top: '50%', left: -20, transform: 'translateY(-50%)', width: 38, height: 38, borderRadius: '50%', border: '1.5px solid #D9DEE2', backgroundColor: '#fff', boxShadow: '2px 2px 8px rgba(9,52,78,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 2 }}><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 3L6 8l4 5" stroke="#09344e" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg></button>}
       {canNext && <button onClick={() => scrollTo(1)} aria-label="Siguiente" style={{ position: 'absolute', top: '50%', right: -20, transform: 'translateY(-50%)', width: 38, height: 38, borderRadius: '50%', border: '1.5px solid #D9DEE2', backgroundColor: '#fff', boxShadow: '2px 2px 8px rgba(9,52,78,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 2 }}><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M6 3l4 5-4 5" stroke="#09344e" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg></button>}
@@ -230,95 +216,57 @@ function PonenteCarousel() {
 }
 
 export default function AgendaPage() {
-  const [diaActivo, setDiaActivo] = useState(0)
+  const [diaActivo, setDiaActivo]   = useState(0)
+  const [ponentes,  setPonentes]    = useState<Ponente[]>(PONENTES_FALLBACK)
+
+  // ── Carga ponentes desde Salesforce, mantiene fallback si falla ──
+ useEffect(() => {
+  fetch('/api/salesforce/ponentes')
+    .then(r => r.json())
+    .then(data => {
+      if (data.ponentes?.length > 0) {
+        // ← Combina fallback + Salesforce, sin duplicados por nombre
+        setPonentes(prev => {
+          const sfNombres = new Set(data.ponentes.map((p: Ponente) => p.nombre))
+          const soloFallback = prev.filter(p => !sfNombres.has(p.nombre))
+          return [...soloFallback, ...data.ponentes]
+        })
+      }
+    })
+    .catch(() => { /* mantiene fallback */ })
+}, [])
 
   return (
     <div style={{ backgroundColor: '#ffffff', minHeight: '100vh' }}>
 
-      {/* ══ 1. HERO — usando HeroIceo unificado, igual que el resto de páginas ══ */}
       <HeroIceo
-  badge="3ª Edición · Cali, Colombia"
-  title={
-    <>
-      Programa{' '}
-      <span style={{ color: '#ffffff', fontVariantNumeric: 'lining-nums' }}>
-        3er ICEO
-      </span>
-    </>
-  }
-  description={<>Tres días de conferencias, paneles, talleres<br />y experiencias para activar soluciones hídricas</>}
-  cta={{ label: 'QUIERO ASISTIR →', href: '/marketing/registro' }}
-  ctaSecondary={{ label: 'VER LÍNEAS TEMÁTICAS', href: "/marketing/lineas-tematicas" }}
-  image="/icons/panelistas.svg"
-  imageAlt="Panelistas 3ICEO"
-  imageLabel="3° ICEO · 17-19 Ago · Cali"
-  imageScale={1.30}
-  waveVariant="overlap"
-  waveColor="#F0F4F7"
->
-        {/* Selector de días — pill unificado, redondeado */}
+        badge="3ª Edición · Cali, Colombia"
+        title={<>Programa{' '}<span style={{ color: '#ffffff', fontVariantNumeric: 'lining-nums' }}>3er ICEO</span></>}
+        description={<>Tres días de conferencias, paneles, talleres<br />y experiencias para activar soluciones hídricas</>}
+        cta={{ label: 'QUIERO ASISTIR →', href: '/marketing/registro' }}
+        ctaSecondary={{ label: 'VER LÍNEAS TEMÁTICAS', href: '/marketing/lineas-tematicas' }}
+        image="/icons/panelistas.svg"
+        imageAlt="Panelistas 3ICEO"
+        imageLabel="3° ICEO · 17-19 Ago · Cali"
+        imageScale={1.30}
+        waveVariant="overlap"
+        waveColor="#F0F4F7"
+      >
         <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 20, paddingBottom: 0 }}>
-          <div style={{
-            display: 'inline-flex',
-            backgroundColor: 'rgba(255,255,255,0.95)',
-            borderRadius: 20,
-            boxShadow: '0 8px 32px rgba(9,52,78,0.20)',
-            overflow: 'hidden',
-          }}>
+          <div style={{ display: 'inline-flex', backgroundColor: 'rgba(255,255,255,0.95)', borderRadius: 20, boxShadow: '0 8px 32px rgba(9,52,78,0.20)', overflow: 'hidden' }}>
             {DIAS.map((d, i) => {
               const active = diaActivo === i
               return (
-                <div
-                  key={d.id}
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => {
-                    setDiaActivo(i)
-                    setTimeout(() => document.getElementById('programa')?.scrollIntoView({ behavior: 'smooth' }), 100)
-                  }}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      setDiaActivo(i)
-                      setTimeout(() => document.getElementById('programa')?.scrollIntoView({ behavior: 'smooth' }), 100)
-                    }
-                  }}
-                  style={{
-                    width: 155,
-                    paddingTop: 14, paddingBottom: 14, paddingLeft: 12, paddingRight: 12,
-                    backgroundColor: active ? '#ffffff' : 'transparent',
-                    borderTop: `3px solid ${active ? d.colorAccent : 'transparent'}`,
-                    borderRight: i < DIAS.length - 1 ? '1px solid rgba(9,52,78,0.08)' : 'none',
-                    cursor: 'pointer',
-                    transition: 'all 0.22s',
-                    textAlign: 'center',
-                    userSelect: 'none',
-                    outline: 'none',
-                    opacity: active ? 1 : 0.75,
-                  }}
-                  onMouseEnter={e => {
-                    if (!active) {
-                      const el = e.currentTarget as HTMLDivElement
-                      el.style.opacity = '1'
-                      el.style.backgroundColor = 'rgba(9,52,78,0.04)'
-                    }
-                  }}
-                  onMouseLeave={e => {
-                    if (!active) {
-                      const el = e.currentTarget as HTMLDivElement
-                      el.style.opacity = '0.75'
-                      el.style.backgroundColor = 'transparent'
-                    }
-                  }}
+                <div key={d.id} role="button" tabIndex={0}
+                  onClick={() => { setDiaActivo(i); setTimeout(() => document.getElementById('programa')?.scrollIntoView({ behavior: 'smooth' }), 100) }}
+                  onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setDiaActivo(i); setTimeout(() => document.getElementById('programa')?.scrollIntoView({ behavior: 'smooth' }), 100) } }}
+                  style={{ width: 155, paddingTop: 14, paddingBottom: 14, paddingLeft: 12, paddingRight: 12, backgroundColor: active ? '#ffffff' : 'transparent', borderTop: `3px solid ${active ? d.colorAccent : 'transparent'}`, borderRight: i < DIAS.length - 1 ? '1px solid rgba(9,52,78,0.08)' : 'none', cursor: 'pointer', transition: 'all 0.22s', textAlign: 'center', userSelect: 'none', outline: 'none', opacity: active ? 1 : 0.75 }}
+                  onMouseEnter={e => { if (!active) { const el = e.currentTarget as HTMLDivElement; el.style.opacity = '1'; el.style.backgroundColor = 'rgba(9,52,78,0.04)' } }}
+                  onMouseLeave={e => { if (!active) { const el = e.currentTarget as HTMLDivElement; el.style.opacity = '0.75'; el.style.backgroundColor = 'transparent' } }}
                 >
-                  <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 9, fontWeight: 700, color: '#5A6E77', letterSpacing: '0.14em', marginBottom: 3 }}>
-                    {d.mes}
-                  </div>
-                  <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 34, fontWeight: 700, color: d.colorAccent, lineHeight: 1 }}>
-                    {d.diaNum}
-                  </div>
-                  <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 700, color: d.colorAccent, marginTop: 3, letterSpacing: '0.06em' }}>
-                    {d.diaSemana}
-                  </div>
+                  <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 9, fontWeight: 700, color: '#5A6E77', letterSpacing: '0.14em', marginBottom: 3 }}>{d.mes}</div>
+                  <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 34, fontWeight: 700, color: d.colorAccent, lineHeight: 1 }}>{d.diaNum}</div>
+                  <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 700, color: d.colorAccent, marginTop: 3, letterSpacing: '0.06em' }}>{d.diaSemana}</div>
                 </div>
               )
             })}
@@ -326,7 +274,7 @@ export default function AgendaPage() {
         </div>
       </HeroIceo>
 
-      {/* ══ 2. PONENTES ════════════════════════════════════════════════════════ */}
+      {/* ══ PONENTES ══════════════════════════════════════════════════════════ */}
       <section id="ponentes" style={{ backgroundColor: '#F0F4F7', padding: '48px 48px 80px', marginTop: -2 }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <FadeIn>
@@ -335,46 +283,32 @@ export default function AgendaPage() {
             </h2>
           </FadeIn>
           <div style={{ padding: '0 24px', position: 'relative' }}>
-            <PonenteCarousel />
+            <PonenteCarousel ponentes={ponentes} />
           </div>
         </div>
       </section>
 
-      {/* Wave F0F4F7 → blanca */}
       <div style={{ lineHeight: 0, backgroundColor: '#F0F4F7' }}>
         <svg viewBox="0 0 1440 48" preserveAspectRatio="none" style={{ width: '100%', height: 48, display: 'block' }}>
           <path d="M0,48 C360,0 720,48 1080,20 C1260,8 1380,40 1440,28 L1440,48 L0,48 Z" fill="#ffffff" />
         </svg>
       </div>
 
-      {/* ══ 3. PROGRAMA ═══════════════════════════════════════════════════════ */}
+      {/* ══ PROGRAMA ══════════════════════════════════════════════════════════ */}
       <section id="programa" style={{ backgroundColor: '#ffffff', padding: '72px 48px 88px' }}>
         <div style={{ maxWidth: 1400, margin: '0 auto' }}>
           <FadeIn>
-            <h2 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 'clamp(24px, 2.8vw, 34px)', fontWeight: 700, color: '#09344e', textAlign: 'center', marginBottom: 8 }}>
-              Talleres y horarios
-            </h2>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#5A6E77', textAlign: 'center', marginBottom: 36, lineHeight: 1.6 }}>
-              Agenda preliminar basada en las líneas temáticas. El copy final podrá ajustarse más adelante.
-            </p>
+            <h2 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 'clamp(24px, 2.8vw, 34px)', fontWeight: 700, color: '#09344e', textAlign: 'center', marginBottom: 8 }}>Talleres y horarios</h2>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#5A6E77', textAlign: 'center', marginBottom: 36, lineHeight: 1.6 }}>Agenda preliminar basada en las líneas temáticas. El copy final podrá ajustarse más adelante.</p>
           </FadeIn>
 
-          {/* Selector pill */}
           <FadeIn delay={0.05}>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 52 }}>
               <div style={{ display: 'flex', gap: 4, backgroundColor: '#E8EDF1', borderRadius: 999, padding: '4px', boxShadow: 'inset 0 2px 6px rgba(9,52,78,0.08)' }}>
                 {DIAS.map((d, i) => {
                   const active = diaActivo === i
                   return (
-                    <button key={d.id} onClick={() => setDiaActivo(i)} style={{
-                      fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700,
-                      padding: '11px 26px', borderRadius: 999, border: 'none', cursor: 'pointer',
-                      backgroundColor: active ? d.colorAccent : 'transparent',
-                      color: active ? '#ffffff' : '#5A6E77',
-                      transition: 'all 0.25s',
-                      boxShadow: active ? `0 2px 14px ${d.colorAccent}55` : 'none',
-                      whiteSpace: 'nowrap',
-                    }}
+                    <button key={d.id} onClick={() => setDiaActivo(i)} style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, padding: '11px 26px', borderRadius: 999, border: 'none', cursor: 'pointer', backgroundColor: active ? d.colorAccent : 'transparent', color: active ? '#ffffff' : '#5A6E77', transition: 'all 0.25s', boxShadow: active ? `0 2px 14px ${d.colorAccent}55` : 'none', whiteSpace: 'nowrap' }}
                       onMouseEnter={e => { if (!active) (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(9,52,78,0.08)' }}
                       onMouseLeave={e => { if (!active) (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent' }}
                     >
@@ -386,83 +320,34 @@ export default function AgendaPage() {
             </div>
           </FadeIn>
 
-          {/* Días en columna vertical */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
             {DIAS.map((dia, i) => {
               const active = diaActivo === i
               return (
-                <div
-                  key={dia.id}
-                  onClick={() => setDiaActivo(i)}
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: '280px 1fr 1fr',
-                    gap: 0,
-                    opacity: active ? 1 : 0.50,
-                    transition: 'opacity 0.3s',
-                    cursor: active ? 'default' : 'pointer',
-                    position: 'relative',
-                  }}
+                <div key={dia.id} onClick={() => setDiaActivo(i)}
+                  style={{ display: 'grid', gridTemplateColumns: '280px 1fr 1fr', gap: 0, opacity: active ? 1 : 0.50, transition: 'opacity 0.3s', cursor: active ? 'default' : 'pointer', position: 'relative' }}
                   className="dia-row-inner"
                   onMouseEnter={e => { if (!active) (e.currentTarget as HTMLDivElement).style.opacity = '0.75' }}
                   onMouseLeave={e => { if (!active) (e.currentTarget as HTMLDivElement).style.opacity = '0.50' }}
                 >
-                  {/* Columna fecha */}
                   <div style={{ position: 'relative', paddingRight: 16, paddingBottom: 16 }}>
-                    {/* Tarjeta trasera — color claro distinto al colorAccent */}
-                    <div style={{
-                      position: 'absolute', inset: 0,
-                      borderRadius: '48px 8px 48px 8px',
-                      backgroundColor: active ? dia.accentShadow : '#D9E6EC',
-                      transform: 'translate(10px, 10px)',
-                      zIndex: 0,
-                    }} />
-                    {/* Tarjeta delantera — colorAccent del día */}
-                    <div style={{
-                      position: 'relative', zIndex: 1,
-                      borderRadius: '48px 8px 48px 8px',
-                      backgroundColor: active ? dia.colorAccent : '#9FB8C4',
-                      padding: '36px 20px 28px',
-                      display: 'flex', flexDirection: 'column',
-                      alignItems: 'center', justifyContent: 'flex-start',
-                      textAlign: 'center', height: '100%',
-                      transition: 'background-color 0.3s',
-                      boxSizing: 'border-box',
-                      minHeight: 280,
-                    }}>
-                      <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.70)', letterSpacing: '0.14em', marginBottom: 4, textTransform: 'uppercase' }}>
-                        {dia.diaSemana}
-                      </div>
-                      <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 96, fontWeight: 700, color: '#ffffff', lineHeight: 1, marginBottom: 4 }}>
-                        {dia.diaNum}
-                      </div>
-                      <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.75)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 20 }}>
-                        {dia.mes}
-                      </div>
+                    <div style={{ position: 'absolute', inset: 0, borderRadius: '48px 8px 48px 8px', backgroundColor: active ? dia.accentShadow : '#D9E6EC', transform: 'translate(10px, 10px)', zIndex: 0 }} />
+                    <div style={{ position: 'relative', zIndex: 1, borderRadius: '48px 8px 48px 8px', backgroundColor: active ? dia.colorAccent : '#9FB8C4', padding: '36px 20px 28px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', textAlign: 'center', height: '100%', transition: 'background-color 0.3s', boxSizing: 'border-box', minHeight: 280 }}>
+                      <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.70)', letterSpacing: '0.14em', marginBottom: 4, textTransform: 'uppercase' }}>{dia.diaSemana}</div>
+                      <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 96, fontWeight: 700, color: '#ffffff', lineHeight: 1, marginBottom: 4 }}>{dia.diaNum}</div>
+                      <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.75)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 20 }}>{dia.mes}</div>
                       <div style={{ padding: '8px 12px', backgroundColor: 'rgba(255,255,255,0.18)', borderRadius: 10, width: '100%' }}>
-                        <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,0.60)', letterSpacing: '0.10em', textTransform: 'uppercase', marginBottom: 4 }}>
-                          {dia.label}
-                        </div>
-                        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.92)', lineHeight: 1.45, textAlign: 'center' }}>
-                          {dia.tema}
-                        </p>
+                        <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,0.60)', letterSpacing: '0.10em', textTransform: 'uppercase', marginBottom: 4 }}>{dia.label}</div>
+                        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.92)', lineHeight: 1.45, textAlign: 'center' }}>{dia.tema}</p>
                       </div>
                     </div>
                   </div>
-
-                  {/* Mañana */}
                   <div style={{ backgroundColor: '#ffffff', padding: '24px 20px', borderTop: `3px solid ${active ? dia.colorAccent : '#E8EDF1'}`, borderBottom: `3px solid ${active ? dia.colorAccent : '#E8EDF1'}`, transition: 'border-color 0.3s' }}>
-                    <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 700, color: '#09344e', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 16, paddingBottom: 10, borderBottom: '2px solid #F0F4F7' }}>
-                      MAÑANA
-                    </div>
+                    <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 700, color: '#09344e', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 16, paddingBottom: 10, borderBottom: '2px solid #F0F4F7' }}>MAÑANA</div>
                     {dia.manana.map((s, j) => <SesionRow key={j} s={s} />)}
                   </div>
-
-                  {/* Tarde */}
                   <div style={{ backgroundColor: '#ffffff', padding: '24px 20px', borderTop: `3px solid ${active ? dia.colorAccent : '#E8EDF1'}`, borderBottom: `3px solid ${active ? dia.colorAccent : '#E8EDF1'}`, borderRight: `3px solid ${active ? dia.colorAccent : '#E8EDF1'}`, borderRadius: '0 20px 20px 0', transition: 'border-color 0.3s' }}>
-                    <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 700, color: '#09344e', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 16, paddingBottom: 10, borderBottom: '2px solid #F0F4F7' }}>
-                      TARDE
-                    </div>
+                    <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 700, color: '#09344e', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 16, paddingBottom: 10, borderBottom: '2px solid #F0F4F7' }}>TARDE</div>
                     {dia.tarde.map((s, j) => <SesionRow key={j} s={s} />)}
                   </div>
                 </div>
@@ -470,7 +355,6 @@ export default function AgendaPage() {
             })}
           </div>
 
-          {/* Botones descarga */}
           <FadeIn delay={0.2}>
             <div style={{ display: 'flex', gap: 14, justifyContent: 'center', marginTop: 56, flexWrap: 'wrap' }}>
               <a href="/docs/agenda-draft.pdf" target="_blank" rel="noopener noreferrer"
@@ -491,22 +375,17 @@ export default function AgendaPage() {
         </div>
       </section>
 
-      {/* ══ 4. DONACIÓN ═══════════════════════════════════════════════════════ */}
       <SectionDonacion bg="#09344e" theme="dark" showTopWave={true} topWaveFrom="#ffffff" waveColor="#ffffff" showWave={true} />
-
-      {/* ══ 5. REDES ══════════════════════════════════════════════════════════ */}
       <SectionRedes bg="#ffffff" theme="light" />
 
       <style suppressHydrationWarning>{`
         .hero-grid { grid-template-columns: 1fr 1fr; }
-        @media (max-width: 1100px) {
-          .dia-row-inner { grid-template-columns: 220px 1fr 1fr !important; }
-        }
+        @media (max-width: 1100px) { .dia-row-inner { grid-template-columns: 220px 1fr 1fr !important; } }
         @media (max-width: 900px) {
-          .hero-grid      { grid-template-columns: 1fr !important; }
-          .dia-row-inner  { grid-template-columns: 1fr !important; }
-          .donacion-grid  { grid-template-columns: 1fr !important; }
-          .follow-grid    { grid-template-columns: 1fr !important; }
+          .hero-grid     { grid-template-columns: 1fr !important; }
+          .dia-row-inner { grid-template-columns: 1fr !important; }
+          .donacion-grid { grid-template-columns: 1fr !important; }
+          .follow-grid   { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </div>

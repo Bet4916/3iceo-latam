@@ -6,7 +6,6 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 
-// ─── RUTAS ───────────────────────────────────────────────────────────────────
 const NAV_LINKS = [
   { label: 'Agenda',       href: '/marketing/agenda' },
   { label: 'Temáticas',    href: '/marketing/lineas-tematicas' },
@@ -18,7 +17,6 @@ const NAV_LINKS = [
   { label: 'Colabora',     href: '/marketing/colabora' },
 ]
 
-// ─── ICONOS ───────────────────────────────────────────────────────────────────
 const IconChevron = () => (
   <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
     <path d="M3 5l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
@@ -30,11 +28,9 @@ const IconArrow = () => (
   </svg>
 )
 
-// ─── NAVBAR ───────────────────────────────────────────────────────────────────
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [menuOpen, setMenuOpen]     = useState(false)
-  const [logoActive, setLogoActive] = useState(false) // ← hover o focus del logo
   const pathname = usePathname()
 
   useEffect(() => {
@@ -49,11 +45,18 @@ export default function Navbar() {
 
   return (
     <>
-      {/* ── HEADER ─────────────────────────────────────────────────────────
-          overflow visible para que el logo PUEDA sobresalir, pero el logo
-          solo sobresale cuando está activo (cursor encima o foco de teclado).
-          En reposo queda contenido y entero dentro de la barra.
-      ── */}
+      {/* ── CSS puro para el hover del logo — sin estado React ── */}
+      <style>{`
+        .navbar-logo {
+          transition: transform 0.22s ease, box-shadow 0.22s ease;
+        }
+        .navbar-logo:hover,
+        .navbar-logo:focus-visible {
+          transform: translateY(4px) scale(1.22);
+          box-shadow: 0 6px 20px rgba(9,52,78,0.22) !important;
+        }
+      `}</style>
+
       <header
         style={{
           position: 'fixed',
@@ -65,7 +68,6 @@ export default function Navbar() {
           backgroundColor: 'transparent',
         }}
       >
-        {/* ── White bar — con border-bottom-left-radius para el "pliegue" ── */}
         <div
           style={{
             backgroundColor: '#ffffff',
@@ -75,99 +77,87 @@ export default function Navbar() {
           }}
         >
           <div
-            className="container-brand"
             style={{
-              padding: '0 32px',
+              padding: '0 28px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              gap: 16,
-              height: 64,
+              height: 68,
               overflow: 'visible',
             }}
           >
-            {/* ── LOGO ─────────────────────────────────────────────────────
-                52px dentro de una barra de 64px → siempre se ve entero y con
-                aire. Solo crece y sobresale un poco hacia abajo en hover/focus.
-            ── */}
-            <Link
-              href="/"
-              onFocus={() => setLogoActive(true)}
-              onBlur={() => setLogoActive(false)}
-              style={{ outline: 'none', flexShrink: 0 }}
-            >
-              <div
-                onMouseEnter={() => setLogoActive(true)}
-                onMouseLeave={() => setLogoActive(false)}
-                style={{
-                  width: 52,
-                  height: 52,
-                  borderRadius: '50%',
-                  backgroundColor: '#ffffff',
-                  boxShadow: logoActive
-                    ? '0 6px 20px rgba(9,52,78,0.22)'
-                    : '0 2px 12px rgba(9,52,78,0.12)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  // En reposo: contenido. Activo: crece y baja un poco para
-                  // "salir" de la navbar sobre el contenido.
-                  transform: logoActive ? 'translateY(4px) scale(1.22)' : 'translateY(0) scale(1)',
-                  transformOrigin: 'center',
-                  transition: 'transform 0.22s ease, box-shadow 0.22s ease',
-                  cursor: 'pointer',
-                  outline: 'none',
-                  position: 'relative',
-                  zIndex: 1,
-                }}
-              >
-                <Image
-                  src="/icons/logo-awaq.svg"
-                  alt="AWAQ Logo"
-                  width={42}
-                  height={42}
-                  style={{ objectFit: 'contain', display: 'block' }}
-                  priority
-                />
-              </div>
-            </Link>
+            {/* ── BLOQUE ÚNICO: logo + nav todo junto ── */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 40 }}>
 
-            {/* ── DESKTOP NAV ────────────────────────────────────────────── */}
-            <nav className="hidden xl:flex items-center" style={{ gap: 40 }}>
-              {NAV_LINKS.map(link => (
-                <Link
-                  key={link.href}
-                  href={link.href}
+              {/* LOGO — hover 100% CSS, sin estado */}
+              <Link href="/" style={{ outline: 'none', flexShrink: 0 }}>
+                <div
+                  className="navbar-logo"
                   style={{
-                    fontFamily: 'Poppins, sans-serif',
-                    fontSize: 15,
-                    fontWeight: isActive(link.href) ? 600 : 400,
-                    color: isActive(link.href) ? '#09344e' : '#12303E',
-                    textDecoration: 'none',
-                    whiteSpace: 'nowrap',
-                    borderBottom: isActive(link.href) ? '2px solid #097589' : '2px solid transparent',
-                    paddingBottom: 2,
-                    transition: 'color 0.2s, border-color 0.2s',
-                  }}
-                  onMouseEnter={e => {
-                    if (!isActive(link.href)) {
-                      (e.currentTarget as HTMLAnchorElement).style.color = '#097589'
-                    }
-                  }}
-                  onMouseLeave={e => {
-                    if (!isActive(link.href)) {
-                      (e.currentTarget as HTMLAnchorElement).style.color = '#12303E'
-                    }
+                    width: 52,
+                    height: 52,
+                    borderRadius: '50%',
+                    backgroundColor: '#ffffff',
+                    boxShadow: '0 2px 12px rgba(9,52,78,0.12)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    position: 'relative',
+                    zIndex: 1,
                   }}
                 >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
+                  <Image
+                    src="/icons/logo-awaq.svg"
+                    alt="AWAQ Logo"
+                    width={42}
+                    height={42}
+                    style={{ objectFit: 'contain', display: 'block' }}
+                    priority
+                  />
+                </div>
+              </Link>
 
-            {/* ── DESKTOP CTAs ───────────────────────────────────────────── */}
-            <div className="hidden xl:flex items-center" style={{ gap: 12, flexShrink: 0 }}>
-              {/* Idioma */}
+              {/* NAV — pegado al logo, todo junto */}
+              <nav
+                className="hidden xl:flex items-center"
+                style={{ gap: 44 }}
+              >
+                {NAV_LINKS.map(link => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    style={{
+                      fontFamily: 'Poppins, sans-serif',
+                      fontSize: 19,
+                      fontWeight: isActive(link.href) ? 600 : 400,
+                      color: isActive(link.href) ? '#09344e' : '#12303E',
+                      textDecoration: 'none',
+                      whiteSpace: 'nowrap',
+                      borderBottom: isActive(link.href) ? '2px solid #097589' : '2px solid transparent',
+                      paddingBottom: 2,
+                      transition: 'color 0.2s, border-color 0.2s',
+                    }}
+                    onMouseEnter={e => {
+                      if (!isActive(link.href))
+                        (e.currentTarget as HTMLAnchorElement).style.color = '#097589'
+                    }}
+                    onMouseLeave={e => {
+                      if (!isActive(link.href))
+                        (e.currentTarget as HTMLAnchorElement).style.color = '#12303E'
+                    }}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
+            </div>
+
+            {/* ── CTAs ── */}
+            <div
+              className="hidden xl:flex items-center"
+              style={{ gap: 12, flexShrink: 0 }}
+            >
               <button
                 style={{
                   display: 'flex', alignItems: 'center', gap: 6,
@@ -180,8 +170,7 @@ export default function Navbar() {
                 ES <IconChevron />
               </button>
 
-              {/* DONAR */}
-              <Link 
+              <Link
                 href="/marketing/donaciones"
                 style={{
                   fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700,
@@ -205,7 +194,6 @@ export default function Navbar() {
                 DONAR
               </Link>
 
-              {/* QUIERO ASISTIR — rosa/magenta según Figma */}
               <Link
                 href="/marketing/registro"
                 style={{
@@ -228,7 +216,7 @@ export default function Navbar() {
               </Link>
             </div>
 
-            {/* ── MOBILE: CTA + MENÚ ─────────────────────────────────────── */}
+            {/* ── MOBILE ── */}
             <div className="xl:hidden flex items-center" style={{ gap: 12 }}>
               <Link
                 href="/marketing/registro"
@@ -252,7 +240,6 @@ export default function Navbar() {
                 }}
               >
                 MENÚ
-                {/* Usa el ícono oficial de AWAQ si existe */}
                 <img
                   src={menuOpen ? '/icons/icon-close.svg' : '/icons/icon-menu.svg'}
                   alt=""
@@ -262,11 +249,12 @@ export default function Navbar() {
                 />
               </button>
             </div>
+
           </div>
         </div>
       </header>
 
-      {/* ── MOBILE SLIDE-IN PANEL ──────────────────────────────────────────── */}
+      {/* ── MOBILE SLIDE-IN PANEL ── */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -280,13 +268,10 @@ export default function Navbar() {
               display: 'flex', justifyContent: 'flex-end',
             }}
           >
-            {/* Backdrop */}
             <div
               style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(9,52,78,0.45)' }}
               onClick={() => setMenuOpen(false)}
             />
-
-            {/* Panel */}
             <div
               style={{
                 position: 'relative', width: 300, maxWidth: '100%', height: '100%',
@@ -295,7 +280,6 @@ export default function Navbar() {
                 display: 'flex', flexDirection: 'column',
               }}
             >
-              {/* Idioma */}
               <button
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -307,7 +291,6 @@ export default function Navbar() {
                 ESPAÑOL <IconChevron />
               </button>
 
-              {/* Links */}
               <nav style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 32 }}>
                 {NAV_LINKS.map(link => (
                   <Link
@@ -327,7 +310,6 @@ export default function Navbar() {
                 ))}
               </nav>
 
-              {/* CTAs */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 <Link
                   href="/marketing/donaciones"
@@ -356,11 +338,6 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* ─── PLACEHOLDERS para rutas no desarrolladas ────────────────────────
-          Estas páginas existen como rutas válidas pero solo muestran un
-          mensaje "Próximamente". Créalas en app/marketing/[ruta]/page.tsx
-      ─── */}
     </>
   )
 }
