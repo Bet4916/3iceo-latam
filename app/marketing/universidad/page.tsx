@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import {
@@ -72,6 +72,14 @@ const UNITY_EMBED_URL = '/unity-game/sede/index.html'
 // ─── PLANO DEL ESPACIO + RECORRIDO VIRTUAL ────────────────────────────────────
 function PlanoDelEspacio() {
   const [vista, setVista] = useState<'mapa' | 'unity'>('mapa')
+  const iframeContainerRef = useRef<HTMLDivElement>(null)
+
+  const openFullscreen = () => {
+    if (!iframeContainerRef.current) return
+    if (iframeContainerRef.current.requestFullscreen) {
+      iframeContainerRef.current.requestFullscreen()
+    }
+  }
 
   return (
     <section style={{ backgroundColor: '#fff', padding: '72px 0' }}>
@@ -362,6 +370,7 @@ function PlanoDelEspacio() {
 
                 {/* Embed del build de Unity */}
                 <div
+                  ref={iframeContainerRef}
                   style={{
                     borderRadius: 14,
                     overflow: 'hidden',
@@ -369,11 +378,33 @@ function PlanoDelEspacio() {
                     boxShadow: '4px 8px 32px rgba(9,52,78,0.15)',
                     aspectRatio: '16/10',
                     backgroundColor: '#09344e',
+                    position: 'relative',
                   }}
                 >
+                  <button
+                    onClick={openFullscreen}
+                    style={{
+                      position: 'absolute',
+                      top: 12,
+                      right: 12,
+                      zIndex: 20,
+                      background: 'rgba(0,0,0,0.7)',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 8,
+                      padding: '8px 12px',
+                      cursor: 'pointer',
+                      fontSize: 12,
+                      fontWeight: 600,
+                    }}
+                  >
+                    ⛶ Pantalla completa
+                  </button>
+
                   <iframe
                     src={UNITY_EMBED_URL}
                     title="Recorrido virtual USB Cali — 3° ICEO LATAM"
+                    allowFullScreen
                     allow="fullscreen; autoplay; gamepad; xr-spatial-tracking"
                     loading="lazy"
                     style={{
