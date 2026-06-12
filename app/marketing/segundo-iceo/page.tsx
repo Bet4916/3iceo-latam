@@ -279,7 +279,7 @@ export default function SegundoIceoPage() {
         badge="Edición 2026 · Cali, Colombia"
         title={<>Memoria <span style={{ color: '#ffffff' }}>2do ICEO</span></>}
         description={<>Descubre el impacto de la segunda edición del congreso<br />y el movimiento que transforma territorios en LATAM</>}
-        cta={{ label: 'VER MEMORIA →', href: '/docs/memoria_2iceo.pdf', target: '_blank' }}
+        cta={{ label: 'VER MEMORIA →', href: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Memorias_Congreso%202%C2%BAICEO.pdf', target: '_blank' }}
         image="/icons/2do_iceo.svg"
         imageAlt="2° ICEO LATAM · Cali 2026"
         imageLabel="2° ICEO · 2026 · Cali"
@@ -471,7 +471,7 @@ export default function SegundoIceoPage() {
                 Su impacto se refleja en nuevas alianzas, intercambio de saberes y fortalecimiento de iniciativas ambientales en toda la región.
               </p>
               <Link
-                href="/docs/memoria_2iceo.pdf"
+                href="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Memorias_Congreso%202%C2%BAICEO.pdf"
                 target="_blank"
                 style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: '#74B4A7', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600, padding: '12px 28px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em', textTransform: 'uppercase', transition: 'background-color 0.2s' }}
                 onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#3C625B')}
@@ -490,7 +490,7 @@ export default function SegundoIceoPage() {
           <h2 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 28, fontWeight: 600, color: '#fff', marginBottom: 28 }}>
             Lee la memoria del 2° ICEO completa
           </h2>
-          <Link href="/docs/memoria_2iceo.pdf" target="_blank"
+          <Link href="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Memorias_Congreso%202%C2%BAICEO.pdf" target="_blank"
             style={{ display: 'inline-flex', alignItems: 'center', gap: 10, backgroundColor: '#fff', color: '#03A383', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, padding: '13px 32px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em', textTransform: 'uppercase', boxShadow: '0 4px 20px rgba(0,0,0,0.15)' }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="#03A383" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>

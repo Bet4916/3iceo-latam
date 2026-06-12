@@ -354,10 +354,9 @@ export default function AgendaPage() {
               )
             })}
           </div>
-
           <FadeIn delay={0.2}>
             <div style={{ display: 'flex', gap: 14, justifyContent: 'center', marginTop: 56, flexWrap: 'wrap' }}>
-              <a href="/docs/agenda-draft.pdf" target="_blank" rel="noopener noreferrer"
+              <a href="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Memorias_Congreso%202%C2%BAICEO.pdf" target="_blank" rel="noopener noreferrer"
                 style={{ display: 'inline-flex', alignItems: 'center', gap: 10, backgroundColor: '#097589', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, padding: '13px 26px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.05em', transition: 'background-color 0.2s' }}
                 onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#074954')}
                 onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#097589')}
