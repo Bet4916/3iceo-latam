@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
@@ -42,19 +43,38 @@ export default function Navbar() {
   useEffect(() => setMenuOpen(false), [pathname])
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/')
+  const [lang, setLang] = useState<'es' | 'en'>('es')
+
+useEffect(() => {
+  if (document.cookie.match(/googtrans=\/es\/en/)) setLang('en')
+}, [])
+
+const toggleLang = () => {
+  const next = lang === 'es' ? 'en' : 'es'
+  const value = next === 'es' ? '/es/es' : '/es/en'
+  const host = window.location.hostname
+  ;[`domain=.${host}`, `domain=${host}`, ''].forEach(d => {
+    document.cookie = `googtrans=${value};path=/;${d}`
+  })
+  window.location.reload()}
 
   return (
     <>
       <style>{`
-        .navbar-logo {
-          transition: transform 0.22s ease, box-shadow 0.22s ease;
-        }
-        .navbar-logo:hover,
-        .navbar-logo:focus-visible {
-          transform: translateY(4px) scale(1.22);
-          box-shadow: 0 6px 20px rgba(9,52,78,0.22) !important;
-        }
-      `}</style>
+  .navbar-logo {
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+  }
+  .navbar-logo:hover,
+  .navbar-logo:focus-visible {
+    transform: translateY(4px) scale(1.22);
+    box-shadow: 0 6px 20px rgba(9,52,78,0.22) !important;
+  }
+
+  /* Solo cuando Google traduce (inglés): juntar los CTA */
+  html.translated-ltr .navbar-cta {
+    gap: 8px !important;
+  }
+`}</style>
 
       <header
         style={{
@@ -156,21 +176,25 @@ export default function Navbar() {
 
             {/* ── CTAs ── */}
             <div
-              className="hidden xl:flex items-center"
+             className="hidden xl:flex items-center navbar-cta"
               style={{ gap: 16, flexShrink: 0 }}
-            >
+>
               {/* Selector de idioma */}
               <button
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 6,
-                  fontFamily: 'Poppins, sans-serif', fontSize: 16, fontWeight: 500,
-                  color: '#097589', background: 'transparent',
-                  border: '1.5px solid #C3DED9', borderRadius: 50,
-                  padding: '10px 20px', cursor: 'pointer',
-                }}
-              >
-                ES <IconChevron />
-              </button>
+              onClick={toggleLang}
+              aria-label="Change language"
+              translate="no"
+              className="notranslate"
+              style={{
+                display: 'flex', alignItems: 'center', gap: 6,
+                fontFamily: 'Poppins, sans-serif', fontSize: 16, fontWeight: 500,
+                color: '#097589', background: 'transparent',
+                border: '1.5px solid #C3DED9', borderRadius: 50,
+                padding: '10px 20px', cursor: 'pointer',
+              }}
+            >
+              {lang === 'es' ? 'EN' : 'ES'} <IconChevron />
+            </button>
 
               {/* DONAR */}
               <Link
@@ -285,15 +309,16 @@ export default function Navbar() {
               }}
             >
               <button
-                style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  width: '100%', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 500,
-                  color: '#097589', background: 'transparent', border: '1.5px solid #C3DED9',
-                  borderRadius: 50, padding: '10px 20px', cursor: 'pointer', marginBottom: 24,
-                }}
-              >
-                ESPAÑOL <IconChevron />
-              </button>
+              onClick={toggleLang}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                width: '100%', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 500,
+                color: '#097589', background: 'transparent', border: '1.5px solid #C3DED9',
+                borderRadius: 50, padding: '10px 20px', cursor: 'pointer', marginBottom: 24,
+              }}
+            >
+              {lang === 'es' ? 'ENGLISH' : 'ESPAÑOL'} <IconChevron />
+            </button>
 
               <nav style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 32 }}>
                 {NAV_LINKS.map(link => (
