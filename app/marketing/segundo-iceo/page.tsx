@@ -20,9 +20,6 @@ const FadeIn = ({ children, delay = 0, style }: { children: React.ReactNode; del
 )
 
 // ─── DATA ─────────────────────────────────────────────────────────────────────
-
-// Imágenes LOCALES por ahora. Cuando tengas las fotos en Cloudflare R2,
-// solo reemplaza cada "image" por su URL (mismo orden, mismo num/label).
 const MOMENTOS = [
   { num: '30', label: 'Panelistas',                       image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Panelistas.jpg'       },
   { num: '14', label: 'Conferencias',                     image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Conferencias.jpg'     },

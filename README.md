@@ -44,8 +44,6 @@ Plataforma web modular para el Congreso Internacional de Organizaciones Ambienta
 │   ├── lib/
 │   │   └── salesforce.ts             ← Cliente Salesforce (token + query + create)
 │   ├── public/
-│   │   ├── images/
-│   │   ├── icons/
 │   │   └── unity-game/               ← Build WebGL del juego Unity
 │   │       ├── Build/
 │   │       └── index.html

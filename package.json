@@ -11,7 +11,6 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1067.0",
     "clsx": "^2.1.1",
-    "country-flag-icons": "^1.6.17",
     "country-state-city": "^3.2.1",
     "framer-motion": "^11.2.10",
     "next": "14.2.3",

@@ -30,7 +30,7 @@ export async function GET() {
       org:        r.organizacion__c,
       rol:        r.rol__c,
       pais:       (r.pais__c as string)?.toLowerCase() || 'es',
-      foto:       r.url_foto__c    || '/icons/default-avatar.svg',
+      foto:       r.url_foto__c    || 'https://cdn-icons-png.flaticon.com/512/1077/1077114.png',
       social:     r.link_social__c || '#',
       socialType: detectSocialType(r.link_social__c as string),
     }))

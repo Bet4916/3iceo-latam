@@ -126,8 +126,3 @@ export interface NavLink {
   href: string
   icon?: string
 }
-
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger'
-export type ButtonSize = 'sm' | 'md' | 'lg'
-
-export type InputState = 'default' | 'focus' | 'error' | 'disabled' | 'success'

@@ -60,9 +60,13 @@ const PONENTES_FALLBACK: Ponente[] = [
   { foto: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/agenda/Fotos%20Ponentes/Santiago%20Granados%20Guti%C3%A9rrez%20-%20CEPAL.jpg',           nombre: 'Santiago Granados Gutiérrez',     pais: 'co', org: 'CEPAL-ONU',                      rol: 'Consultor',                                         social: 'https://www.linkedin.com/in/santiago-granados-guti%C3%A9rrez-94a65a21/',                             socialType: 'linkedin'  },
 ]
 
+// ⚠️ AGENDA PROVISIONAL / HARDCODE.
+// El programa y los horarios oficiales del 3ICEO aún no están definidos.
+// El contenido temático real y definitivo está en /marketing/lineas-tematicas.
+// Actualizar fechas, sesiones y horas cuando AWAQ entregue la agenda oficial.
 const DIAS = [
   {
-    id: 'martes', diaSemana: 'MARTES', diaNum: '17', mes: 'AGOSTO',
+    id: 'martes', diaSemana: 'MARTES', diaNum: '17', mes: 'FEBRERO',
     label: 'DÍA 1',
     tema: 'Agua, territorios vivos y comunidades',
     desc: 'Un primer día para comprender la situación actual de las fuentes hídricas, compartir una visión de futuro y explorar qué iniciativas hacen falta para activar soluciones desde los territorios.',
@@ -84,7 +88,7 @@ const DIAS = [
     ],
   },
   {
-    id: 'miercoles', diaSemana: 'MIÉRCOLES', diaNum: '18', mes: 'AGOSTO',
+    id: 'miercoles', diaSemana: 'MIÉRCOLES', diaNum: '18', mes: 'FEBRERO',
     label: 'DÍA 2',
     tema: 'Cooperación internacional al desarrollo, innovación y mundo rural',
     desc: 'Un segundo día orientado a conectar cooperación, transferencia de conocimiento e innovación aplicada para impulsar soluciones territoriales, bioeconomía y desarrollo rural sostenible.',
@@ -106,7 +110,7 @@ const DIAS = [
     ],
   },
   {
-    id: 'jueves', diaSemana: 'JUEVES', diaNum: '19', mes: 'AGOSTO',
+    id: 'jueves', diaSemana: 'JUEVES', diaNum: '19', mes: 'FEBRERO',
     label: 'DÍA 3 · JORNADA DE CONCLUSIONES',
     tema: 'Conclusiones',
     desc: 'Una jornada más breve para convertir aprendizajes y acuerdos en memoria útil, conclusiones compartidas y una hoja de ruta para futuras alianzas.',

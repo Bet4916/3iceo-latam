@@ -1,4 +1,4 @@
-// frontend/app/api/contact/route.ts
+// app/api/contact/route.ts
 // Ruta: POST /api/contact
 // Recibe { email, mensaje } del footer y reenvía a info@somosawaq.org
 // Usa el mismo patrón que /api/registro (Salesforce Web-to-Case)

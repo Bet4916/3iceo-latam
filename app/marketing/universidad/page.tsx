@@ -92,8 +92,6 @@ const ESPACIOS_MAP = [
   'Paradero MIO',
 ]
 
-// URL del build de Unity embebido (carpeta /public/unity/index.html).
-// Cuando tengas el build final, solo reemplazas la carpeta /public/unity.
 const UNITY_EMBED_URL = '/unity-game/sede/index.html'
 
 const PDF_PLANO_URL =

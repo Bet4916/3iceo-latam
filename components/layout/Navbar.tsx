@@ -150,8 +150,8 @@ const toggleLang = () => {
                       fontFamily: 'Poppins, sans-serif',
                       fontSize: 17.5,
                       fontWeight: isActive(link.href) ? 600 : 400,
-                      letterSpacing: '0.02em',  // ← único cambio
-                      lineHeight: 1.5,           // ← único cambio
+                      letterSpacing: '0.02em',  
+                      lineHeight: 1.5,
                       color: isActive(link.href) ? '#09344e' : '#12303E',
                       textDecoration: 'none',
                       whiteSpace: 'nowrap',
@@ -269,7 +269,7 @@ const toggleLang = () => {
               >
                 MENÚ
                 <img
-                  src={menuOpen ? '/icons/icon-close.svg' : '/icons/icon-menu.svg'}
+                  src={menuOpen ? 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/close.svg' : 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/menu.svg'}
                   alt=""
                   width={20}
                   height={20}
