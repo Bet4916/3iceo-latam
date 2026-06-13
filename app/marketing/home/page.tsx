@@ -7,7 +7,6 @@ import Link from 'next/link'
 import SectionDonacion from '@/components/sections/SectionDonacion'
 import SectionRedes from '@/components/sections/SectionRedes'
 
-// EcoWorldMundo cargado dinámicamente (sin SSR) — mismo patrón que EcoWorldEmbed en marketplace
 const EcoWorldMundo = dynamic(
   () => import('@/components/ui/EcoWorldMundo'),
   { ssr: false }
@@ -54,7 +53,6 @@ function IconCalendar({ size = 16, color = 'currentColor' }: { size?: number; co
     </svg>
   )
 }
-
 function IconOrganizations({ size = 22 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -247,50 +245,22 @@ const ENTREVISTAS = [
   },
 ]
 
-// instrucciones del mundo (igual que marketplace)
 const INSTRUCCIONES_MUNDO = [
   { key: 'Click', label: 'Interactuar', desc: '¡Conoce a los asistentes, no te lo pierdas!' },
 ]
 
-// ─── HERO (memoizado: FUERA de HomePage para que memo funcione) ───────────────
-//
-// ESTRATEGIA ANTI-GOOGLE-TRANSLATE:
-//
-// El problema: Google Translate modifica el DOM insertando <font> tags dentro
-// de los nodos de texto. Cuando esto ocurre dentro de elementos con Framer
-// Motion o con `display:flex/grid` y dimensiones exactas, el layout se rompe
-// porque los nuevos nodos cambian las dimensiones calculadas.
-//
-// La solución aplicada aquí:
-//   1. El contenedor raíz del Hero tiene translate="no" + className="notranslate"
-//      para que Google Translate NO toque nada dentro del Hero.
-//   2. El texto que SÍ debe traducirse (h1, párrafo descriptivo, chips de fecha/lugar)
-//      se saca a un div hermano con position:absolute, inset:0, zIndex:4,
-//      que tiene translate="yes" explícito. Este div es puro HTML sin motion,
-//      por lo que Google Translate puede mutar su DOM sin romper nada.
-//   3. El div con translate="no" conserva sólo fondos, overlays y el wave SVG
-//      del fondo — elementos visuales sin texto.
-//   4. Los botones CTA también van en el overlay traducible (pero su texto
-//      "QUIERO ASISTIR" y "Ver programa" puede traducirse sin problema de layout).
-//   5. El badge de ubicación es texto ESTÁTICO que no necesita traducción
-//      (nombre propio de universidad y ciudad), así que va incrustado con
-//      translate="no" directamente en el overlay.
-//
+// ─── HERO ─────────────────────────────────────────────────────────────────────
 const HeroSection = memo(function HeroSection() {
   return (
     <section
-      // El section completo bloquea la traducción del DOM estructural
       translate="no"
-      className="notranslate"
+      className="notranslate hero-section"
       style={{
         position: 'relative',
-        height: '100vh',
-        maxHeight: 720,
-        minHeight: 560,
         overflow: 'hidden',
       }}
     >
-      {/* ── Capas de fondo: gradiente + foto + overlay ── */}
+      {/* Fondos */}
       <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg,#09344e 0%,#1C495C 55%,#437287 100%)' }} />
       <div style={{
         position: 'absolute', inset: 0,
@@ -302,31 +272,25 @@ const HeroSection = memo(function HeroSection() {
         background: 'linear-gradient(95deg, rgba(9,52,78,0.92) 0%, rgba(9,52,78,0.80) 38%, rgba(9,52,78,0.30) 62%, rgba(9,52,78,0.05) 100%)',
       }} />
 
-      {/* ── Círculos decorativos ── */}
-      <div style={{ position: 'absolute', top: 40, right: '8%',  width: 380, height: 380, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.05)', pointerEvents: 'none' }} />
-      <div style={{ position: 'absolute', top: -10, right: '4%', width: 540, height: 540, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.03)', pointerEvents: 'none' }} />
+      {/* Círculos decorativos — solo desktop */}
+      <div className="hero-deco-circle-sm" style={{ position: 'absolute', top: 40, right: '8%', width: 380, height: 380, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.05)', pointerEvents: 'none' }} />
+      <div className="hero-deco-circle-lg" style={{ position: 'absolute', top: -10, right: '4%', width: 540, height: 540, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.03)', pointerEvents: 'none' }} />
 
-      {/* ── OVERLAY TRADUCIBLE ──────────────────────────────────────────────
-          Este div está en position:absolute sobre los fondos y el wave.
-          Tiene translate="yes" para que Google Translate SÍ lo procese.
-          Al ser HTML plano (sin Framer Motion en los nodos de texto),
-          las mutaciones del DOM de GT no rompen ningún layout calculado.
-      ── */}
+      {/* Contenido */}
       <div
         translate="yes"
+        className="hero-inner"
         style={{
-          position: 'absolute',
-          inset: 0,
+          position: 'relative',
           zIndex: 2,
           display: 'flex',
           alignItems: 'center',
-          pointerEvents: 'none', // el div en sí no captura eventos
         }}
       >
-        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 48px', width: '100%' }}>
+        <div className="hero-content-wrap" style={{ maxWidth: 1280, margin: '0 auto', width: '100%' }}>
           <div style={{ maxWidth: 660 }}>
 
-            {/* BADGE — texto estático (nombre propio), no necesita traducción */}
+            {/* Badge ubicación */}
             <div
               translate="no"
               className="notranslate"
@@ -335,14 +299,11 @@ const HeroSection = memo(function HeroSection() {
                 backgroundColor: 'rgba(255,255,255,0.10)',
                 border: '1px solid rgba(192,255,242,0.30)',
                 borderRadius: 999, padding: '5px 16px', marginBottom: 20,
-                pointerEvents: 'auto',
               }}
             >
-              <img
-                src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon-location.svg"
+              <img src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon-location.svg"
                 alt="" width={12} height={12}
-                style={{ filter: 'brightness(0) invert(1)', opacity: 0.8 }}
-              />
+                style={{ filter: 'brightness(0) invert(1)', opacity: 0.8 }} />
               <span style={{
                 fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 600,
                 color: '#C0FFF2', letterSpacing: '0.12em', textTransform: 'uppercase',
@@ -351,32 +312,29 @@ const HeroSection = memo(function HeroSection() {
               </span>
             </div>
 
-            {/* H1 — traducible, sin motion wrapper en el nodo de texto */}
-            <h1 style={{
+            {/* H1 */}
+            <h1 className="hero-h1" style={{
               fontFamily: 'Gloock, Georgia, serif',
-              fontSize: 'clamp(36px, 5.2vw, 70px)',
               fontWeight: 400, color: '#ffffff',
               lineHeight: 1.04, marginBottom: 18, letterSpacing: '-0.01em',
-              pointerEvents: 'auto',
             }}>
               3er Congreso<br />
               <span style={{ color: '#AEE5DA' }}>Internacional</span> de<br />
               Organizaciones Ambientales
             </h1>
 
-            {/* Párrafo descriptivo — traducible */}
+            {/* Párrafo */}
             <p style={{
               fontFamily: 'Inter, sans-serif', fontSize: 15,
               color: 'rgba(255,255,255,0.80)', lineHeight: 1.65,
               maxWidth: 480, marginBottom: 28,
-              pointerEvents: 'auto',
             }}>
               El mayor encuentro anual del ecosistema ambiental latinoamericano.
               Aprendizaje, conexión y colaboración entre organizaciones, universidades y comunidades.
             </p>
 
-            {/* Chips de meta — texto estático (fechas, lugar, formato) */}
-            <div translate="no" className="notranslate" style={{ display: 'flex', gap: 8, marginBottom: 32, flexWrap: 'wrap', pointerEvents: 'auto' }}>
+            {/* Chips */}
+            <div translate="no" className="notranslate hero-chips" style={{ display: 'flex', gap: 8, marginBottom: 32, flexWrap: 'wrap' }}>
               {[
                 { icon: <IconCalendar size={13} color="rgba(255,255,255,0.85)" />, label: '17–19 Febrero 2027' },
                 { icon: <img src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon-location.svg" alt="" width={12} height={12} style={{ filter: 'brightness(0) invert(1)', opacity: 0.85 }} />, label: 'Cali · Colombia' },
@@ -396,7 +354,7 @@ const HeroSection = memo(function HeroSection() {
             </div>
 
             {/* CTAs */}
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', pointerEvents: 'auto' }}>
+            <div className="hero-ctas" style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
               <Link href="/marketing/registro" style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
                 backgroundColor: '#B53077', color: '#fff',
@@ -422,8 +380,8 @@ const HeroSection = memo(function HeroSection() {
         </div>
       </div>
 
-      {/* ── Wave inferior — dentro del bloque notranslate, sin texto ── */}
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, lineHeight: 0, zIndex: 3 }}>
+      {/* Wave inferior */}
+      <div style={{ lineHeight: 0, zIndex: 3, position: 'relative' }}>
         <svg viewBox="0 0 1440 64" preserveAspectRatio="none" style={{ width: '100%', height: 64, display: 'block' }}>
           <path d="M0,40 C360,64 720,10 1080,48 C1260,62 1380,28 1440,40 L1440,64 L0,64 Z" fill="#ffffff" />
         </svg>
@@ -470,20 +428,21 @@ export default function HomePage() {
       {/* ══════════════════════════════════════════════════════════════════════
           2. AGENDA OFICIAL
       ══════════════════════════════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#ffffff', padding: '72px 48px 80px' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+      <section className="section-pad">
+        <div className="container">
           <FadeIn>
             <div style={{ textAlign: 'center', marginBottom: 52 }}>
-              <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#097589', marginBottom: 12 }}>Programa Oficial · 3ICEO 2027</p>
-              <h2 style={{ fontFamily: 'Gloock, Georgia, serif', fontWeight: 400, fontSize: 'clamp(28px,3.5vw,44px)', color: '#09344e', lineHeight: 1.1, marginBottom: 12 }}>
-                Tres días para escuchar los territorios,<br />construir soluciones y aterrizar conclusiones
+              <p className="eyebrow" style={{ color: '#097589' }}>Programa Oficial · 3ICEO 2027</p>
+              <h2 className="section-title" style={{ color: '#09344e' }}>
+                Tres días para escuchar los territorios,<br className="br-desktop" />
+                construir soluciones y aterrizar conclusiones
               </h2>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#5A6E77', maxWidth: 560, margin: '0 auto', lineHeight: 1.6 }}>
+              <p className="section-desc">
                 Agenda preliminar basada en las líneas temáticas. El copy final podrá ajustarse más adelante.
               </p>
             </div>
           </FadeIn>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, alignItems: 'stretch' }} className="agenda-grid">
+          <div className="grid-3">
             {AGENDA_DIAS.map((dia, i) => (
               <FadeIn key={dia.dia} delay={i * 0.12} style={{ height: '100%' }}>
                 <div style={{ borderRadius: 16, overflow: 'hidden', boxShadow: '2px 2px 16px rgba(9,52,78,0.10)', border: '1px solid rgba(9,52,78,0.07)', display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -517,7 +476,7 @@ export default function HomePage() {
               <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: '#5A6E77', marginBottom: 16, maxWidth: 560, margin: '0 auto 20px', lineHeight: 1.6 }}>
                 Nota: mantener agenda en nivel alto, alineada con las líneas temáticas. No cerrar todavía ponentes, horarios definitivos ni financiadores específicos.
               </p>
-              <Link href="/marketing/agenda" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '2px solid #097589', color: '#097589', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 600, padding: '12px 30px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em' }}>Ver agenda completa →</Link>
+              <Link href="/marketing/agenda" className="btn-outline-teal">Ver agenda completa →</Link>
             </div>
           </FadeIn>
         </div>
@@ -528,16 +487,16 @@ export default function HomePage() {
       {/* ══════════════════════════════════════════════════════════════════════
           3. LÍNEAS TEMÁTICAS
       ══════════════════════════════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#09344e', padding: '72px 48px 80px' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+      <section className="section-pad" style={{ backgroundColor: '#09344e' }}>
+        <div className="container">
           <FadeIn>
             <div style={{ textAlign: 'center', marginBottom: 52 }}>
-              <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#74B4A7', marginBottom: 12 }}>Ejes de trabajo · 3ICEO</p>
-              <h2 style={{ fontFamily: 'Gloock, Georgia, serif', fontWeight: 400, fontSize: 'clamp(28px,3.5vw,44px)', color: '#ffffff', lineHeight: 1.1, marginBottom: 16 }}>Líneas temáticas</h2>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 15, color: 'rgba(255,255,255,0.60)', lineHeight: 1.7, maxWidth: 480, margin: '0 auto' }}>Cinco marcos de conversación que ordenan el conocimiento y las alianzas del congreso.</p>
+              <p className="eyebrow" style={{ color: '#74B4A7' }}>Ejes de trabajo · 3ICEO</p>
+              <h2 className="section-title" style={{ color: '#ffffff' }}>Líneas temáticas</h2>
+              <p className="section-desc" style={{ color: 'rgba(255,255,255,0.60)' }}>Cinco marcos de conversación que ordenan el conocimiento y las alianzas del congreso.</p>
             </div>
           </FadeIn>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 16, alignItems: 'stretch' }} className="lineas-grid">
+          <div className="grid-5-lineas">
             {LINEAS.map((l, i) => (
               <FadeIn key={l.num} delay={i * 0.09} style={{ display: 'flex' }}>
                 <Link href="/marketing/lineas-tematicas" style={{ textDecoration: 'none', display: 'flex', width: '100%' }}>
@@ -568,16 +527,16 @@ export default function HomePage() {
       {/* ══════════════════════════════════════════════════════════════════════
           4. PONENTES DESTACADOS
       ══════════════════════════════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#ffffff', padding: '72px 48px 80px' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+      <section className="section-pad">
+        <div className="container">
           <FadeIn>
             <div style={{ textAlign: 'center', marginBottom: 52 }}>
-              <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#097589', marginBottom: 12 }}>Voces del congreso</p>
-              <h2 style={{ fontFamily: 'Gloock, Georgia, serif', fontWeight: 400, fontSize: 'clamp(28px,3.5vw,44px)', color: '#09344e', lineHeight: 1.1, marginBottom: 16 }}>Ponentes destacados</h2>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 15, color: '#5A6E77', lineHeight: 1.7, maxWidth: 480, margin: '0 auto' }}>Líderes, investigadores y gestores ambientales de Latinoamérica y Europa que comparten su conocimiento en el 3ICEO.</p>
+              <p className="eyebrow" style={{ color: '#097589' }}>Voces del congreso</p>
+              <h2 className="section-title" style={{ color: '#09344e' }}>Ponentes destacados</h2>
+              <p className="section-desc">Líderes, investigadores y gestores ambientales de Latinoamérica y Europa que comparten su conocimiento en el 3ICEO.</p>
             </div>
           </FadeIn>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 20 }} className="speakers-grid">
+          <div className="grid-6-speakers">
             {PONENTES.map((p, i) => (
               <FadeIn key={p.nombre} delay={i * 0.08}>
                 <div style={{ borderRadius: 16, overflow: 'hidden', backgroundColor: '#F7F6F3', border: '1.5px solid rgba(9,52,78,0.07)', textAlign: 'center', padding: '24px 16px 20px', boxShadow: '2px 2px 8px rgba(9,52,78,0.06)' }}>
@@ -596,7 +555,7 @@ export default function HomePage() {
           </div>
           <FadeIn delay={0.55}>
             <div style={{ textAlign: 'center', marginTop: 36 }}>
-              <Link href="/marketing/agenda#ponentes" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '2px solid #097589', color: '#097589', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 600, padding: '12px 30px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em' }}>Ver todos los ponentes →</Link>
+              <Link href="/marketing/agenda#ponentes" className="btn-outline-teal">Ver todos los ponentes →</Link>
             </div>
           </FadeIn>
         </div>
@@ -607,15 +566,15 @@ export default function HomePage() {
       {/* ══════════════════════════════════════════════════════════════════════
           5. ALIADOS
       ══════════════════════════════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#F0F4F7', padding: '72px 48px 80px' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+      <section className="section-pad" style={{ backgroundColor: '#F0F4F7' }}>
+        <div className="container">
           <FadeIn>
             <div style={{ textAlign: 'center', marginBottom: 52 }}>
-              <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#097589', marginBottom: 12 }}>Construido entre todos</p>
-              <h2 style={{ fontFamily: 'Gloock, Georgia, serif', fontWeight: 400, fontSize: 'clamp(28px,3.5vw,44px)', color: '#09344e', lineHeight: 1.1 }}>Aliados del 3ICEO</h2>
+              <p className="eyebrow" style={{ color: '#097589' }}>Construido entre todos</p>
+              <h2 className="section-title" style={{ color: '#09344e' }}>Aliados del 3ICEO</h2>
             </div>
           </FadeIn>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 16, marginBottom: 40 }} className="logos-grid">
+          <div className="grid-6-logos" style={{ marginBottom: 40 }}>
             {ALIADOS_LOGOS.map((a, i) => (
               <FadeIn key={a.name} delay={i * 0.08}>
                 <div style={{ borderRadius: 14, border: '1.5px solid #D9DEE2', padding: '20px 16px', backgroundColor: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, minHeight: 110, boxShadow: '2px 2px 8px rgba(9,52,78,0.05)' }}>
@@ -633,7 +592,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Wave Aliados → EcoWorld Mundo */}
+      {/* Wave Aliados → EcoWorld */}
       <div style={{ lineHeight: 0, backgroundColor: '#F0F4F7' }}>
         <svg viewBox="0 0 1440 64" preserveAspectRatio="none" style={{ width: '100%', height: 64, display: 'block' }}>
           <path d="M0,0 C240,64 480,0 720,40 C960,64 1200,16 1440,44 L1440,64 L0,64 Z" fill="#09344e"/>
@@ -641,10 +600,10 @@ export default function HomePage() {
       </div>
 
       {/* ══════════════════════════════════════════════════════════════════════
-          6. ⭐ ECOWORLD MUNDO
+          6. ECOWORLD MUNDO
       ══════════════════════════════════════════════════════════════════════ */}
-      <section id="ecoworld-mundo" style={{ backgroundColor: '#09344e', padding: '80px 48px 88px' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+      <section id="ecoworld-mundo" className="section-pad" style={{ backgroundColor: '#09344e' }}>
+        <div className="container">
           <FadeIn>
             <div style={{ textAlign: 'center', marginBottom: 52 }}>
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: 'rgba(255,255,255,0.10)', border: '1px solid rgba(174,229,218,0.25)', borderRadius: 999, padding: '5px 16px', marginBottom: 20 }}>
@@ -652,11 +611,11 @@ export default function HomePage() {
                   Experiencia inmersiva · EcoWorld Mundo
                 </span>
               </div>
-              <h2 style={{ fontFamily: 'Gloock, Georgia, serif', fontWeight: 400, fontSize: 'clamp(30px, 4vw, 52px)', color: '#ffffff', lineHeight: 1.08, marginBottom: 20 }}>
-                Encuentra a los asistentes<br />
+              <h2 className="section-title" style={{ color: '#ffffff' }}>
+                Encuentra a los asistentes<br className="br-desktop" />
                 <span style={{ color: '#AEE5DA' }}>en el mismo mundo</span>
               </h2>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 15, color: 'rgba(255,255,255,0.68)', lineHeight: 1.75, maxWidth: 580, margin: '0 auto 0' }}>
+              <p className="section-desc" style={{ color: 'rgba(255,255,255,0.68)' }}>
                 EcoWorld Mundo es el espacio virtual donde conviven todos los participantes del 3ICEO.
                 Navega en 3D, explora el entorno del congreso y conecta con organizaciones, ponentes y comunidades de 9 países.
               </p>
@@ -664,7 +623,7 @@ export default function HomePage() {
           </FadeIn>
 
           <FadeIn delay={0.08}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 44 }} className="mundo-features-grid">
+            <div className="grid-3-mundo" style={{ marginBottom: 44 }}>
               {[
                 {
                   icon: (
@@ -746,7 +705,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Wave EcoWorld Mundo → Marketplace */}
       <div style={{ lineHeight: 0, backgroundColor: '#09344e' }}>
         <svg viewBox="0 0 1440 64" preserveAspectRatio="none" style={{ width: '100%', height: 64, display: 'block' }}>
           <path d="M0,64 C360,0 1080,64 1440,24 L1440,0 L0,0 Z" fill="#09344e"/>
@@ -757,46 +715,50 @@ export default function HomePage() {
       {/* ══════════════════════════════════════════════════════════════════════
           7. MARKETPLACE
       ══════════════════════════════════════════════════════════════════════ */}
-      <section style={{ position: 'relative', overflow: 'hidden', minHeight: 480, display: 'flex', alignItems: 'center' }}>
+      <section style={{ position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg,#09344e 0%,#1C495C 60%,#097589 100%)' }} />
         <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Marketplace/market_ex.svg)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.35 }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(100deg,rgba(9,52,78,0.88) 0%,rgba(9,52,78,0.55) 55%,rgba(9,52,78,0.20) 100%)' }} />
-        <div style={{ position: 'relative', zIndex: 2, maxWidth: 1280, margin: '0 auto', padding: '80px 48px', width: '100%' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center' }} className="marketplace-grid">
-            <FadeIn>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: 'rgba(255,255,255,0.12)', border: '1px solid rgba(192,255,242,0.30)', borderRadius: 999, padding: '5px 14px', marginBottom: 20 }}>
-                <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700, color: '#AEE5DA', letterSpacing: '0.12em', textTransform: 'uppercase' }}>Marketplace Circular · 3ICEO</span>
-              </div>
-              <h2 style={{ fontFamily: 'Gloock, Georgia, serif', fontWeight: 400, fontSize: 'clamp(30px,3.8vw,52px)', color: '#ffffff', lineHeight: 1.05, marginBottom: 20 }}>28 organizaciones ambientales esperan conectar contigo</h2>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 15, color: 'rgba(255,255,255,0.80)', lineHeight: 1.75, marginBottom: 16 }}>Explora el Marketplace Circular del 3ICEO: un espacio inmersivo donde puedes navegar entre stands de organizaciones ambientales, conocer sus proyectos y establecer contacto directo.</p>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.60)', lineHeight: 1.7, marginBottom: 36 }}>
-                Muévete con las teclas WASD o las flechas. Acércate a un stand y presiona <strong style={{ color: '#AEE5DA' }}>E</strong> para ver la información de la organización.
-              </p>
-              <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-                <Link href="/marketing/marketplace" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: '#B53077', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700, padding: '13px 30px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em', boxShadow: '0 4px 20px rgba(181,48,119,0.45)' }}>Explorar el Marketplace →</Link>
-                <Link href="/marketing/registro?tipo=asistencia&stand=true" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '2px solid rgba(255,255,255,0.45)', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 600, padding: '13px 26px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em' }}>Reserva tu stand</Link>
-              </div>
-            </FadeIn>
-            <FadeIn delay={0.15}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-                {[
-                  { num: '28',   label: 'Organizaciones',      Icon: IconOrganizations },
-                  { num: '03',   label: 'Días de feria',       Icon: IconDays          },
-                  { num: '9',    label: 'Países representados', Icon: IconGlobe         },
-                  { num: '100%', label: 'Economía circular',   Icon: IconRecycle       },
-                ].map(s => (
-                  <div key={s.label} style={{ backgroundColor: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 14, padding: '20px', display: 'flex', alignItems: 'center', gap: 14 }}>
-                    <div style={{ width: 44, height: 44, borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: '#AEE5DA' }}>
-                      <s.Icon size={22} />
-                    </div>
-                    <div>
-                      <div style={{ fontFamily: 'Gloock, Georgia, serif', fontSize: 26, fontWeight: 400, color: '#fff', lineHeight: 1 }}>{s.num}</div>
-                      <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.65)', marginTop: 2 }}>{s.label}</div>
-                    </div>
+        <div className="section-pad" style={{ position: 'relative', zIndex: 2 }}>
+          <div className="container">
+            <div className="grid-marketplace">
+              <FadeIn>
+                <div>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: 'rgba(255,255,255,0.12)', border: '1px solid rgba(192,255,242,0.30)', borderRadius: 999, padding: '5px 14px', marginBottom: 20 }}>
+                    <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700, color: '#AEE5DA', letterSpacing: '0.12em', textTransform: 'uppercase' }}>Marketplace Circular · 3ICEO</span>
                   </div>
-                ))}
-              </div>
-            </FadeIn>
+                  <h2 className="section-title" style={{ color: '#ffffff', textAlign: 'left' }}>28 organizaciones ambientales esperan conectar contigo</h2>
+                  <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 15, color: 'rgba(255,255,255,0.80)', lineHeight: 1.75, marginBottom: 16 }}>Explora el Marketplace Circular del 3ICEO: un espacio inmersivo donde puedes navegar entre stands de organizaciones ambientales, conocer sus proyectos y establecer contacto directo.</p>
+                  <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.60)', lineHeight: 1.7, marginBottom: 36 }}>
+                    Muévete con las teclas WASD o las flechas. Acércate a un stand y presiona <strong style={{ color: '#AEE5DA' }}>E</strong> para ver la información de la organización.
+                  </p>
+                  <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+                    <Link href="/marketing/marketplace" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: '#B53077', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700, padding: '13px 30px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em', boxShadow: '0 4px 20px rgba(181,48,119,0.45)' }}>Explorar el Marketplace →</Link>
+                    <Link href="/marketing/registro?tipo=asistencia&stand=true" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '2px solid rgba(255,255,255,0.45)', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 600, padding: '13px 26px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em' }}>Reserva tu stand</Link>
+                  </div>
+                </div>
+              </FadeIn>
+              <FadeIn delay={0.15}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                  {[
+                    { num: '28',   label: 'Organizaciones',       Icon: IconOrganizations },
+                    { num: '03',   label: 'Días de feria',        Icon: IconDays          },
+                    { num: '9',    label: 'Países representados', Icon: IconGlobe         },
+                    { num: '100%', label: 'Economía circular',    Icon: IconRecycle       },
+                  ].map(s => (
+                    <div key={s.label} style={{ backgroundColor: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 14, padding: '20px', display: 'flex', alignItems: 'center', gap: 14 }}>
+                      <div style={{ width: 44, height: 44, borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: '#AEE5DA' }}>
+                        <s.Icon size={22} />
+                      </div>
+                      <div>
+                        <div style={{ fontFamily: 'Gloock, Georgia, serif', fontSize: 26, fontWeight: 400, color: '#fff', lineHeight: 1 }}>{s.num}</div>
+                        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.65)', marginTop: 2 }}>{s.label}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </FadeIn>
+            </div>
           </div>
         </div>
       </section>
@@ -804,17 +766,17 @@ export default function HomePage() {
       {/* ══════════════════════════════════════════════════════════════════════
           8. SEDE DEL EVENTO
       ══════════════════════════════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#E6F3EE', padding: '72px 48px 80px' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+      <section className="section-pad" style={{ backgroundColor: '#E6F3EE' }}>
+        <div className="container">
           <FadeIn>
             <div style={{ textAlign: 'center', marginBottom: 52 }}>
-              <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#097589', marginBottom: 12 }}>Sede del evento · 3ICEO 2027</p>
-              <h2 style={{ fontFamily: 'Gloock, Georgia, serif', fontWeight: 400, fontSize: 'clamp(28px,3.5vw,44px)', color: '#09344e', lineHeight: 1.1 }}>Universidad de San Buenaventura · Cali</h2>
+              <p className="eyebrow" style={{ color: '#097589' }}>Sede del evento · 3ICEO 2027</p>
+              <h2 className="section-title" style={{ color: '#09344e' }}>Universidad de San Buenaventura · Cali</h2>
             </div>
           </FadeIn>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 28, alignItems: 'stretch' }} className="sede-grid">
+          <div className="grid-sede">
             <FadeIn>
-              <div style={{ position: 'relative', borderRadius: 20, overflow: 'hidden', minHeight: 400, background: 'linear-gradient(135deg,#09344e 0%,#1C495C 60%,#437287 100%)', boxShadow: '4px 4px 28px rgba(9,52,78,0.18)' }}>
+              <div style={{ position: 'relative', borderRadius: 20, overflow: 'hidden', minHeight: 360, background: 'linear-gradient(135deg,#09344e 0%,#1C495C 60%,#437287 100%)', boxShadow: '4px 4px 28px rgba(9,52,78,0.18)' }}>
                 <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?w=900&q=80)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.55 }} />
                 <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg,rgba(9,52,78,0.10) 0%,rgba(9,52,78,0.80) 100%)' }} />
                 <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '32px' }}>
@@ -828,7 +790,7 @@ export default function HomePage() {
               </div>
             </FadeIn>
             <FadeIn delay={0.12}>
-              <div style={{ backgroundColor: '#ffffff', borderRadius: 20, padding: '36px', boxShadow: '2px 2px 16px rgba(9,52,78,0.08)', border: '1.5px solid rgba(9,117,137,0.12)', display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
+              <div style={{ backgroundColor: '#ffffff', borderRadius: 20, padding: '36px', boxShadow: '2px 2px 16px rgba(9,52,78,0.08)', border: '1.5px solid rgba(9,117,137,0.12)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <div style={{ display: 'inline-flex', alignItems: 'center', gap: 12, backgroundColor: '#F7F6F3', borderRadius: 12, padding: '12px 18px', marginBottom: 28, border: '1.5px solid #D9DEE2', alignSelf: 'flex-start' }}>
                   <img src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Aliados/universidad.png" alt="USB Cali" height={36} style={{ display: 'block', objectFit: 'contain' }} />
                   <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700, color: '#09344e', lineHeight: 1.35, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Universidad de San<br />Buenaventura</div>
@@ -863,21 +825,21 @@ export default function HomePage() {
       {/* ══════════════════════════════════════════════════════════════════════
           9. LEGADO DEL 2° ICEO
       ══════════════════════════════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#ffffff', padding: '20px 48px 60px' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+      <section style={{ backgroundColor: '#ffffff', paddingTop: 20, paddingBottom: 60, paddingLeft: 24, paddingRight: 24 }}>
+        <div className="container">
           <FadeIn delay={0.05}>
-            <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, color: '#097589', letterSpacing: '0.14em', textTransform: 'uppercase', textAlign: 'center', marginBottom: 28 }}>
+            <p className="eyebrow" style={{ color: '#097589', textAlign: 'center', marginBottom: 28 }}>
               Legado del 2° ICEO · Cali 2026
             </p>
           </FadeIn>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12 }} className="stats-grid">
+          <div className="grid-6-stats">
             {STATS.map((s, i) => (
               <FadeIn key={s.label} delay={i * 0.07}>
                 <div style={{ position: 'relative', borderRadius: 14, overflow: 'hidden', aspectRatio: '3/4', boxShadow: '2px 2px 12px rgba(9,52,78,0.12)', backgroundColor: '#09344e' }}>
                   <img src={s.image} alt={s.label} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
                   <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(9,52,78,0.88) 0%, rgba(9,52,78,0.40) 50%, rgba(9,52,78,0.08) 100%)' }} />
                   <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '14px 14px 16px', textAlign: 'center' }}>
-                    <div style={{ fontFamily: 'Gloock, Georgia, serif', fontSize: 'clamp(24px, 2.5vw, 32px)', fontWeight: 400, color: '#ffffff', lineHeight: 1, marginBottom: 4, textShadow: '0 1px 6px rgba(0,0,0,0.4)' }}>{s.num}</div>
+                    <div style={{ fontFamily: 'Gloock, Georgia, serif', fontSize: 'clamp(22px, 2vw, 32px)', fontWeight: 400, color: '#ffffff', lineHeight: 1, marginBottom: 4, textShadow: '0 1px 6px rgba(0,0,0,0.4)' }}>{s.num}</div>
                     <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, fontWeight: 500, color: 'rgba(255,255,255,0.88)', lineHeight: 1.3, textShadow: '0 1px 4px rgba(0,0,0,0.4)' }}>{s.label}</div>
                   </div>
                 </div>
@@ -886,7 +848,7 @@ export default function HomePage() {
           </div>
           <FadeIn delay={0.55}>
             <div style={{ textAlign: 'center', marginTop: 28 }}>
-              <Link href="/marketing/segundo-iceo" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600, color: '#097589', textDecoration: 'none', border: '1.5px solid rgba(9,117,137,0.45)', borderRadius: 999, padding: '8px 22px' }}>
+              <Link href="/marketing/segundo-iceo" className="btn-outline-teal">
                 Ver memoria del 2° ICEO →
               </Link>
             </div>
@@ -899,17 +861,17 @@ export default function HomePage() {
       {/* ══════════════════════════════════════════════════════════════════════
           10. VOCES DEL 2° ICEO
       ══════════════════════════════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#F7F6F3', padding: '72px 48px 80px' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+      <section className="section-pad" style={{ backgroundColor: '#F7F6F3' }}>
+        <div className="container">
           <FadeIn>
             <div style={{ textAlign: 'center', marginBottom: 52 }}>
-              <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#097589', marginBottom: 12 }}>Edición 2026 · Cali, Colombia</p>
-              <h2 style={{ fontFamily: 'Gloock, Georgia, serif', fontWeight: 400, fontSize: 'clamp(28px,3.5vw,44px)', color: '#09344e', lineHeight: 1.1, marginBottom: 16 }}>Voces del 2° ICEO</h2>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 15, color: '#5A6E77', lineHeight: 1.7, maxWidth: 480, margin: '0 auto' }}>El 2° ICEO fue un espacio de encuentro entre organizaciones, comunidades, líderes y jóvenes que construyen soluciones desde sus territorios.</p>
+              <p className="eyebrow" style={{ color: '#097589' }}>Edición 2026 · Cali, Colombia</p>
+              <h2 className="section-title" style={{ color: '#09344e' }}>Voces del 2° ICEO</h2>
+              <p className="section-desc">El 2° ICEO fue un espacio de encuentro entre organizaciones, comunidades, líderes y jóvenes que construyen soluciones desde sus territorios.</p>
             </div>
           </FadeIn>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60, alignItems: 'start' }} className="voces-grid">
+          <div className="grid-voces">
             <FadeIn>
               <motion.div key={activeVideo} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: 'easeOut' }}>
                 <blockquote style={{ borderLeft: '3px solid #03A383', paddingLeft: 18, margin: '0 0 16px', fontFamily: 'Inter, sans-serif', fontSize: 15, fontStyle: 'italic', color: '#5A6E77', lineHeight: 1.75 }}>
@@ -923,7 +885,7 @@ export default function HomePage() {
 
             <FadeIn delay={0.15}>
               <div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 14 }}>
+                <div className="voces-tabs">
                   {ENTREVISTAS.map((e, i) => (
                     <button key={e.id} onClick={() => setActiveVideo(i)} style={{ padding: '8px 4px', borderRadius: 8, border: activeVideo === i ? '2px solid #03A383' : '2px solid #C3DED9', backgroundColor: activeVideo === i ? '#03A383' : '#fff', color: activeVideo === i ? '#fff' : '#5A6E77', fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s', letterSpacing: '0.02em' }}>
                       {e.label}
@@ -957,18 +919,18 @@ export default function HomePage() {
       {/* ══════════════════════════════════════════════════════════════════════
           11. NOTICIAS
       ══════════════════════════════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#ffffff', padding: '72px 48px 80px' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+      <section className="section-pad">
+        <div className="container">
           <FadeIn>
             <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 44, flexWrap: 'wrap', gap: 16 }}>
               <div>
-                <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#097589', marginBottom: 8 }}>Centro de comunicaciones</p>
+                <p className="eyebrow" style={{ color: '#097589', marginBottom: 8 }}>Centro de comunicaciones</p>
                 <h2 style={{ fontFamily: 'Gloock, Georgia, serif', fontWeight: 400, fontSize: 'clamp(26px,3vw,38px)', color: '#09344e', lineHeight: 1.15 }}>Últimas noticias</h2>
               </div>
-              <Link href="/marketing/comunicaciones" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600, color: '#097589', textDecoration: 'none', border: '1.5px solid rgba(9,117,137,0.35)', borderRadius: 999, padding: '8px 20px' }}>Ver todas →</Link>
+              <Link href="/marketing/comunicaciones" className="btn-outline-teal">Ver todas →</Link>
             </div>
           </FadeIn>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }} className="noticias-grid">
+          <div className="grid-3-noticias">
             {noticiasHome.map((n, i) => (
               <FadeIn key={n.titulo} delay={i * 0.1}>
                 <Link href={n.href} style={{ textDecoration: 'none' }}>
@@ -999,35 +961,212 @@ export default function HomePage() {
       <SectionDonacion bg="#09344e" theme="dark" showTopWave={true} topWaveFrom="#ffffff" />
       <SectionRedes bg="#ffffff" theme="light" />
 
-      {/* ── Responsive ── */}
+      {/* ── CSS GLOBAL RESPONSIVE ── */}
       <style suppressHydrationWarning>{`
+        /* ─── RESET BOX ─── */
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* ─── UTILITIES ─── */
+        .container {
+          max-width: 1280px;
+          margin: 0 auto;
+          width: 100%;
+        }
+        .section-pad {
+          padding: 72px 48px 80px;
+        }
+        .eyebrow {
+          font-family: 'Poppins', sans-serif;
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          margin-bottom: 12px;
+        }
+        .section-title {
+          font-family: 'Gloock', Georgia, serif;
+          font-weight: 400;
+          font-size: clamp(26px, 3.5vw, 44px);
+          line-height: 1.1;
+          margin-bottom: 16px;
+        }
+        .section-desc {
+          font-family: 'Inter', sans-serif;
+          font-size: 15px;
+          color: #5A6E77;
+          line-height: 1.7;
+          max-width: 480px;
+          margin: 0 auto;
+        }
+        .btn-outline-teal {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          font-family: 'Poppins', sans-serif;
+          font-size: 13px;
+          font-weight: 600;
+          color: #097589;
+          text-decoration: none;
+          border: 1.5px solid rgba(9,117,137,0.45);
+          border-radius: 999px;
+          padding: 8px 22px;
+        }
+
+        /* ─── HERO ─── */
+        .hero-section {
+          height: 100vh;
+          max-height: 720px;
+          min-height: 560px;
+        }
+        .hero-inner {
+          height: 100%;
+          padding: 0 48px;
+        }
+        .hero-content-wrap {
+          padding: 0;
+        }
+        .hero-h1 {
+          font-size: clamp(36px, 5.2vw, 70px);
+        }
+
+        /* ─── GRIDS ─── */
+        .grid-3 {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 24px;
+          align-items: stretch;
+        }
+        .grid-5-lineas {
+          display: grid;
+          grid-template-columns: repeat(5, 1fr);
+          gap: 16px;
+          align-items: stretch;
+        }
+        .grid-6-speakers {
+          display: grid;
+          grid-template-columns: repeat(6, 1fr);
+          gap: 20px;
+        }
+        .grid-6-logos {
+          display: grid;
+          grid-template-columns: repeat(6, 1fr);
+          gap: 16px;
+        }
+        .grid-3-mundo {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 16px;
+        }
+        .grid-marketplace {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 64px;
+          align-items: center;
+        }
+        .grid-sede {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 28px;
+          align-items: stretch;
+        }
+        .grid-6-stats {
+          display: grid;
+          grid-template-columns: repeat(6, 1fr);
+          gap: 12px;
+        }
+        .grid-voces {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 60px;
+          align-items: start;
+        }
+        .grid-3-noticias {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 24px;
+        }
+        .voces-tabs {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 8px;
+          margin-bottom: 14px;
+        }
+
+        /* ─── DECORATIVE (hide on mobile) ─── */
+        .hero-deco-circle-sm,
+        .hero-deco-circle-lg,
+        .br-desktop {
+          display: block;
+        }
+
+        /* ══════════════════════════════
+           TABLET  ≤ 1100px
+        ══════════════════════════════ */
         @media (max-width: 1100px) {
-          .lineas-grid         { grid-template-columns: repeat(3,1fr) !important; }
-          .speakers-grid       { grid-template-columns: repeat(3,1fr) !important; }
-          .logos-grid          { grid-template-columns: repeat(3,1fr) !important; }
-          .stats-grid          { grid-template-columns: repeat(3,1fr) !important; }
-          .mundo-features-grid { grid-template-columns: 1fr !important; }
+          .grid-5-lineas        { grid-template-columns: repeat(3, 1fr); }
+          .grid-6-speakers      { grid-template-columns: repeat(3, 1fr); }
+          .grid-6-logos         { grid-template-columns: repeat(3, 1fr); }
+          .grid-6-stats         { grid-template-columns: repeat(3, 1fr); }
+          .grid-3-mundo         { grid-template-columns: 1fr; }
         }
+
+        /* ══════════════════════════════
+           TABLET CHICO  ≤ 900px
+        ══════════════════════════════ */
         @media (max-width: 900px) {
-          .agenda-grid         { grid-template-columns: 1fr !important; }
-          .marketplace-grid    { grid-template-columns: 1fr !important; }
-          .sede-grid           { grid-template-columns: 1fr !important; }
-          .noticias-grid       { grid-template-columns: 1fr !important; }
-          .speakers-grid       { grid-template-columns: repeat(2,1fr) !important; }
-          .voces-grid          { grid-template-columns: 1fr !important; }
-          .mundo-features-grid { grid-template-columns: 1fr !important; }
+          .section-pad          { padding: 56px 32px 64px; }
+          .grid-3               { grid-template-columns: 1fr; }
+          .grid-marketplace     { grid-template-columns: 1fr; gap: 40px; }
+          .grid-sede            { grid-template-columns: 1fr; }
+          .grid-3-noticias      { grid-template-columns: 1fr; }
+          .grid-6-speakers      { grid-template-columns: repeat(2, 1fr); }
+          .grid-voces           { grid-template-columns: 1fr; gap: 40px; }
+          .hero-inner           { padding: 0 32px; align-items: flex-end; padding-bottom: 80px; }
+          .hero-h1              { font-size: clamp(30px, 6vw, 52px); }
+          .hero-deco-circle-sm,
+          .hero-deco-circle-lg  { display: none; }
         }
+
+        /* ══════════════════════════════
+           MÓVIL  ≤ 640px
+        ══════════════════════════════ */
         @media (max-width: 640px) {
-          .lineas-grid   { grid-template-columns: 1fr 1fr !important; }
-          .logos-grid    { grid-template-columns: 1fr 1fr !important; }
-          .stats-grid    { grid-template-columns: repeat(2,1fr) !important; }
-          .speakers-grid { grid-template-columns: 1fr 1fr !important; }
+          .section-pad          { padding: 44px 20px 52px; }
+          .hero-section         { height: auto; min-height: 100svh; max-height: none; }
+          .hero-inner           { padding: 100px 20px 0; align-items: flex-start; height: auto; }
+          .hero-h1              { font-size: clamp(28px, 8vw, 40px); }
+          .hero-chips           { gap: 6px; }
+          .hero-ctas            { flex-direction: column; }
+          .hero-ctas a          { text-align: center; justify-content: center; }
+
+          .grid-5-lineas        { grid-template-columns: 1fr 1fr; }
+          .grid-6-logos         { grid-template-columns: 1fr 1fr; }
+          .grid-6-stats         { grid-template-columns: repeat(2, 1fr); }
+          .grid-6-speakers      { grid-template-columns: 1fr 1fr; }
+          .grid-marketplace     { gap: 32px; }
+
+          .voces-tabs           { grid-template-columns: repeat(2, 1fr); }
+
+          .section-title        { font-size: clamp(22px, 6vw, 32px); }
+          .section-desc         { font-size: 14px; }
+          .br-desktop           { display: none; }
+
+          /* Sede: imagen más pequeña en móvil */
+          .grid-sede > *:first-child { min-height: 240px !important; }
         }
-        /* Hero: el overlay traducible hereda pointer-events none del padre,
-           pero los hijos interactivos (links, botones) lo re-habilitan */
-        #hero-translate-overlay a,
-        #hero-translate-overlay button {
-          pointer-events: auto;
+
+        /* ══════════════════════════════
+           MÓVIL XS  ≤ 400px
+        ══════════════════════════════ */
+        @media (max-width: 400px) {
+          .hero-h1              { font-size: 26px; }
+          .grid-5-lineas        { grid-template-columns: 1fr; }
+          .grid-6-speakers      { grid-template-columns: 1fr; }
+        }
+
+        /* ─── Reduced motion ─── */
+        @media (prefers-reduced-motion: reduce) {
+          * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
         }
       `}</style>
     </div>
