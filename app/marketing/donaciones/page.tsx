@@ -658,7 +658,7 @@ export default function DonacionesPage() {
                         </span>
                         <Icon
                           src={open
-                            ? '/icons/icon_questionmark_selcted.svg'
+                            ? 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon_questionmark_selcted.svg'
                             : 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon_questionmark_no_selcted.svg'
                           }
                           size={22}

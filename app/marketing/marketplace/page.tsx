@@ -104,10 +104,8 @@ const CATEGORIAS = [
 ]
 
 const INSTRUCCIONES = [
-  { key: 'WASD', label: 'Moverse',         desc: 'o flechas del teclado' },
-  { key: 'E',    label: 'Interactuar',     desc: 'al acercarte a un stand' },
-  { key: 'ESC',  label: 'Salir del stand', desc: 'cerrar panel de info'   },
-]
+  { key: 'WASD', label: 'Moverse',         desc: '¡Explora el mundo!' },
+  { key: '↵Enter',    label: 'Interactuar',     desc: 'Al acercarte a un personaje' }]
 
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
 export default function MarketplacePage() {

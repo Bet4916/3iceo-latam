@@ -71,12 +71,12 @@ const INSTALACIONES = [
 ]
 
 const SERVICIOS = [
-  { label: 'Cafetería',          icon: '/icons/sede_food.svg'       },
-  { label: 'Parking gratuito',   icon: '/icons/sede_parking.svg'    },
-  { label: 'Equipos multimedia', icon: '/icons/sede_multimedia.svg' },
-  { label: 'Accesos adaptados',  icon: '/icons/sede_wheelchair.svg' },
-  { label: 'Wifi gratuito',      icon: '/icons/sede_wifi.svg'       },
-  { label: 'Áreas de descanso',  icon: '/icons/sede_highway.svg'    },
+  { label: 'Cafetería',          icon: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/sedecongreso/sede_food.svg'       },
+  { label: 'Parking gratuito',   icon: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/sedecongreso/sede_parking.svg'    },
+  { label: 'Equipos multimedia', icon: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/sedecongreso/sede_multimedia.svg' },
+  { label: 'Accesos adaptados',  icon: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/sedecongreso/sede_wheelchair.svg' },
+  { label: 'Wifi gratuito',      icon: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/sedecongreso/sede_wifi.svg'       },
+  { label: 'Áreas de descanso',  icon: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/sedecongreso/sede_highway.svg'    },
 ]
 
 const ESPACIOS_MAP = [
@@ -686,7 +686,7 @@ export default function UniversidadPage() {
                 boxShadow: '4px 4px 24px rgba(9,52,78,0.12)',
               }}>
                 <img
-                  src="/icons/market_ex.svg"
+                  src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Marketplace/market_ex.svg"
                   alt="Marketplace del congreso"
                   style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                 />
@@ -830,7 +830,7 @@ export default function UniversidadPage() {
                 boxShadow: '4px 4px 24px rgba(9,52,78,0.12)',
               }}>
                 <img
-                  src="/icons/ubicacion.svg"
+                  src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Home/ubicacion.svg"
                   alt="Mapa de ubicación Universidad de San Buenaventura"
                   style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                 />

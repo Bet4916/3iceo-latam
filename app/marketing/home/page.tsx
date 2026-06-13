@@ -187,7 +187,7 @@ const PONENTES = [
   { foto: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/agenda/Fotos%20Ponentes/FOTO_BEGO_PRO.JPG',                       nombre: 'Begoña de la Hera',       flag: '🇪🇸', org: 'Awaq ONGD',               rol: 'Directora Programa TEDI',    social: 'https://www.linkedin.com/in/bego%C3%B1a-de-la-hera-25ba801a/', socialType: 'linkedin' },
   { foto: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/agenda/Fotos%20Ponentes/Liza%20Rodri%CC%81guez%20Galvis.jpeg',  nombre: 'Liza Rodríguez Galvis',   flag: '🇨🇴', org: 'Gobernación Valle del Cauca', rol: 'Secretaria General',         social: 'https://www.instagram.com/lizarodriguez18', socialType: 'instagram' },
   { foto: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/agenda/Fotos%20Ponentes/Gustavo%20Herrera%20Caballero-SELA.jpeg',        nombre: 'Mtro. Gustavo Herrera',   flag: '🇨🇴', org: 'SELA',                      rol: 'Coordinador Desarrollo Social', social: 'https://www.linkedin.com/in/gustavo-herrera-3528a979/', socialType: 'linkedin' },
-  { foto: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/agenda/Fotos%20Ponentes/Santiago%20Granados%20Guti%C3%A9rrez%20-%20CEPAL.jpg',       nombre: 'Santiago Granados',       flag: '🇨🇴', org: 'CEPAL–ONU',                 rol: 'Consultor',                  social: 'https://www.linkedin.com/in/santiago-granados-guti%C3%A9rez-94a65a21/', socialType: 'linkedin' },
+  { foto: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/agenda/Fotos%20Ponentes/Santiago%20Granados%20Guti%C3%A9rrez%20-%20CEPAL.jpg',       nombre: 'Santiago Granados',       flag: '🇨🇴', org: 'CEPAL–ONU',                 rol: 'Consultor',                  social: 'https://www.linkedin.com/in/santiago-granados-guti%C3%A9rrez-94a65a21/', socialType: 'linkedin' },
 ]
 
 const ALIADOS_LOGOS = [
@@ -299,7 +299,7 @@ export default function HomePage() {
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg,#09344e 0%,#1C495C 55%,#437287 100%)' }} />
         <div style={{
           position: 'absolute', inset: 0,
-          backgroundImage: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Home/ubicacion_home.jpg',
+          backgroundImage: 'url(https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Home/ubicacion_home.jpg)',
           backgroundSize: 'cover', backgroundPosition: 'center 45%', opacity: 0.55,
         }} />
         <div style={{
@@ -676,7 +676,7 @@ export default function HomePage() {
       ══════════════════════════════════════════════════════════════════════ */}
       <section style={{ position: 'relative', overflow: 'hidden', minHeight: 480, display: 'flex', alignItems: 'center' }}>
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg,#09344e 0%,#1C495C 60%,#097589 100%)' }} />
-        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Marketplace/market_ex.svg', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.35 }} />
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Marketplace/market_ex.svg)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.35 }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(100deg,rgba(9,52,78,0.88) 0%,rgba(9,52,78,0.55) 55%,rgba(9,52,78,0.20) 100%)' }} />
         <div style={{ position: 'relative', zIndex: 2, maxWidth: 1280, margin: '0 auto', padding: '80px 48px', width: '100%' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center' }} className="marketplace-grid">
@@ -746,10 +746,12 @@ export default function HomePage() {
             </FadeIn>
             <FadeIn delay={0.12}>
               <div style={{ backgroundColor: '#ffffff', borderRadius: 20, padding: '36px', boxShadow: '2px 2px 16px rgba(9,52,78,0.08)', border: '1.5px solid rgba(9,117,137,0.12)', display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 12, backgroundColor: '#F7F6F3', borderRadius: 12, padding: '12px 18px', marginBottom: 28, border: '1.5px solid #D9DEE2', alignSelf: 'flex-start' }}>
-                  <img src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Aliados/universidad.png" alt="USB Cali" height={36} style={{ display: 'block', objectFit: 'contain' }} />
-                  <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700, color: '#09344e', lineHeight: 1.35, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Universidad de San<br />Buenaventura</div>
+                
+                {/* ── LOGO CORREGIDO ── */}
+                <div style={{ backgroundColor: '#F7F6F3', borderRadius: 12, padding: '20px 24px', marginBottom: 28, border: '1.5px solid #D9DEE2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <img src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Aliados/universidad.png" alt="USB Cali" style={{ display: 'block', objectFit: 'contain', width: '100%', maxHeight: 72 }} />
                 </div>
+
                 <h3 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 20, fontWeight: 700, color: '#09344e', marginBottom: 12 }}>Ubicación</h3>
                 <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#5A6E77', lineHeight: 1.75, marginBottom: 22 }}>Universidad de San Buenaventura, Cali — Ubicada en zona céntrica de fácil acceso desde las avenidas principales de la ciudad, en la zona universitaria de la Avenida Cañasgordas.</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 32 }}>

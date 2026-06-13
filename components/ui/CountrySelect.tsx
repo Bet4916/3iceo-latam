@@ -63,7 +63,7 @@ const CountryPlaceholder = (props: PlaceholderProps<CountryOption>) => (
   <components.Placeholder {...props}>
     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
       <img
-        src="/icons/icon-location.svg"
+        src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon-location.svg"
         alt=""
         width={15}
         height={15}

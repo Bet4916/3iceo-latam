@@ -121,7 +121,7 @@ export default function Footer({ topColor = '#ffffff' }: { topColor?: string }) 
           {/* Col 1 — Logo */}
           <div>
             <img
-              src="/icons/logo-awaq-white.svg"
+              src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/logo-awaq-white.svg"
               alt="AWAQ"
               style={{ width: 156, height: 'auto', display: 'block' }}
               onError={e => {
@@ -244,7 +244,7 @@ export default function Footer({ topColor = '#ffffff' }: { topColor?: string }) 
                 onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.6)')}
               >
                 <img
-                  src="/icons/icon-streaming.svg" alt=""
+                  src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon-streaming.svg" alt=""
                   width={14} height={14}
                   style={{ flexShrink: 0 }}
                   onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}

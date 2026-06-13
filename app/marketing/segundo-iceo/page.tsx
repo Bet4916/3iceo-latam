@@ -36,11 +36,11 @@ const MOMENTOS = [
 ]
 
 const IMPACTO = [
-  { num: '1209', label: 'Asistentes Presenciales y Virtuales', icon: '/icons/icon_asistentes.svg'                   },
-  { num: '192',  label: 'Organizaciones Ambientales',          icon: '/icons/icon_organizaciones.svg'               },
-  { num: '06',   label: 'Entidades Públicas',                  icon: '/icons/icon_ent_pub.svg'                      },
-  { num: '+135', label: 'Estudiantes Universitarios',          icon: '/icons/icon_estudiantes.svg'                  },
-  { num: '31',   label: 'Participantes Independientes',        icon: '/icons/icon_participantes_independientes.svg' },
+  { num: '1209', label: 'Asistentes Presenciales y Virtuales', icon: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon_asistentes.svg'                   },
+  { num: '192',  label: 'Organizaciones Ambientales',          icon: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon_organizaciones.svg'               },
+  { num: '06',   label: 'Entidades Públicas',                  icon: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon_ent_pub.svg'                      },
+  { num: '+135', label: 'Estudiantes Universitarios',          icon: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon_estudiantes.svg'                  },
+  { num: '31',   label: 'Participantes Independientes',        icon: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon_participantes_independientes.svg' },
 ]
 
 const REDES_STATS = [

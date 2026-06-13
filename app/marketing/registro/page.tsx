@@ -85,7 +85,7 @@ const INITIAL_FORM: Form = {
 function LocationIcon({ size = 14 }: { size?: number }) {
   return (
     <img
-      src="/icons/icon-location.svg"
+      src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon-location.svg"
       alt=""
       width={size}
       height={size}
@@ -616,13 +616,13 @@ export default function RegistroPage() {
                     <div style={{ height: 1, backgroundColor: '#EFF4F7', margin: '0 -32px 32px' }} />
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
                       {/* follow más grande */}
-                      <img src="/icons/follow.svg" alt="Síguenos" style={{ width: 190, height: 'auto', objectFit: 'contain' }} />
+                      <img src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/follow.svg" alt="Síguenos" style={{ width: 190, height: 'auto', objectFit: 'contain' }} />
                       <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 15, fontWeight: 600, color: '#09344e', margin: 0 }}>Síguenos en redes para no perderte nada</p>
                       <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
                         {[
-                          { src: '/icons/icon_instagram.svg', href: 'https://www.instagram.com/awaqongd',         label: 'Instagram' },
-                          { src: '/icons/icon_facebook.svg',  href: 'https://facebook.com/awaqong',                label: 'Facebook'  },
-                          { src: '/icons/icon_linkedin.svg',  href: 'https://www.linkedin.com/company/awaq-ongd/', label: 'LinkedIn'  },
+                          { src: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/instagram.svg', href: 'https://www.instagram.com/awaqongd',         label: 'Instagram' },
+                          { src: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/facebook.svg',  href: 'https://facebook.com/awaqong',                label: 'Facebook'  },
+                          { src: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/linkedin.svg',  href: 'https://www.linkedin.com/company/awaq-ongd/', label: 'LinkedIn'  },
                         ].map(({ src, href, label }) => (
                           <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}
                             style={{ width: 44, height: 44, borderRadius: '50%', backgroundColor: '#09344e', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background .2s, transform .2s' }}
@@ -647,7 +647,7 @@ export default function RegistroPage() {
                   >
                     <div style={{ position: 'relative', background: 'linear-gradient(135deg, #09344e 0%, #1C495C 55%, #097589 100%)', padding: '36px 34px' }}>
                       {/* textura/brillo */}
-                      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(/icons/market_ex.svg)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.18, pointerEvents: 'none' }} />
+                      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Marketplace/market_ex.svg)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.18, pointerEvents: 'none' }} />
                       <div style={{ position: 'absolute', top: -60, right: -40, width: 220, height: 220, background: 'radial-gradient(circle, rgba(174,229,218,0.25) 0%, transparent 65%)', pointerEvents: 'none' }} />
 
                       <div style={{ position: 'relative' }}>
@@ -695,7 +695,7 @@ export default function RegistroPage() {
                     <h3 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 20, fontWeight: 700, color: '#09344e', marginBottom: 14, lineHeight: 1.3 }}>¡Gracias a tu donación, nadie se queda fuera!</h3>
                     <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14, color: '#437287', marginBottom: 24, lineHeight: 1.7 }}>El importe irá íntegramente destinado a cubrir alojamiento, transporte y dietas.</p>
                     <Link href="/marketing/donaciones#form-donacion" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '11px 26px', borderRadius: 50, backgroundColor: '#B53077', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700, textDecoration: 'none', letterSpacing: '0.04em' }}>
-                      <img src="/icons/icon_paypal.svg" alt="" width={18} height={18} style={{ display: 'block', objectFit: 'contain' }} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
+                      <img src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/paypal.svg" alt="" width={18} height={18} style={{ display: 'block', objectFit: 'contain' }} onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
                       DONAR
                     </Link>
                   </div>
