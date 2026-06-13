@@ -32,12 +32,100 @@ export default function AcuerdoConvivenciaPage() {
         waveColor="#ffffff"
       />
 
-      <section style={{ backgroundColor: '#ffffff', padding: '72px 48px 96px' }}>
+      {/* ── Estilos responsive ───────────────────────────────────────────── */}
+      <style>{`
+        .acuerdo-section {
+          background-color: #ffffff;
+          padding: 72px 48px 96px;
+        }
+        .acuerdo-preambulo {
+          background-color: #E6F3EE;
+          border-radius: 16px;
+          padding: 28px 32px;
+          margin-bottom: 56px;
+        }
+        .acuerdo-principio-row {
+          display: flex;
+          gap: 20px;
+          align-items: flex-start;
+        }
+        .acuerdo-numero {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          background-color: #097589;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          margin-top: 2px;
+        }
+        .acuerdo-consecuencias {
+          background-color: #F7F6F3;
+          border-radius: 16px;
+          padding: 28px 32px;
+          margin-bottom: 40px;
+          border-left: 4px solid #B53077;
+        }
+        .acuerdo-compromiso {
+          text-align: center;
+          padding: 32px;
+          background-color: #09344e;
+          border-radius: 16px;
+        }
+
+        /* ── Tablet (≤ 768px) ── */
+        @media (max-width: 768px) {
+          .acuerdo-section {
+            padding: 48px 24px 72px;
+          }
+          .acuerdo-preambulo {
+            padding: 20px 20px;
+            margin-bottom: 40px;
+          }
+          .acuerdo-consecuencias {
+            padding: 20px 20px;
+          }
+          .acuerdo-compromiso {
+            padding: 24px 20px;
+          }
+        }
+
+        /* ── Móvil (≤ 480px) ── */
+        @media (max-width: 480px) {
+          .acuerdo-section {
+            padding: 32px 16px 56px;
+          }
+          .acuerdo-preambulo {
+            padding: 16px;
+            margin-bottom: 32px;
+            border-radius: 12px;
+          }
+          .acuerdo-principio-row {
+            gap: 14px;
+          }
+          .acuerdo-numero {
+            width: 30px;
+            height: 30px;
+          }
+          .acuerdo-consecuencias {
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 28px;
+          }
+          .acuerdo-compromiso {
+            padding: 20px 16px;
+            border-radius: 12px;
+          }
+        }
+      `}</style>
+
+      <section className="acuerdo-section">
         <div style={{ maxWidth: 860, margin: '0 auto' }}>
 
           {/* Preámbulo */}
-          <div style={{ backgroundColor: '#E6F3EE', borderRadius: 16, padding: '28px 32px', marginBottom: 56 }}>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 16, color: '#09344e', lineHeight: 1.8 }}>
+          <div className="acuerdo-preambulo">
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 16, color: '#09344e', lineHeight: 1.8, margin: 0 }}>
               Unidos en la búsqueda de un objetivo común como lo es la protección del medioambiente, las y los participantes del <strong>"2ndo Congreso Internacional de Organizaciones Ambientales 2025"</strong> se comprometen a comportarse con el máximo apego a los principios plasmados en el presente Acuerdo de Convivencia, los cuales son fundamentales para garantizar un ambiente respetuoso, colaborativo y productivo.
             </p>
           </div>
@@ -49,31 +137,31 @@ export default function AcuerdoConvivenciaPage() {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginBottom: 56 }}>
             {PRINCIPIOS.map((p, i) => (
-              <div key={i} style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }}>
-                <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#097589', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 2 }}>
+              <div key={i} className="acuerdo-principio-row">
+                <div className="acuerdo-numero">
                   <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700, color: '#fff' }}>{i + 1}</span>
                 </div>
                 <div>
-                  <h3 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 16, fontWeight: 700, color: '#09344e', marginBottom: 6 }}>{p.title}</h3>
-                  <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#5A6E77', lineHeight: 1.75 }}>{p.desc}</p>
+                  <h3 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 16, fontWeight: 700, color: '#09344e', marginBottom: 6, marginTop: 0 }}>{p.title}</h3>
+                  <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#5A6E77', lineHeight: 1.75, margin: 0 }}>{p.desc}</p>
                 </div>
               </div>
             ))}
           </div>
 
           {/* Consecuencias */}
-          <div style={{ backgroundColor: '#F7F6F3', borderRadius: 16, padding: '28px 32px', marginBottom: 40, borderLeft: '4px solid #B53077' }}>
-            <h3 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 16, fontWeight: 700, color: '#09344e', marginBottom: 12 }}>
+          <div className="acuerdo-consecuencias">
+            <h3 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 16, fontWeight: 700, color: '#09344e', marginBottom: 12, marginTop: 0 }}>
               Consecuencias por incumplimiento
             </h3>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#5A6E77', lineHeight: 1.75 }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#5A6E77', lineHeight: 1.75, margin: 0 }}>
               De presentarse conductas contrarias a los principios previamente establecidos en este Acuerdo de Convivencia, se tendrá que proceder con las consecuencias que podrán oscilar desde la llamada de atención por parte del personal del evento hasta la expulsión del congreso, dependiendo de la gravedad de la situación; en caso de ser aplicable también se pudiera optar por el llamamiento a las autoridades locales.
             </p>
           </div>
 
           {/* Compromiso */}
-          <div style={{ textAlign: 'center', padding: '32px', backgroundColor: '#09344e', borderRadius: 16 }}>
-            <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 16, fontWeight: 600, color: '#AEE5DA', lineHeight: 1.6 }}>
+          <div className="acuerdo-compromiso">
+            <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 16, fontWeight: 600, color: '#AEE5DA', lineHeight: 1.6, margin: 0 }}>
               "Al aceptar este acuerdo me comprometo a cumplir con las normas de convivencia establecidas para el congreso."
             </p>
           </div>
@@ -82,9 +170,9 @@ export default function AcuerdoConvivenciaPage() {
 
       {/* ══ 4. DONACIÓN ═══════════════════════════════════════════════════════ */}
       <SectionDonacion bg="#09344e" theme="dark" showTopWave={true} topWaveFrom="#ffffff" waveColor="#ffffff" showWave={true} />
-      
+
       {/* ══ 5. REDES ══════════════════════════════════════════════════════════ */}
-     <SectionRedes bg="#ffffff" theme="light" />
+      <SectionRedes bg="#ffffff" theme="light" />
     </div>
   )
 }

@@ -90,7 +90,6 @@ const BADGE_COLOR: Record<string, string> = {
   anuncio:          '#B58A00',
 }
 
-// ─── Iconos SVG profesionales por categoría ───────────────────────────────────
 function BadgeIcon({ tipo }: { tipo: string }) {
   const icons: Record<string, JSX.Element> = {
     video: (
@@ -121,7 +120,6 @@ function BadgeIcon({ tipo }: { tipo: string }) {
   return icons[tipo] || icons['anuncio']
 }
 
-// ─── Iconos SVG profesionales por red social ──────────────────────────────────
 const REDIRECT_INFO: Record<string, { color: string; label: string; svg: JSX.Element }> = {
   instagram: {
     color: '#E1306C', label: 'Ver en Instagram',
@@ -204,8 +202,6 @@ export default function ComunicacionesPage() {
       const pasaQ   = !busqueda || n.titulo.toLowerCase().includes(busqueda.toLowerCase())
       return pasaCat && pasaQ
     })
-
-    // Ordenar
     result = [...result].sort((a, b) => {
       if (orden === 'Más reciente') return b.fecha.localeCompare(a.fecha)
       if (orden === 'Más antigua')  return a.fecha.localeCompare(b.fecha)
@@ -213,7 +209,6 @@ export default function ComunicacionesPage() {
       if (orden === 'Z-A')          return b.titulo.localeCompare(a.titulo)
       return 0
     })
-
     return result
   }, [noticias, filtro, busqueda, orden])
 
@@ -237,15 +232,15 @@ export default function ComunicacionesPage() {
         waveColor="#F0F4F7"
       />
 
-      <section id="noticias" style={{ padding: '64px 0 80px', backgroundColor: '#F0F4F7' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 48px' }}>
+      <section id="noticias" className="noticias-section">
+        <div className="noticias-inner">
 
-          {/* ── Filtros + búsqueda + orden ── */}
+          {/* ── Filtros ── */}
           <FadeIn>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 40, flexWrap: 'wrap', justifyContent: 'space-between' }}>
+            <div className="filtros-wrapper">
 
               {/* Pills categoría */}
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              <div className="filtros-pills">
                 {CATEGORIAS_FILTRO.map(cat => (
                   <button key={cat} onClick={() => setFiltro(cat)} style={{
                     fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 600,
@@ -261,7 +256,7 @@ export default function ComunicacionesPage() {
               </div>
 
               {/* Búsqueda + Orden */}
-              <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+              <div className="filtros-controles">
 
                 {/* Buscador */}
                 <div style={{ position: 'relative' }}>
@@ -271,7 +266,8 @@ export default function ComunicacionesPage() {
                   </svg>
                   <input type="text" placeholder="Buscar noticia..."
                     value={busqueda} onChange={e => setBusqueda(e.target.value)}
-                    style={{ height: 38, paddingLeft: 32, paddingRight: 14, borderRadius: 999, border: '1.5px solid #D9DEE2', backgroundColor: '#fff', fontFamily: 'Inter, sans-serif', fontSize: 12, color: '#12303E', outline: 'none', width: 200 }}
+                    className="filtro-input"
+                    style={{ height: 38, paddingLeft: 32, paddingRight: 14, borderRadius: 999, border: '1.5px solid #D9DEE2', backgroundColor: '#fff', fontFamily: 'Inter, sans-serif', fontSize: 12, color: '#12303E', outline: 'none' }}
                   />
                 </div>
 
@@ -282,7 +278,8 @@ export default function ComunicacionesPage() {
                     <path d="M3 6h18M7 12h10M11 18h2"/>
                   </svg>
                   <select value={orden} onChange={e => setOrden(e.target.value)}
-                    style={{ height: 38, paddingLeft: 32, paddingRight: 14, borderRadius: 999, border: '1.5px solid #D9DEE2', backgroundColor: '#fff', fontFamily: 'Inter, sans-serif', fontSize: 12, color: '#12303E', outline: 'none', cursor: 'pointer', appearance: 'none', width: 160 }}
+                    className="filtro-select"
+                    style={{ height: 38, paddingLeft: 32, paddingRight: 14, borderRadius: 999, border: '1.5px solid #D9DEE2', backgroundColor: '#fff', fontFamily: 'Inter, sans-serif', fontSize: 12, color: '#12303E', outline: 'none', cursor: 'pointer', appearance: 'none' }}
                   >
                     {ORDEN_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
                   </select>
@@ -310,15 +307,13 @@ export default function ComunicacionesPage() {
                 {/* ── Noticia destacada ── */}
                 {destacada && (
                   <FadeIn>
-                    <div style={{ display: 'grid', gridTemplateColumns: '480px 1fr', height: 380, borderRadius: 20, overflow: 'hidden', boxShadow: '0 4px 24px rgba(9,52,78,0.12)', marginBottom: 32 }} className="noticia-destacada">
-
-                      {/* Imagen fija */}
+                    <div className="noticia-destacada" style={{ marginBottom: 32 }}>
+                      {/* Imagen */}
                       <div style={{ position: 'relative', overflow: 'hidden', background: destacada.imgBg, flexShrink: 0 }}>
-                      <img src={destacada.img} alt={destacada.titulo} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                    </div>
-
+                        <img src={destacada.img} alt={destacada.titulo} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                      </div>
                       {/* Contenido */}
-                      <div style={{ backgroundColor: '#ffffff', padding: '40px 36px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', overflow: 'hidden' }}>
+                      <div style={{ backgroundColor: '#ffffff', padding: '40px 36px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', overflow: 'hidden' }} className="destacada-body">
                         <div>
                           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, backgroundColor: BADGE_COLOR[destacada.categoria] || '#097589', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700, padding: '4px 12px', borderRadius: 50, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 16 }}>
                             <BadgeIcon tipo={destacada.categoria} />
@@ -342,7 +337,7 @@ export default function ComunicacionesPage() {
 
                 {/* ── Grid resto ── */}
                 {resto.length > 0 && (
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }} className="news-grid">
+                  <div className="news-grid">
                     {resto.map((n, i) => (
                       <motion.article key={n.id}
                         initial={{ opacity: 0, y: 16 }}
@@ -352,16 +347,13 @@ export default function ComunicacionesPage() {
                         onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px)'; (e.currentTarget as HTMLElement).style.boxShadow = '4px 8px 24px rgba(9,52,78,0.14)' }}
                         onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLElement).style.boxShadow = '2px 2px 12px rgba(9,52,78,0.07)' }}
                       >
-                        {/* Imagen */}
                         <div style={{ height: 180, background: n.imgBg, flexShrink: 0, overflow: 'hidden', position: 'relative' }}>
-                      <img src={n.img} alt={n.titulo} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                      <span style={{ position: 'absolute', top: 12, left: 12, display: 'inline-flex', alignItems: 'center', gap: 4, backgroundColor: BADGE_COLOR[n.categoria] || '#097589', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 9, fontWeight: 700, padding: '3px 9px', borderRadius: 50, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                          <img src={n.img} alt={n.titulo} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                          <span style={{ position: 'absolute', top: 12, left: 12, display: 'inline-flex', alignItems: 'center', gap: 4, backgroundColor: BADGE_COLOR[n.categoria] || '#097589', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 9, fontWeight: 700, padding: '3px 9px', borderRadius: 50, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
                             <BadgeIcon tipo={n.categoria} />
                             {n.categoria}
                           </span>
                         </div>
-
-                        {/* Contenido */}
                         <div style={{ padding: '18px 18px 20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
                           <h3 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeight: 700, color: '#09344e', lineHeight: 1.35, marginBottom: 8, flex: 1 }}>
                             {n.titulo}
@@ -407,14 +399,57 @@ export default function ComunicacionesPage() {
       <SectionRedes bg="#F7F6F3" theme="light" />
 
       <style suppressHydrationWarning>{`
+
+        /* ── Base (escritorio) ── */
+        .noticias-section   { padding: 64px 0 80px; background-color: #F0F4F7; }
+        .noticias-inner     { max-width: 1280px; margin: 0 auto; padding: 0 48px; }
+
+        .filtros-wrapper    { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; flex-wrap: wrap; justify-content: space-between; }
+        .filtros-pills      { display: flex; gap: 8px; flex-wrap: wrap; }
+        .filtros-controles  { display: flex; gap: 10px; align-items: center; }
+        .filtro-input       { width: 200px; }
+        .filtro-select      { width: 160px; }
+
+        .noticia-destacada  { display: grid; grid-template-columns: 480px 1fr; height: 380px; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 24px rgba(9,52,78,0.12); }
+        .destacada-body     { padding: 40px 36px; }
+
+        .news-grid          { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+        /* ── Tablet grande (≤ 1024px): destacada apilada ── */
         @media (max-width: 1024px) {
           .noticia-destacada { grid-template-columns: 1fr !important; height: auto !important; }
+          .noticia-destacada > div:first-child { height: 260px; }
         }
+
+        /* ── Tablet (≤ 900px): 2 cols en news-grid, padding reducido ── */
         @media (max-width: 900px) {
-          .news-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .noticias-section  { padding: 48px 0 64px; }
+          .noticias-inner    { padding: 0 32px; }
+          .news-grid         { grid-template-columns: repeat(2, 1fr) !important; }
+          .filtros-wrapper   { gap: 16px; }
         }
+
+        /* ── Móvil (≤ 640px): filtros apilados, inputs full-width ── */
+        @media (max-width: 640px) {
+          .noticias-section  { padding: 40px 0 56px; }
+          .noticias-inner    { padding: 0 16px; }
+          .filtros-wrapper   { flex-direction: column; align-items: flex-start; gap: 12px; }
+          .filtros-controles { width: 100%; flex-wrap: wrap; }
+          .filtro-input      { width: 100% !important; flex: 1; min-width: 120px; }
+          .filtro-select     { width: auto !important; flex: 1; min-width: 120px; }
+          .destacada-body    { padding: 24px 20px !important; }
+          .noticia-destacada > div:first-child { height: 200px; }
+        }
+
+        /* ── Móvil (≤ 560px): 1 col en news-grid ── */
         @media (max-width: 560px) {
           .news-grid { grid-template-columns: 1fr !important; }
+        }
+
+        /* ── Móvil pequeño (≤ 380px) ── */
+        @media (max-width: 380px) {
+          .noticias-inner { padding: 0 12px; }
+          .filtros-pills  { gap: 6px; }
         }
       `}</style>
     </div>

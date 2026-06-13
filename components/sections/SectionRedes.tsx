@@ -3,10 +3,6 @@
 /**
  * SectionRedes — versión unificada basada en home/page.tsx sección 12
  * Ruta: frontend/components/sections/SectionRedes.tsx
- *
- * PROPS:
- *  bg       → color de fondo de la sección. Default: '#ffffff'
- *  theme    → 'light' | 'dark'  adapta título y párrafo al fondo
  */
 
 import { motion } from 'framer-motion'
@@ -32,25 +28,23 @@ export default function SectionRedes({
   theme = 'light',
 }: SectionRedesProps) {
 
-  const title  = theme === 'light' ? '#09344e' : '#ffffff'
-  const body   = theme === 'light' ? '#5A6E77' : 'rgba(255,255,255,0.65)'
-  const cardBg = theme === 'light' ? '#fff'    : 'rgba(255,255,255,0.08)'
-  const cardBorder = theme === 'light' ? '#D9DEE2' : 'rgba(255,255,255,0.15)'
-  const cardText   = theme === 'light' ? '#12303E' : '#ffffff'
-  const arrow      = theme === 'light' ? '#097589' : '#74B4A7'
+  const title      = theme === 'light' ? '#09344e'                : '#ffffff'
+  const body       = theme === 'light' ? '#5A6E77'                : 'rgba(255,255,255,0.65)'
+  const cardBg     = theme === 'light' ? '#fff'                   : 'rgba(255,255,255,0.08)'
+  const cardBorder = theme === 'light' ? '#D9DEE2'                : 'rgba(255,255,255,0.15)'
+  const cardText   = theme === 'light' ? '#12303E'                : '#ffffff'
+  const arrow      = theme === 'light' ? '#097589'                : '#74B4A7'
 
   return (
-    <section style={{ backgroundColor: bg, padding: '64px 48px 80px' }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-        <div
-          style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center' }}
-          className="follow-grid"
-        >
+    <section className="redes-section" style={{ backgroundColor: bg }}>
+      <div className="redes-inner">
+        <div className="redes-grid">
+
           {/* ── Izquierda: texto + botones ── */}
           <FadeIn>
             <h2 style={{
               fontFamily: 'Gloock, Georgia, serif', fontWeight: 400,
-              fontSize: 'clamp(26px,3vw,38px)',
+              fontSize: 'clamp(22px, 3vw, 38px)',
               color: title, lineHeight: 1.2, marginBottom: 12,
             }}>
               ¡Pásate por nuestras Redes Sociales y síguenos!
@@ -62,10 +56,10 @@ export default function SectionRedes({
               Publicamos contenido acerca de la labor que hacemos, podrás conocer proyectos y a nosotros más a fondo.
             </p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 320 }}>
+            <div className="redes-buttons">
               {[
-                { label: 'Instagram', bg: '#E1306C', href: 'https://instagram.com/awaqongd',       iconSrc: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/instagram.svg' },
-                { label: 'Facebook',  bg: '#1877F2', href: 'https://facebook.com/somosawaq',        iconSrc: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/facebook.svg'  },
+                { label: 'Instagram', bg: '#E1306C', href: 'https://instagram.com/awaqongd',            iconSrc: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/instagram.svg' },
+                { label: 'Facebook',  bg: '#1877F2', href: 'https://facebook.com/somosawaq',            iconSrc: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/facebook.svg'  },
                 { label: 'LinkedIn',  bg: '#0A66C2', href: 'https://www.linkedin.com/company/awaq-ongd/', iconSrc: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/linkedin.svg'  },
               ].map(({ label, bg: redBg, href, iconSrc }) => (
                 <a
@@ -87,6 +81,7 @@ export default function SectionRedes({
                       width: 36, height: 36, borderRadius: 8,
                       backgroundColor: redBg,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      flexShrink: 0,
                     }}>
                       <img src={iconSrc} alt={label} width={18} height={18}
                         style={{ display: 'block', filter: 'brightness(0) invert(1)' }} />
@@ -104,7 +99,7 @@ export default function SectionRedes({
             </div>
           </FadeIn>
 
-          {/* ── Derecha: caja teal con follow.svg — exactamente igual que home ── */}
+          {/* ── Derecha: caja teal con follow.svg ── */}
           <FadeIn delay={0.12}>
             <div style={{
               borderRadius: 20, overflow: 'hidden',
@@ -121,8 +116,63 @@ export default function SectionRedes({
               />
             </div>
           </FadeIn>
+
         </div>
       </div>
+
+      <style suppressHydrationWarning>{`
+        /* ── Sección base ── */
+        .redes-section {
+          padding: 64px 48px 80px;
+        }
+        .redes-inner {
+          max-width: 1280px;
+          margin: 0 auto;
+        }
+
+        /* ── Grid principal ── */
+        .redes-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 64px;
+          align-items: center;
+        }
+
+        /* ── Botones de redes ── */
+        .redes-buttons {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          max-width: 320px;
+        }
+
+        /* ── Tablet: 768–1023px ── */
+        @media (min-width: 768px) and (max-width: 1023px) {
+          .redes-section {
+            padding: 52px 32px 64px;
+          }
+          .redes-grid {
+            gap: 40px;
+          }
+          .redes-buttons {
+            max-width: 100%;
+          }
+        }
+
+        /* ── Móvil: < 768px ── */
+        @media (max-width: 767px) {
+          .redes-section {
+            padding: 48px 20px 60px;
+          }
+          .redes-grid {
+            grid-template-columns: 1fr;
+            gap: 36px;
+          }
+          .redes-buttons {
+            max-width: 100%;
+          }
+        }
+      `}</style>
     </section>
   )
 }

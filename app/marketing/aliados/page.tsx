@@ -20,7 +20,6 @@ function FadeIn({ children, delay = 0, style, className }: { children: React.Rea
   )
 }
 
-// ─── Tipo unificado para socios ───────────────────────────────────────────────
 interface Socio {
   name:     string
   desc:     string
@@ -30,7 +29,6 @@ interface Socio {
   isJpg:    boolean
 }
 
-// ─── Organizadores — hardcodeados, nunca cambian ──────────────────────────────
 const ORGANIZADORES = [
   {
     logo:     'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Aliados/logo.png',
@@ -55,7 +53,6 @@ const ORGANIZADORES = [
   },
 ]
 
-// ─── Socios fallback hardcodeados ─────────────────────────────────────────────
 const SOCIOS_FALLBACK: Socio[] = [
   { logo: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Aliados/gob_valle_cauca.svg',      isJpg: false, name: 'Gobernación del Valle del Cauca',             desc: 'Máxima autoridad administrativa del departamento, promueve el desarrollo integral, la prosperidad y la preservación cultural de sus habitantes.',                              href: 'https://www.valledelcauca.gov.co/',                                    accentBg: '#097589' },
   { logo: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Aliados/sc_uni_lasalle_utopia.svg', isJpg: false, name: 'Proyecto Utopía · Universidad de La Salle',   desc: 'Referente de transformación territorial y agroecología con sentido social. Modelo educativo rural orientado a la paz y la sostenibilidad.',                                   href: 'https://lasalle.edu.co/es/campus-unisalle/campus-yopal/proyecto-utopia', accentBg: '#4886B5' },
@@ -123,7 +120,6 @@ function SocioCard({ socio, index }: { socio: Socio; index: number }) {
 export default function AliadosPage() {
   const [socios, setSocios] = useState<Socio[]>(SOCIOS_FALLBACK)
 
-  // ── Carga socios desde Salesforce, combina con fallback ──
   useEffect(() => {
     fetch('/api/salesforce/socios')
       .then(r => r.json())
@@ -156,15 +152,15 @@ export default function AliadosPage() {
         waveColor="#F0F4F7"
       />
 
-      {/* ══ ORGANIZADORES — hardcodeados, nunca cambian ══════════════════════ */}
-      <section style={{ backgroundColor: '#F0F4F7', padding: '80px 48px' }}>
+      {/* ══ ORGANIZADORES ════════════════════════════════════════════════════ */}
+      <section className="aliados-section org-section">
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <FadeIn>
             <h2 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 'clamp(24px,2.8vw,32px)', fontWeight: 700, color: '#09344e', textAlign: 'center', marginBottom: 56 }}>
               Organizadores
             </h2>
           </FadeIn>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 32, alignItems: 'stretch', padding: '0 8px 16px' }} className="org-grid">
+          <div className="org-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 32, alignItems: 'stretch', padding: '0 8px 16px' }}>
             {ORGANIZADORES.map((org, i) => <OrgCard key={org.name} org={org} delay={i * 0.1} />)}
           </div>
         </div>
@@ -176,8 +172,8 @@ export default function AliadosPage() {
         </svg>
       </div>
 
-      {/* ══ SOCIOS COLABORADORES — dinámicos desde Salesforce ════════════════ */}
-      <section style={{ backgroundColor: '#ffffff', padding: '80px 48px' }}>
+      {/* ══ SOCIOS COLABORADORES ═════════════════════════════════════════════ */}
+      <section className="aliados-section socios-section">
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <FadeIn>
             <div style={{ textAlign: 'center', marginBottom: 56 }}>
@@ -189,14 +185,14 @@ export default function AliadosPage() {
               </p>
             </div>
           </FadeIn>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 28, alignItems: 'stretch', padding: '0 8px 16px' }} className="socios-grid">
+          <div className="socios-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 28, alignItems: 'stretch', padding: '0 8px 16px' }}>
             {socios.map((socio, i) => <SocioCard key={socio.name} socio={socio} index={i} />)}
           </div>
         </div>
       </section>
 
       {/* ══ LLAMADO A ALIADOS ════════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#E6F3EE', padding: '72px 48px 80px' }}>
+      <section className="aliados-section cta-section">
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <div className="cta-aliados-grid" style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 48, alignItems: 'center' }}>
             <FadeIn>
@@ -209,7 +205,7 @@ export default function AliadosPage() {
               <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 15, color: '#5A6E77', lineHeight: 1.7, marginBottom: 32, maxWidth: 540 }}>
                 El 3ICEO busca aliados institucionales, académicos y organizaciones de cooperación comprometidas con la protección de las fuentes hídricas y los territorios vivos de Latinoamérica. Únete a la red y construye junto a nosotros.
               </p>
-              <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+              <div className="cta-buttons" style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
                 <Link href="/marketing/registro?tipo=colaboracion"
                   style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: '#097589', color: '#ffffff', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, padding: '12px 28px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.05em', boxShadow: '0 2px 16px rgba(9,117,137,0.30)', transition: 'background-color 0.2s, transform 0.15s' }}
                   onMouseEnter={e => { const el = e.currentTarget as HTMLAnchorElement; el.style.backgroundColor = '#074954'; el.style.transform = 'translateY(-1px)' }}
@@ -228,7 +224,7 @@ export default function AliadosPage() {
             </FadeIn>
 
             <FadeIn delay={0.12}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, flexShrink: 0 }} className="aliados-beneficios">
+              <div className="aliados-beneficios" style={{ display: 'flex', flexDirection: 'column', gap: 10, flexShrink: 0 }}>
                 {[
                   { label: 'Visibilidad institucional ante más de 1.000 asistentes',    icon: <svg width={16} height={16} viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#fff" strokeWidth="1.8"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/></svg> },
                   { label: 'Red de cooperación Europa–Latinoamérica',                   icon: <svg width={16} height={16} viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" strokeWidth="1.8"/><path d="M12 3C12 3 8 8 8 12s4 9 4 9M12 3c0 0 4 5 4 9s-4 9-4 9M3 12h18" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/></svg> },
@@ -253,15 +249,38 @@ export default function AliadosPage() {
       <SectionRedes bg="#ffffff" theme="light" />
 
       <style suppressHydrationWarning>{`
-        @media (max-width: 900px) {
-          .org-grid           { grid-template-columns: 1fr !important; }
-          .socios-grid        { grid-template-columns: repeat(2,1fr) !important; }
-          .cta-aliados-grid   { grid-template-columns: 1fr !important; }
-          .aliados-beneficios { display: none !important; }
-          .follow-grid        { grid-template-columns: 1fr !important; }
+
+        /* ── Secciones: padding base (escritorio) ── */
+        .aliados-section        { padding: 80px 48px; }
+        .org-section            { background-color: #F0F4F7; }
+        .socios-section         { background-color: #ffffff; }
+        .cta-section            { background-color: #E6F3EE; padding-bottom: 80px; }
+
+        /* ── Tablet grande (≤ 1024px): 2 cols en grids ── */
+        @media (max-width: 1024px) {
+          .org-grid             { grid-template-columns: repeat(2, 1fr) !important; }
+          .socios-grid          { grid-template-columns: repeat(2, 1fr) !important; }
         }
+
+        /* ── Tablet (≤ 900px): 1 col en org, ocultar beneficios en CTA ── */
+        @media (max-width: 900px) {
+          .aliados-section      { padding: 56px 32px; }
+          .org-grid             { grid-template-columns: 1fr !important; max-width: 480px; margin: 0 auto; }
+          .cta-aliados-grid     { grid-template-columns: 1fr !important; }
+          .aliados-beneficios   { display: none !important; }
+        }
+
+        /* ── Móvil (≤ 580px): 1 col en socios ── */
         @media (max-width: 580px) {
-          .socios-grid { grid-template-columns: 1fr !important; }
+          .aliados-section      { padding: 40px 16px; }
+          .socios-grid          { grid-template-columns: 1fr !important; }
+          .cta-buttons          { flex-direction: column !important; }
+          .cta-buttons a        { text-align: center; justify-content: center; }
+        }
+
+        /* ── Móvil pequeño (≤ 380px) ── */
+        @media (max-width: 380px) {
+          .aliados-section      { padding: 32px 12px; }
         }
       `}</style>
     </div>

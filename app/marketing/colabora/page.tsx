@@ -6,7 +6,6 @@ import HeroIceo from '@/components/sections/HeroIceo'
 import SectionDonacion from '@/components/sections/SectionDonacion'
 import SectionRedes from '@/components/sections/SectionRedes'
 
-// ─── FADE IN ──────────────────────────────────────────────────────────────────
 function FadeIn({
   children, delay = 0, style,
 }: { children: React.ReactNode; delay?: number; style?: React.CSSProperties }) {
@@ -23,7 +22,6 @@ function FadeIn({
   )
 }
 
-// ─── CHECK ────────────────────────────────────────────────────────────────────
 function Check({ color }: { color: string }) {
   return (
     <svg width={18} height={18} viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginTop: 1 }}>
@@ -33,7 +31,6 @@ function Check({ color }: { color: string }) {
   )
 }
 
-// ─── ICONOS POR TARJETA ───────────────────────────────────────────────────────
 function CardIcon({ kind }: { kind: 'voluntariado' | 'aliados' | 'prensa' }) {
   const common = { width: 30, height: 30, viewBox: '0 0 24 24', fill: 'none', stroke: 'white', strokeWidth: 1.8, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }
   if (kind === 'voluntariado') {
@@ -60,7 +57,6 @@ function CardIcon({ kind }: { kind: 'voluntariado' | 'aliados' | 'prensa' }) {
   )
 }
 
-// ─── ICONOS "POR QUÉ SUMARTE" ─────────────────────────────────────────────────
 function WhyIcon({ kind }: { kind: 'impacto' | 'red' | 'visibilidad' }) {
   const c = { width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: '#097589', strokeWidth: 1.8, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }
   if (kind === 'impacto') return <svg {...c}><path d="M12 21s-7-4.35-9.5-8.5C.5 9 2 5 5.5 5 7.5 5 9 6 12 9c3-3 4.5-4 6.5-4C22 5 23.5 9 21.5 12.5 19 16.65 12 21 12 21z" /></svg>
@@ -68,7 +64,6 @@ function WhyIcon({ kind }: { kind: 'impacto' | 'red' | 'visibilidad' }) {
   return <svg {...c}><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" /><circle cx="12" cy="12" r="3" /></svg>
 }
 
-// ─── TARJETAS ─────────────────────────────────────────────────────────────────
 const CARDS = [
   {
     kind: 'voluntariado' as const,
@@ -88,7 +83,6 @@ const CARDS = [
     title: 'Aliados Estratégicos',
     desc: 'Suma capacidades, recursos, patrocinio o apoyo institucional para hacer posible el 3er ICEO LATAM.',
     perks: ['Visibilidad institucional', 'Networking con inversores', 'Espacio en el Marketplace'],
-    // ← Autoselecciona "ser aliado" (colaboración) en el formulario de registro
     cta: { label: 'Quiero ser aliado', href: '/marketing/registro?tipo=colaboracion' },
   },
   {
@@ -109,14 +103,10 @@ const WHY = [
   { kind: 'visibilidad' as const, title: 'Visibilidad', text: 'Posiciona tu organización ante la mayor comunidad ambiental de Latinoamérica.' },
 ]
 
-// ─── PAGE ─────────────────────────────────────────────────────────────────────
 export default function ColaboraPage() {
   return (
     <div style={{ backgroundColor: '#fff', minHeight: '100vh' }}>
 
-      {/* ════════════════════════════════════════════════════════════════════
-          HERO
-      ════════════════════════════════════════════════════════════════════ */}
       <HeroIceo
         badge="Colabora con el 3er ICEO LATAM"
         title={
@@ -137,15 +127,13 @@ export default function ColaboraPage() {
         waveColor="#ffffff"
       />
 
-      {/* ════════════════════════════════════════════════════════════════════
-          ¿CÓMO QUIERES COLABORAR? — tarjetas rediseñadas
-      ════════════════════════════════════════════════════════════════════ */}
-      <section id="como-colaborar" style={{ position: 'relative', backgroundColor: '#fff', padding: '88px 0 96px', overflow: 'hidden' }}>
+      {/* ════ ¿CÓMO QUIERES COLABORAR? ════ */}
+      <section id="como-colaborar" className="colabora-section" style={{ position: 'relative', backgroundColor: '#fff', overflow: 'hidden' }}>
         {/* decoración suave de fondo */}
         <div style={{ position: 'absolute', top: -120, right: -120, width: 460, height: 460, borderRadius: '50%', background: 'radial-gradient(circle, rgba(9,117,137,0.06) 0%, transparent 70%)', pointerEvents: 'none' }} />
         <div style={{ position: 'absolute', bottom: -140, left: -120, width: 460, height: 460, borderRadius: '50%', background: 'radial-gradient(circle, rgba(181,48,119,0.05) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-        <div style={{ position: 'relative', maxWidth: 1280, margin: '0 auto', padding: '0 48px' }}>
+        <div style={{ position: 'relative', maxWidth: 1280, margin: '0 auto' }} className="colabora-inner">
           <FadeIn>
             <div style={{ textAlign: 'center', marginBottom: 56 }}>
               <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 700, color: '#097589', letterSpacing: '0.14em', textTransform: 'uppercase', display: 'block', marginBottom: 14 }}>
@@ -160,8 +148,7 @@ export default function ColaboraPage() {
             </div>
           </FadeIn>
 
-          {/* Cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 28 }} className="colabora-cards-grid">
+          <div className="colabora-cards-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 28 }}>
             {CARDS.map((card, i) => (
               <FadeIn key={card.title} delay={i * 0.1} style={{ height: '100%' }}>
                 <article
@@ -174,9 +161,7 @@ export default function ColaboraPage() {
                   onMouseEnter={e => { const el = e.currentTarget; el.style.boxShadow = '6px 14px 40px rgba(9,52,78,0.16)'; el.style.transform = 'translateY(-5px)' }}
                   onMouseLeave={e => { const el = e.currentTarget; el.style.boxShadow = '2px 4px 24px rgba(9,52,78,0.07)'; el.style.transform = 'translateY(0)' }}
                 >
-                  {/* Cabecera de color */}
                   <div style={{ position: 'relative', background: card.gradient, padding: '26px 26px 22px', overflow: 'hidden' }}>
-                    {/* brillo */}
                     <div style={{ position: 'absolute', top: -40, right: -30, width: 160, height: 160, background: 'radial-gradient(circle, rgba(255,255,255,0.18) 0%, transparent 65%)', pointerEvents: 'none' }} />
                     <div style={{
                       width: 58, height: 58, borderRadius: 16,
@@ -197,7 +182,6 @@ export default function ColaboraPage() {
                     </span>
                   </div>
 
-                  {/* Cuerpo */}
                   <div style={{ padding: '24px 26px 28px', display: 'flex', flexDirection: 'column', flex: 1 }}>
                     <h3 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 19, fontWeight: 700, color: '#09344e', marginBottom: 10, lineHeight: 1.25 }}>
                       {card.title}
@@ -205,7 +189,6 @@ export default function ColaboraPage() {
                     <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#5A6E77', lineHeight: 1.7, marginBottom: 22 }}>
                       {card.desc}
                     </p>
-
                     <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 26px', display: 'flex', flexDirection: 'column', gap: 10 }}>
                       {card.perks.map(p => (
                         <li key={p} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
@@ -214,8 +197,6 @@ export default function ColaboraPage() {
                         </li>
                       ))}
                     </ul>
-
-                    {/* CTA */}
                     <Link
                       href={card.cta.href}
                       style={{
@@ -239,11 +220,9 @@ export default function ColaboraPage() {
         </div>
       </section>
 
-      {/* ════════════════════════════════════════════════════════════════════
-          ¿POR QUÉ SUMARTE?
-      ════════════════════════════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: '#E6F3EE', padding: '80px 0' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 48px' }}>
+      {/* ════ ¿POR QUÉ SUMARTE? ════ */}
+      <section className="why-section">
+        <div style={{ maxWidth: 1280, margin: '0 auto' }} className="colabora-inner">
           <FadeIn>
             <div style={{ textAlign: 'center', marginBottom: 52 }}>
               <h2 style={{ fontFamily: 'Gloock, Georgia, serif', fontWeight: 400, fontSize: 'clamp(24px, 2.8vw, 38px)', color: '#09344e', lineHeight: 1.15 }}>
@@ -252,7 +231,7 @@ export default function ColaboraPage() {
             </div>
           </FadeIn>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 28 }} className="why-grid">
+          <div className="why-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 28 }}>
             {WHY.map((w, i) => (
               <FadeIn key={w.title} delay={i * 0.1}>
                 <div style={{
@@ -276,20 +255,43 @@ export default function ColaboraPage() {
         </div>
       </section>
 
-      {/* ════════════════════════════════════════════════════════════════════
-          DONACIÓN + REDES
-      ════════════════════════════════════════════════════════════════════ */}
       <SectionDonacion bg="#09344e" theme="dark" showWave={false} showTopWave topWaveFrom="#E6F3EE" />
       <SectionRedes bg="#ffffff" theme="light" />
 
-      {/* ─── RESPONSIVE ── */}
+      {/* ─── RESPONSIVE ─────────────────────────────────────────────────────── */}
       <style suppressHydrationWarning>{`
-        @media (max-width: 980px) {
-          .colabora-cards-grid { grid-template-columns: 1fr 1fr !important; }
-          .why-grid { grid-template-columns: 1fr !important; }
+
+        /* ── Base (escritorio) ── */
+        .colabora-section  { padding: 88px 0 96px; }
+        .why-section       { background-color: #E6F3EE; padding: 80px 0; }
+        .colabora-inner    { padding: 0 48px; }
+
+        /* ── Tablet grande (≤ 1024px): 2 cols en cards ── */
+        @media (max-width: 1024px) {
+          .colabora-cards-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .why-grid            { grid-template-columns: repeat(2, 1fr) !important; }
         }
+
+        /* ── Tablet (≤ 980px): padding reducido ── */
+        @media (max-width: 980px) {
+          .colabora-section  { padding: 60px 0 72px; }
+          .why-section       { padding: 56px 0; }
+          .colabora-inner    { padding: 0 32px; }
+          .why-grid          { grid-template-columns: 1fr !important; }
+        }
+
+        /* ── Móvil (≤ 680px): 1 col en cards ── */
         @media (max-width: 680px) {
+          .colabora-section  { padding: 48px 0 60px; }
+          .why-section       { padding: 44px 0; }
+          .colabora-inner    { padding: 0 16px; }
           .colabora-cards-grid { grid-template-columns: 1fr !important; }
+          .why-grid            { grid-template-columns: 1fr !important; }
+        }
+
+        /* ── Móvil pequeño (≤ 380px) ── */
+        @media (max-width: 380px) {
+          .colabora-inner { padding: 0 12px; }
         }
       `}</style>
     </div>

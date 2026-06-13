@@ -4,9 +4,6 @@ import { useState } from 'react'
 import Link from 'next/link'
 
 // ─── WAVES ────────────────────────────────────────────────────────────────────
-// topColor = color que se ve DETRÁS de las olas (en los huecos transparentes).
-// Debe coincidir con el color de la sección que va justo encima del footer
-// (p. ej. el bg del SectionRedes) para que conecten sin espacio blanco.
 function FooterWaves({ topColor }: { topColor: string }) {
   return (
     <div style={{ lineHeight: 0, display: 'block', marginBottom: -4, overflow: 'hidden', backgroundColor: topColor }}>
@@ -53,17 +50,13 @@ const inputDarkStyle: React.CSSProperties = {
 }
 
 // ─── FOOTER COMPONENT ─────────────────────────────────────────────────────────
-// topColor → color de la sección que va justo encima (default blanco).
-//            Pásale el mismo bg que tu SectionRedes para que conecten.
 export default function Footer({ topColor = '#ffffff' }: { topColor?: string }) {
   const [email,   setEmail]   = useState('')
   const [mensaje, setMensaje] = useState('')
   const [sent,    setSent]    = useState(false)
   const [sending, setSending] = useState(false)
-  // ── errores por campo ──────────────────────────────────────────────
-  const [errors, setErrors]   = useState<{ email?: string; mensaje?: string }>({})
+  const [errors,  setErrors]  = useState<{ email?: string; mensaje?: string }>({})
 
-  // ── validación real + fetch a /api/contact ─────────────────────────
   const handleSend = async () => {
     const e: { email?: string; mensaje?: string } = {}
     if (!email.trim()) {
@@ -103,27 +96,18 @@ export default function Footer({ topColor = '#ffffff' }: { topColor?: string }) 
     <footer>
       <FooterWaves topColor={topColor} />
 
-      {/* ── Cuerpo del footer — sin separación con las waves ── */}
+      {/* ── Cuerpo del footer ── */}
       <div style={{ backgroundColor: '#09354E', marginTop: 0 }}>
 
         {/* ── Contenido principal ── */}
-        <div
-          className="container-brand footer-grid"
-          style={{
-            padding: '56px 48px 0',
-            display: 'grid',
-            gridTemplateColumns: '200px 1fr 260px',
-            gap: 64,
-            alignItems: 'start',
-          }}
-        >
+        <div className="container-brand footer-grid">
 
           {/* Col 1 — Logo */}
-          <div>
+          <div className="footer-col-logo">
             <img
               src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/logo-awaq-white.svg"
               alt="AWAQ"
-              style={{ width: 156, height: 'auto', display: 'block' }}
+              className="footer-logo"
               onError={e => {
                 const el = e.currentTarget as HTMLImageElement
                 el.style.display = 'none'
@@ -136,7 +120,7 @@ export default function Footer({ topColor = '#ffffff' }: { topColor?: string }) 
           </div>
 
           {/* Col 2 — ¡Escríbenos! */}
-          <div>
+          <div className="footer-col-form">
             <p style={{
               fontFamily: 'Poppins, sans-serif',
               fontSize: 24,
@@ -222,8 +206,8 @@ export default function Footer({ topColor = '#ffffff' }: { topColor?: string }) 
             )}
           </div>
 
-          {/* Col 3 — Contacto / Streaming / Redes — INTACTO */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 36 }}>
+          {/* Col 3 — Contacto / Streaming */}
+          <div className="footer-col-contact" style={{ display: 'flex', flexDirection: 'column', gap: 36 }}>
             <div>
               <p style={colTitleStyle}>Contacto</p>
               <a href="mailto:info@somosawaq.org" style={colLinkStyle}
@@ -257,41 +241,112 @@ export default function Footer({ topColor = '#ffffff' }: { topColor?: string }) 
 
         {/* ── Bottom bar ── */}
         <div style={{ borderTop: '1px solid rgba(255,255,255,0.12)', marginTop: 56 }}>
-          <div className="container-brand" style={{ padding: '20px 48px 36px' }}>
-            <div style={{
-              display: 'flex', flexWrap: 'wrap',
-              justifyContent: 'space-between', alignItems: 'center', gap: 16,
-            }}>
-              <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14, color: 'rgba(255,255,255,0.35)' }}>
-                © {new Date().getFullYear()} Awaq ONG
-              </span>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'center' }}>
-                {[
-                  { label: 'Políticas de privacidad', href: '/marketing/privacidad'          },
-                  { label: 'Políticas de Cookies',    href: '/marketing/cookies'             },
-                  { label: 'Aviso Legal',             href: '/marketing/aviso-legal'         },
-                  { label: 'Acuerdo de convivencia',  href: '/marketing/acuerdo-convivencia' },
-                ].map(({ label, href }) => (
-                  <Link key={label} href={href}
-                    style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14, color: 'rgba(255,255,255,0.35)', textDecoration: 'none', transition: 'color .2s' }}
-                    onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.7)')}
-                    onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.35)')}
-                  >
-                    {label}
-                  </Link>
-                ))}
-              </div>
+          <div className="container-brand footer-bottom">
+            <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14, color: 'rgba(255,255,255,0.35)' }}>
+              © {new Date().getFullYear()} Awaq ONG
+            </span>
+            <div className="footer-bottom-links">
+              {[
+                { label: 'Políticas de privacidad', href: '/marketing/privacidad'          },
+                { label: 'Políticas de Cookies',    href: '/marketing/cookies'             },
+                { label: 'Aviso Legal',             href: '/marketing/aviso-legal'         },
+                { label: 'Acuerdo de convivencia',  href: '/marketing/acuerdo-convivencia' },
+              ].map(({ label, href }) => (
+                <Link key={label} href={href}
+                  style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14, color: 'rgba(255,255,255,0.35)', textDecoration: 'none', transition: 'color .2s' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.7)')}
+                  onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.35)')}
+                >
+                  {label}
+                </Link>
+              ))}
             </div>
           </div>
         </div>
       </div>
 
       <style suppressHydrationWarning>{`
-        @media (max-width: 767px) {
-          .footer-grid { grid-template-columns: 1fr !important; gap: 40px !important; padding: 40px 24px 0 !important; }
+        /* ── Grid principal ── */
+        .footer-grid {
+          padding: 56px 48px 0;
+          display: grid;
+          grid-template-columns: 200px 1fr 260px;
+          gap: 64px;
+          align-items: start;
         }
+
+        /* ── Logo ── */
+        .footer-logo {
+          width: 156px;
+          height: auto;
+          display: block;
+        }
+
+        /* ── Bottom bar ── */
+        .footer-bottom {
+          padding: 20px 48px 36px;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-between;
+          align-items: center;
+          gap: 16px;
+        }
+        .footer-bottom-links {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 24px;
+          align-items: center;
+        }
+
+        /* ── Tablet: 768–1023px ── */
         @media (min-width: 768px) and (max-width: 1023px) {
-          .footer-grid { grid-template-columns: 160px 1fr !important; gap: 40px !important; }
+          .footer-grid {
+            grid-template-columns: 160px 1fr;
+            gap: 40px;
+            padding: 48px 32px 0;
+          }
+          /* La col de contacto ocupa ambas columnas abajo */
+          .footer-col-contact {
+            grid-column: 1 / -1;
+            flex-direction: row !important;
+            gap: 48px;
+          }
+          .footer-logo {
+            width: 130px;
+          }
+          .footer-bottom {
+            padding: 20px 32px 32px;
+          }
+        }
+
+        /* ── Móvil: < 768px ── */
+        @media (max-width: 767px) {
+          .footer-grid {
+            grid-template-columns: 1fr;
+            gap: 36px;
+            padding: 36px 20px 0;
+          }
+          .footer-col-logo {
+            display: flex;
+            justify-content: center;
+          }
+          .footer-logo {
+            width: 120px;
+          }
+          .footer-col-contact {
+            flex-direction: row !important;
+            flex-wrap: wrap;
+            gap: 32px;
+          }
+          .footer-bottom {
+            padding: 20px 20px 32px;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+          }
+          .footer-bottom-links {
+            gap: 16px;
+          }
         }
       `}</style>
     </footer>

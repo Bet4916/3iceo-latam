@@ -3,17 +3,6 @@
 /**
  * SectionDonacion — versión unificada
  * Ruta: frontend/components/sections/SectionDonacion.tsx
- *
- * PROPS:
- *  bg           → color de fondo. Default: '#09344e'
- *  theme        → 'dark' | 'light'
- *  waveColor    → color final de la ola inferior. Default: '#ffffff'
- *  showWave     → muestra la ola inferior (triple wave). Default: true
- *  showTopWave  → muestra la ola de entrada superior. Default: false
- *  topWaveFrom  → color de fondo de la sección anterior (para la ola superior). Default: '#ffffff'
- *  ctaHref      → destino del botón principal. Default: '/marketing/donaciones#form-donacion'
- *                 (lleva al formulario en CUALQUIER página, sin props extra)
- *  onCtaClick   → handler opcional (solo si quieres scroll suave dentro de la misma página)
  */
 
 import { motion } from 'framer-motion'
@@ -73,12 +62,10 @@ export default function SectionDonacion({
         </div>
       )}
 
-      <section style={{ backgroundColor: bg, padding: '80px 48px' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <div
-            style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center' }}
-            className="donacion-grid"
-          >
+      <section className="donacion-section" style={{ backgroundColor: bg }}>
+        <div className="donacion-inner">
+          <div className="donacion-grid">
+
             {/* ── Texto ── */}
             <FadeIn>
               <p style={{
@@ -90,7 +77,7 @@ export default function SectionDonacion({
               </p>
               <h2 style={{
                 fontFamily: 'Gloock, Georgia, serif', fontWeight: 400,
-                fontSize: 'clamp(28px,3.5vw,48px)',
+                fontSize: 'clamp(24px, 3.5vw, 48px)',
                 color: titleCol, lineHeight: 1.1, marginBottom: 20,
               }}>
                 ¡Gracias a ti, construimos el futuro ambiental de LATAM!
@@ -104,7 +91,7 @@ export default function SectionDonacion({
                 asistir al 3ICEO. El importe irá íntegramente destinado a cubrir
                 alojamiento, transporte y dietas.
               </p>
-              <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+              <div className="donacion-ctas">
                 <Link
                   href={ctaHref}
                   onClick={onCtaClick}
@@ -117,7 +104,6 @@ export default function SectionDonacion({
                     boxShadow: '0 4px 24px rgba(181,48,119,0.45)',
                   }}
                 >
-                  {/* ── Ícono de PayPal (mismo que el HeroIceo) ── */}
                   <img
                     src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/paypal.svg"
                     alt=""
@@ -158,6 +144,7 @@ export default function SectionDonacion({
                 />
               </div>
             </FadeIn>
+
           </div>
         </div>
       </section>
@@ -182,6 +169,60 @@ export default function SectionDonacion({
           </svg>
         </div>
       )}
+
+      <style suppressHydrationWarning>{`
+        /* ── Sección base ── */
+        .donacion-section {
+          padding: 80px 48px;
+        }
+        .donacion-inner {
+          max-width: 1280px;
+          margin: 0 auto;
+        }
+
+        /* ── Grid principal ── */
+        .donacion-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 64px;
+          align-items: center;
+        }
+
+        /* ── CTAs ── */
+        .donacion-ctas {
+          display: flex;
+          gap: 14px;
+          flex-wrap: wrap;
+        }
+
+        /* ── Tablet: 768–1023px ── */
+        @media (min-width: 768px) and (max-width: 1023px) {
+          .donacion-section {
+            padding: 64px 32px;
+          }
+          .donacion-grid {
+            gap: 40px;
+          }
+        }
+
+        /* ── Móvil: < 768px ── */
+        @media (max-width: 767px) {
+          .donacion-section {
+            padding: 52px 20px;
+          }
+          .donacion-grid {
+            grid-template-columns: 1fr;
+            gap: 36px;
+          }
+          .donacion-ctas {
+            flex-direction: column;
+            align-items: stretch;
+          }
+          .donacion-ctas a {
+            justify-content: center;
+          }
+        }
+      `}</style>
     </>
   )
 }

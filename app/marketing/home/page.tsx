@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, memo } from 'react'
 import dynamic from 'next/dynamic'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
@@ -249,8 +249,188 @@ const ENTREVISTAS = [
 
 // instrucciones del mundo (igual que marketplace)
 const INSTRUCCIONES_MUNDO = [
-  { key: 'Click',    label: 'Interactuar',     desc: '¡Conoce a los asistentes, no te lo pierdas!' },
+  { key: 'Click', label: 'Interactuar', desc: '¡Conoce a los asistentes, no te lo pierdas!' },
 ]
+
+// ─── HERO (memoizado: FUERA de HomePage para que memo funcione) ───────────────
+//
+// ESTRATEGIA ANTI-GOOGLE-TRANSLATE:
+//
+// El problema: Google Translate modifica el DOM insertando <font> tags dentro
+// de los nodos de texto. Cuando esto ocurre dentro de elementos con Framer
+// Motion o con `display:flex/grid` y dimensiones exactas, el layout se rompe
+// porque los nuevos nodos cambian las dimensiones calculadas.
+//
+// La solución aplicada aquí:
+//   1. El contenedor raíz del Hero tiene translate="no" + className="notranslate"
+//      para que Google Translate NO toque nada dentro del Hero.
+//   2. El texto que SÍ debe traducirse (h1, párrafo descriptivo, chips de fecha/lugar)
+//      se saca a un div hermano con position:absolute, inset:0, zIndex:4,
+//      que tiene translate="yes" explícito. Este div es puro HTML sin motion,
+//      por lo que Google Translate puede mutar su DOM sin romper nada.
+//   3. El div con translate="no" conserva sólo fondos, overlays y el wave SVG
+//      del fondo — elementos visuales sin texto.
+//   4. Los botones CTA también van en el overlay traducible (pero su texto
+//      "QUIERO ASISTIR" y "Ver programa" puede traducirse sin problema de layout).
+//   5. El badge de ubicación es texto ESTÁTICO que no necesita traducción
+//      (nombre propio de universidad y ciudad), así que va incrustado con
+//      translate="no" directamente en el overlay.
+//
+const HeroSection = memo(function HeroSection() {
+  return (
+    <section
+      // El section completo bloquea la traducción del DOM estructural
+      translate="no"
+      className="notranslate"
+      style={{
+        position: 'relative',
+        height: '100vh',
+        maxHeight: 720,
+        minHeight: 560,
+        overflow: 'hidden',
+      }}
+    >
+      {/* ── Capas de fondo: gradiente + foto + overlay ── */}
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg,#09344e 0%,#1C495C 55%,#437287 100%)' }} />
+      <div style={{
+        position: 'absolute', inset: 0,
+        backgroundImage: 'url(https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Home/ubicacion_home.jpg)',
+        backgroundSize: 'cover', backgroundPosition: 'center 45%', opacity: 0.55,
+      }} />
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(95deg, rgba(9,52,78,0.92) 0%, rgba(9,52,78,0.80) 38%, rgba(9,52,78,0.30) 62%, rgba(9,52,78,0.05) 100%)',
+      }} />
+
+      {/* ── Círculos decorativos ── */}
+      <div style={{ position: 'absolute', top: 40, right: '8%',  width: 380, height: 380, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.05)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', top: -10, right: '4%', width: 540, height: 540, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.03)', pointerEvents: 'none' }} />
+
+      {/* ── OVERLAY TRADUCIBLE ──────────────────────────────────────────────
+          Este div está en position:absolute sobre los fondos y el wave.
+          Tiene translate="yes" para que Google Translate SÍ lo procese.
+          Al ser HTML plano (sin Framer Motion en los nodos de texto),
+          las mutaciones del DOM de GT no rompen ningún layout calculado.
+      ── */}
+      <div
+        translate="yes"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          zIndex: 2,
+          display: 'flex',
+          alignItems: 'center',
+          pointerEvents: 'none', // el div en sí no captura eventos
+        }}
+      >
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 48px', width: '100%' }}>
+          <div style={{ maxWidth: 660 }}>
+
+            {/* BADGE — texto estático (nombre propio), no necesita traducción */}
+            <div
+              translate="no"
+              className="notranslate"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                backgroundColor: 'rgba(255,255,255,0.10)',
+                border: '1px solid rgba(192,255,242,0.30)',
+                borderRadius: 999, padding: '5px 16px', marginBottom: 20,
+                pointerEvents: 'auto',
+              }}
+            >
+              <img
+                src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon-location.svg"
+                alt="" width={12} height={12}
+                style={{ filter: 'brightness(0) invert(1)', opacity: 0.8 }}
+              />
+              <span style={{
+                fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 600,
+                color: '#C0FFF2', letterSpacing: '0.12em', textTransform: 'uppercase',
+              }}>
+                Universidad San Buenaventura · Cali, Colombia
+              </span>
+            </div>
+
+            {/* H1 — traducible, sin motion wrapper en el nodo de texto */}
+            <h1 style={{
+              fontFamily: 'Gloock, Georgia, serif',
+              fontSize: 'clamp(36px, 5.2vw, 70px)',
+              fontWeight: 400, color: '#ffffff',
+              lineHeight: 1.04, marginBottom: 18, letterSpacing: '-0.01em',
+              pointerEvents: 'auto',
+            }}>
+              3er Congreso<br />
+              <span style={{ color: '#AEE5DA' }}>Internacional</span> de<br />
+              Organizaciones Ambientales
+            </h1>
+
+            {/* Párrafo descriptivo — traducible */}
+            <p style={{
+              fontFamily: 'Inter, sans-serif', fontSize: 15,
+              color: 'rgba(255,255,255,0.80)', lineHeight: 1.65,
+              maxWidth: 480, marginBottom: 28,
+              pointerEvents: 'auto',
+            }}>
+              El mayor encuentro anual del ecosistema ambiental latinoamericano.
+              Aprendizaje, conexión y colaboración entre organizaciones, universidades y comunidades.
+            </p>
+
+            {/* Chips de meta — texto estático (fechas, lugar, formato) */}
+            <div translate="no" className="notranslate" style={{ display: 'flex', gap: 8, marginBottom: 32, flexWrap: 'wrap', pointerEvents: 'auto' }}>
+              {[
+                { icon: <IconCalendar size={13} color="rgba(255,255,255,0.85)" />, label: '17–19 Febrero 2027' },
+                { icon: <img src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon-location.svg" alt="" width={12} height={12} style={{ filter: 'brightness(0) invert(1)', opacity: 0.85 }} />, label: 'Cali · Colombia' },
+                { icon: <img src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon-streaming.svg" alt="" width={13} height={13} style={{ filter: 'brightness(0) invert(1)', opacity: 0.85 }} />, label: 'Presencial + Virtual' },
+              ].map(c => (
+                <div key={c.label} style={{
+                  display: 'flex', alignItems: 'center', gap: 7,
+                  backgroundColor: 'rgba(255,255,255,0.10)',
+                  border: '1px solid rgba(255,255,255,0.18)',
+                  borderRadius: 999, padding: '6px 14px',
+                  fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 500,
+                  color: 'rgba(255,255,255,0.90)',
+                }}>
+                  {c.icon}{c.label}
+                </div>
+              ))}
+            </div>
+
+            {/* CTAs */}
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', pointerEvents: 'auto' }}>
+              <Link href="/marketing/registro" style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                backgroundColor: '#B53077', color: '#fff',
+                fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700,
+                padding: '13px 30px', borderRadius: 999, textDecoration: 'none',
+                letterSpacing: '0.05em', boxShadow: '0 4px 24px rgba(181,48,119,0.45)',
+              }}>
+                QUIERO ASISTIR →
+              </Link>
+              <Link href="/marketing/agenda" style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                backgroundColor: 'transparent',
+                border: '2px solid rgba(255,255,255,0.45)', color: '#fff',
+                fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600,
+                padding: '12px 28px', borderRadius: 999, textDecoration: 'none',
+                letterSpacing: '0.04em',
+              }}>
+                Ver programa
+              </Link>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      {/* ── Wave inferior — dentro del bloque notranslate, sin texto ── */}
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, lineHeight: 0, zIndex: 3 }}>
+        <svg viewBox="0 0 1440 64" preserveAspectRatio="none" style={{ width: '100%', height: 64, display: 'block' }}>
+          <path d="M0,40 C360,64 720,10 1080,48 C1260,62 1380,28 1440,40 L1440,64 L0,64 Z" fill="#ffffff" />
+        </svg>
+      </div>
+    </section>
+  )
+})
 
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
 export default function HomePage() {
@@ -284,98 +464,8 @@ export default function HomePage() {
   return (
     <div style={{ backgroundColor: '#fff', minHeight: '100vh' }}>
 
-      {/* ══════════════════════════════════════════════════════════════════════
-          1. HERO
-      ══════════════════════════════════════════════════════════════════════ */}
-      <section style={{
-        position: 'relative',
-        height: '100vh',
-        maxHeight: 720,
-        minHeight: 560,
-        overflow: 'hidden',
-        display: 'flex',
-        alignItems: 'center',
-      }}>
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg,#09344e 0%,#1C495C 55%,#437287 100%)' }} />
-        <div style={{
-          position: 'absolute', inset: 0,
-          backgroundImage: 'url(https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Home/ubicacion_home.jpg)',
-          backgroundSize: 'cover', backgroundPosition: 'center 45%', opacity: 0.55,
-        }} />
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(95deg, rgba(9,52,78,0.92) 0%, rgba(9,52,78,0.80) 38%, rgba(9,52,78,0.30) 62%, rgba(9,52,78,0.05) 100%)',
-        }} />
-        <div style={{ position: 'absolute', top: 40, right: '8%',  width: 380, height: 380, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.05)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', top: -10, right: '4%', width: 540, height: 540, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.03)', pointerEvents: 'none' }} />
-
-        <div style={{ position: 'relative', zIndex: 2, maxWidth: 1280, margin: '0 auto', padding: '0 48px', width: '100%' }}>
-          <div style={{ maxWidth: 660 }}>
-            <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: 'rgba(255,255,255,0.10)', border: '1px solid rgba(192,255,242,0.30)', borderRadius: 999, padding: '5px 16px', marginBottom: 20 }}>
-                <img src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon-location.svg" alt="" width={12} height={12} style={{ filter: 'brightness(0) invert(1)', opacity: 0.8 }} />
-                <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 600, color: '#C0FFF2', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
-                  Universidad San Buenaventura · Cali, Colombia
-                </span>
-              </div>
-            </motion.div>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              style={{ fontFamily: 'Gloock, Georgia, serif', fontSize: 'clamp(36px, 5.2vw, 70px)', fontWeight: 400, color: '#ffffff', lineHeight: 1.04, marginBottom: 18, letterSpacing: '-0.01em' }}
-            >
-              3er Congreso<br />
-              <span style={{ color: '#AEE5DA' }}>Internacional</span> de<br />
-              Organizaciones Ambientales
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.32 }}
-              style={{ fontFamily: 'Inter, sans-serif', fontSize: 15, color: 'rgba(255,255,255,0.80)', lineHeight: 1.65, maxWidth: 480, marginBottom: 28 }}
-            >
-              El mayor encuentro anual del ecosistema ambiental latinoamericano.
-              Aprendizaje, conexión y colaboración entre organizaciones, universidades y comunidades.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.40 }}
-              style={{ display: 'flex', gap: 8, marginBottom: 32, flexWrap: 'wrap' }}
-            >
-              {[
-                { icon: <IconCalendar size={13} color="rgba(255,255,255,0.85)" />, label: '17–19 Febrero 2027' },
-                { icon: <img src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon-location.svg" alt="" width={12} height={12} style={{ filter: 'brightness(0) invert(1)', opacity: 0.85 }} />, label: 'Cali · Colombia' },
-                { icon: <img src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon-streaming.svg" alt="" width={13} height={13} style={{ filter: 'brightness(0) invert(1)', opacity: 0.85 }} />, label: 'Presencial + Virtual' },
-              ].map(c => (
-                <div key={c.label} style={{ display: 'flex', alignItems: 'center', gap: 7, backgroundColor: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.18)', borderRadius: 999, padding: '6px 14px', fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 500, color: 'rgba(255,255,255,0.90)' }}>
-                  {c.icon}{c.label}
-                </div>
-              ))}
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, delay: 0.48 }}
-              style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}
-            >
-              <Link href="/marketing/registro" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: '#B53077', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, padding: '13px 30px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.05em', boxShadow: '0 4px 24px rgba(181,48,119,0.45)' }}>
-                QUIERO ASISTIR →
-              </Link>
-              <Link href="/marketing/agenda" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: 'transparent', border: '2px solid rgba(255,255,255,0.45)', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600, padding: '12px 28px', borderRadius: 999, textDecoration: 'none', letterSpacing: '0.04em' }}>
-                Ver programa
-              </Link>
-            </motion.div>
-          </div>
-        </div>
-
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, lineHeight: 0, zIndex: 3 }}>
-          <svg viewBox="0 0 1440 64" preserveAspectRatio="none" style={{ width: '100%', height: 64, display: 'block' }}>
-            <path d="M0,40 C360,64 720,10 1080,48 C1260,62 1380,28 1440,40 L1440,64 L0,64 Z" fill="#ffffff" />
-          </svg>
-        </div>
-      </section>
+      {/* 1. HERO */}
+      <HeroSection />
 
       {/* ══════════════════════════════════════════════════════════════════════
           2. AGENDA OFICIAL
@@ -551,13 +641,10 @@ export default function HomePage() {
       </div>
 
       {/* ══════════════════════════════════════════════════════════════════════
-          6. ⭐ ECOWORLD MUNDO — NUEVA SECCIÓN
-          Invita a explorar el mundo virtual con todos los asistentes
+          6. ⭐ ECOWORLD MUNDO
       ══════════════════════════════════════════════════════════════════════ */}
       <section id="ecoworld-mundo" style={{ backgroundColor: '#09344e', padding: '80px 48px 88px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-
-          {/* Cabecera centrada */}
           <FadeIn>
             <div style={{ textAlign: 'center', marginBottom: 52 }}>
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: 'rgba(255,255,255,0.10)', border: '1px solid rgba(174,229,218,0.25)', borderRadius: 999, padding: '5px 16px', marginBottom: 20 }}>
@@ -576,7 +663,6 @@ export default function HomePage() {
             </div>
           </FadeIn>
 
-          {/* Tres puntos destacados antes del juego */}
           <FadeIn delay={0.08}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 44 }} className="mundo-features-grid">
               {[
@@ -624,7 +710,6 @@ export default function HomePage() {
             </div>
           </FadeIn>
 
-          {/* Instrucciones de teclado */}
           <FadeIn delay={0.14}>
             <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 36 }}>
               {INSTRUCCIONES_MUNDO.map(({ key, label, desc }) => (
@@ -639,14 +724,12 @@ export default function HomePage() {
             </div>
           </FadeIn>
 
-          {/* Embed del juego */}
           <FadeIn delay={0.20}>
             <div style={{ borderRadius: 20, overflow: 'hidden', border: '1.5px solid rgba(174,229,218,0.18)', boxShadow: '0 8px 48px rgba(0,0,0,0.4)' }}>
               <EcoWorldMundo />
             </div>
           </FadeIn>
 
-          {/* CTA secundario debajo del juego */}
           <FadeIn delay={0.26}>
             <div style={{ textAlign: 'center', marginTop: 36 }}>
               <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.50)', marginBottom: 18, lineHeight: 1.6 }}>
@@ -746,12 +829,10 @@ export default function HomePage() {
             </FadeIn>
             <FadeIn delay={0.12}>
               <div style={{ backgroundColor: '#ffffff', borderRadius: 20, padding: '36px', boxShadow: '2px 2px 16px rgba(9,52,78,0.08)', border: '1.5px solid rgba(9,117,137,0.12)', display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
-                
-                {/* ── LOGO CORREGIDO ── */}
-                <div style={{ backgroundColor: '#F7F6F3', borderRadius: 12, padding: '20px 24px', marginBottom: 28, border: '1.5px solid #D9DEE2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <img src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Aliados/universidad.png" alt="USB Cali" style={{ display: 'block', objectFit: 'contain', width: '100%', maxHeight: 72 }} />
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 12, backgroundColor: '#F7F6F3', borderRadius: 12, padding: '12px 18px', marginBottom: 28, border: '1.5px solid #D9DEE2', alignSelf: 'flex-start' }}>
+                  <img src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Aliados/universidad.png" alt="USB Cali" height={36} style={{ display: 'block', objectFit: 'contain' }} />
+                  <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700, color: '#09344e', lineHeight: 1.35, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Universidad de San<br />Buenaventura</div>
                 </div>
-
                 <h3 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 20, fontWeight: 700, color: '#09344e', marginBottom: 12 }}>Ubicación</h3>
                 <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#5A6E77', lineHeight: 1.75, marginBottom: 22 }}>Universidad de San Buenaventura, Cali — Ubicada en zona céntrica de fácil acceso desde las avenidas principales de la ciudad, en la zona universitaria de la Avenida Cañasgordas.</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 32 }}>
@@ -941,6 +1022,12 @@ export default function HomePage() {
           .logos-grid    { grid-template-columns: 1fr 1fr !important; }
           .stats-grid    { grid-template-columns: repeat(2,1fr) !important; }
           .speakers-grid { grid-template-columns: 1fr 1fr !important; }
+        }
+        /* Hero: el overlay traducible hereda pointer-events none del padre,
+           pero los hijos interactivos (links, botones) lo re-habilitan */
+        #hero-translate-overlay a,
+        #hero-translate-overlay button {
+          pointer-events: auto;
         }
       `}</style>
     </div>
