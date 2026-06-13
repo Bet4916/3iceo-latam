@@ -109,9 +109,9 @@ const WaveUp = ({ from, to, height = 72 }: { from: string; to: string; height?: 
 
 // ─── DATOS ────────────────────────────────────────────────────────────────────
 const STATS = [
-  { num: '1.209+', label: 'Asistentes',        image: '/icons/talleres.svg'       },
-  { num: '192',    label: 'Organizaciones',     image: '/icons/convenios.svg'       },
-  { num: '30',     label: 'Panelistas',         image: '/icons/panelistas.svg'    },
+  { num: '1.209+', label: 'Asistentes',        image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Talleres.jpg'       },
+  { num: '192',    label: 'Organizaciones',     image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Convenios.jpeg'       },
+  { num: '30',     label: 'Panelistas',         image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Panelistas.jpg'    },
   { num: '17',     label: 'Entidades aliadas',  image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Aliados.png'   },
   { num: '14',     label: 'Conferencias',       image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Conferencias.jpg'  },
   { num: '28',     label: 'Stands Marketplace', image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Marketplace.png'     },
@@ -191,31 +191,31 @@ const PONENTES = [
 ]
 
 const ALIADOS_LOGOS = [
-  { src: '/icons/AWAQ_aliado.svg',           name: 'Awaq ONGD'                          },
-  { src: '/icons/humans_pro.svg',            name: 'HumansPRO®'                         },
-  { src: '/icons/logo_uni_USB.svg',          name: 'Univ. San Buenaventura'             },
-  { src: '/icons/gob_valle_cauca.svg',       name: 'Gobernación del Valle del Cauca'    },
-  { src: '/icons/sc_uni_lasalle_utopia.svg', name: 'Proyecto Utopía · U. de La Salle'  },
-  { src: '/icons/sc_sophic.svg',             name: 'SoPhIC'                             },
+  { src: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Aliados/logo.png',           name: 'Awaq ONGD'                          },
+  { src: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Aliados/humanspro.png',            name: 'HumansPRO®'                         },
+  { src: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Aliados/universidad.png',          name: 'Univ. San Buenaventura'             },
+  { src: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Aliados/gob_valle_cauca.svg',       name: 'Gobernación del Valle del Cauca'    },
+  { src: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Aliados/sc_uni_lasalle_utopia.svg', name: 'Proyecto Utopía · U. de La Salle'  },
+  { src: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Aliados/sc_sophic.svg',             name: 'SoPhIC'                             },
 ]
 
 const NOTICIAS_FALLBACK = [
   { tag: 'Impacto', tagColor: '#097589',
     titulo: '1.209 asistentes marcaron historia en el 2ICEO',
     desc: 'El segundo congreso superó todas las expectativas con participación de 192 organizaciones ambientales de 9 países latinoamericanos.',
-    fecha: 'Dic 2026', href: '/marketing/comunicaciones', img: '/icons/panelistas.svg',
+    fecha: 'Dic 2026', href: '/marketing/comunicaciones', img: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Panelistas.jpg',
     imgBg: 'linear-gradient(135deg, #09344e 0%, #097589 100%)',
   },
   { tag: 'Alianzas', tagColor: '#B53077',
     titulo: 'Nueva alianza con la Gobernación del Valle del Cauca',
     desc: 'El Valle del Cauca se suma como socio institucional clave del 3ICEO.',
-    fecha: 'Ene 2027', href: '/marketing/comunicaciones', img: '/icons/ent_aliados.svg',
+    fecha: 'Ene 2027', href: '/marketing/comunicaciones', img: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Aliados.png',
     imgBg: 'linear-gradient(135deg, #1C495C 0%, #74B4A7 100%)',
   },
   { tag: 'Programa', tagColor: '#4886B5',
     titulo: 'Líneas temáticas del 3ICEO: agua, cooperación y conclusiones',
     desc: 'Presentamos el marco conceptual que guiará los tres días del congreso.',
-    fecha: 'Feb 2027', href: '/marketing/comunicaciones', img: '/icons/conferencias.svg',
+    fecha: 'Feb 2027', href: '/marketing/comunicaciones', img: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Conferencias.jpg',
     imgBg: 'linear-gradient(135deg, #097589 0%, #AEE5DA 100%)',
   },
 ]
@@ -299,7 +299,7 @@ export default function HomePage() {
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg,#09344e 0%,#1C495C 55%,#437287 100%)' }} />
         <div style={{
           position: 'absolute', inset: 0,
-          backgroundImage: 'url(/icons/ubicacion_home.jpg)',
+          backgroundImage: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Home/ubicacion_home.jpg',
           backgroundSize: 'cover', backgroundPosition: 'center 45%', opacity: 0.55,
         }} />
         <div style={{
@@ -313,7 +313,7 @@ export default function HomePage() {
           <div style={{ maxWidth: 660 }}>
             <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: 'rgba(255,255,255,0.10)', border: '1px solid rgba(192,255,242,0.30)', borderRadius: 999, padding: '5px 16px', marginBottom: 20 }}>
-                <img src="/icons/icon-location.svg" alt="" width={12} height={12} style={{ filter: 'brightness(0) invert(1)', opacity: 0.8 }} />
+                <img src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon-location.svg" alt="" width={12} height={12} style={{ filter: 'brightness(0) invert(1)', opacity: 0.8 }} />
                 <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 600, color: '#C0FFF2', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
                   Universidad San Buenaventura · Cali, Colombia
                 </span>
@@ -346,8 +346,8 @@ export default function HomePage() {
             >
               {[
                 { icon: <IconCalendar size={13} color="rgba(255,255,255,0.85)" />, label: '17–19 Febrero 2027' },
-                { icon: <img src="/icons/icon-location.svg" alt="" width={12} height={12} style={{ filter: 'brightness(0) invert(1)', opacity: 0.85 }} />, label: 'Cali · Colombia' },
-                { icon: <img src="/icons/icon-streaming.svg" alt="" width={13} height={13} style={{ filter: 'brightness(0) invert(1)', opacity: 0.85 }} />, label: 'Presencial + Virtual' },
+                { icon: <img src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon-location.svg" alt="" width={12} height={12} style={{ filter: 'brightness(0) invert(1)', opacity: 0.85 }} />, label: 'Cali · Colombia' },
+                { icon: <img src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon-streaming.svg" alt="" width={13} height={13} style={{ filter: 'brightness(0) invert(1)', opacity: 0.85 }} />, label: 'Presencial + Virtual' },
               ].map(c => (
                 <div key={c.label} style={{ display: 'flex', alignItems: 'center', gap: 7, backgroundColor: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.18)', borderRadius: 999, padding: '6px 14px', fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 500, color: 'rgba(255,255,255,0.90)' }}>
                   {c.icon}{c.label}
@@ -498,7 +498,7 @@ export default function HomePage() {
                   <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: '#097589', lineHeight: 1.4, marginBottom: 4 }}>{p.org}</div>
                   <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: '#5A6E77', marginBottom: 14, lineHeight: 1.3 }}>{p.rol}</div>
                   <a href={p.social} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: 6, textDecoration: 'none', backgroundColor: p.socialType === 'linkedin' ? '#0A66C2' : '#E1306C' }}>
-                    <img src={p.socialType === 'linkedin' ? '/icons/icon_linkedin.svg' : '/icons/icon_instagram.svg'} alt="" width={13} height={13} style={{ display: 'block', filter: 'brightness(0) invert(1)' }} />
+                    <img src={p.socialType === 'linkedin' ? 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/linkedin-svgrepo-com.svg' : 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/instagram.svg'} alt="" width={13} height={13} style={{ display: 'block', filter: 'brightness(0) invert(1)' }} />
                   </a>
                 </div>
               </FadeIn>
@@ -676,7 +676,7 @@ export default function HomePage() {
       ══════════════════════════════════════════════════════════════════════ */}
       <section style={{ position: 'relative', overflow: 'hidden', minHeight: 480, display: 'flex', alignItems: 'center' }}>
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg,#09344e 0%,#1C495C 60%,#097589 100%)' }} />
-        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(/icons/market_ex.svg)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.35 }} />
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Marketplace/market_ex.svg', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.35 }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(100deg,rgba(9,52,78,0.88) 0%,rgba(9,52,78,0.55) 55%,rgba(9,52,78,0.20) 100%)' }} />
         <div style={{ position: 'relative', zIndex: 2, maxWidth: 1280, margin: '0 auto', padding: '80px 48px', width: '100%' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center' }} className="marketplace-grid">
@@ -736,7 +736,7 @@ export default function HomePage() {
                 <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg,rgba(9,52,78,0.10) 0%,rgba(9,52,78,0.80) 100%)' }} />
                 <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '32px' }}>
                   <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255,255,255,0.18)', border: '1px solid rgba(255,255,255,0.28)', backdropFilter: 'blur(6px)', borderRadius: 999, padding: '5px 14px', marginBottom: 16 }}>
-                    <img src="/icons/icon-location.svg" alt="" width={11} height={11} style={{ filter: 'brightness(0) invert(1)', opacity: 0.9 }} />
+                    <img src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon-location.svg" alt="" width={11} height={11} style={{ filter: 'brightness(0) invert(1)', opacity: 0.9 }} />
                     <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700, color: '#ffffff', letterSpacing: '0.12em', textTransform: 'uppercase' }}>Cali, Colombia</span>
                   </div>
                   <h3 style={{ fontFamily: 'Gloock, Georgia, serif', fontSize: 'clamp(22px,2.5vw,30px)', fontWeight: 400, color: '#ffffff', lineHeight: 1.2, marginBottom: 10 }}>Sede del evento</h3>
@@ -747,18 +747,18 @@ export default function HomePage() {
             <FadeIn delay={0.12}>
               <div style={{ backgroundColor: '#ffffff', borderRadius: 20, padding: '36px', boxShadow: '2px 2px 16px rgba(9,52,78,0.08)', border: '1.5px solid rgba(9,117,137,0.12)', display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
                 <div style={{ display: 'inline-flex', alignItems: 'center', gap: 12, backgroundColor: '#F7F6F3', borderRadius: 12, padding: '12px 18px', marginBottom: 28, border: '1.5px solid #D9DEE2', alignSelf: 'flex-start' }}>
-                  <img src="/icons/logo_uni_USB.svg" alt="USB Cali" height={36} style={{ display: 'block', objectFit: 'contain' }} />
+                  <img src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Aliados/universidad.png" alt="USB Cali" height={36} style={{ display: 'block', objectFit: 'contain' }} />
                   <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 700, color: '#09344e', lineHeight: 1.35, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Universidad de San<br />Buenaventura</div>
                 </div>
                 <h3 style={{ fontFamily: 'Poppins, sans-serif', fontSize: 20, fontWeight: 700, color: '#09344e', marginBottom: 12 }}>Ubicación</h3>
                 <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#5A6E77', lineHeight: 1.75, marginBottom: 22 }}>Universidad de San Buenaventura, Cali — Ubicada en zona céntrica de fácil acceso desde las avenidas principales de la ciudad, en la zona universitaria de la Avenida Cañasgordas.</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 32 }}>
-                  <img src="/icons/icon-location.svg" alt="" width={15} height={15} style={{ display: 'block', flexShrink: 0 }} />
+                  <img src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon-location.svg" alt="" width={15} height={15} style={{ display: 'block', flexShrink: 0 }} />
                   <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600, color: '#097589' }}>C/ Doctor Torres Navas 35, Cali 76110</span>
                 </div>
                 <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
                   <a href="https://maps.google.com/?q=Universidad+San+Buenaventura+Cali" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, backgroundColor: '#097589', color: '#fff', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 700, padding: '12px 22px', borderRadius: 999, textDecoration: 'none', boxShadow: '0 2px 12px rgba(9,117,137,0.30)' }}>
-                    <img src="/icons/icon-location.svg" alt="" width={13} height={13} style={{ filter: 'brightness(0) invert(1)' }} />
+                    <img src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon-location.svg" alt="" width={13} height={13} style={{ filter: 'brightness(0) invert(1)' }} />
                     Ver en el mapa
                   </a>
                   <a href="https://usbcali.edu.co/" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, border: '1.5px solid #097589', color: '#097589', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 600, padding: '12px 20px', borderRadius: 999, textDecoration: 'none' }}>

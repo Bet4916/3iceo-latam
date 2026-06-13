@@ -32,15 +32,15 @@ const STATS = [
   },
   {
     num: '03', label: 'Días de Marketplace',
-    image: '/icons/dias_marketplace.svg',
+    image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/D%C3%ADas%20de%20Marketplace.png',
   },
   {
     num: '9', label: 'Países representados',
-    image: '/icons/uni_aliadas.svg',
+    image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Universidades.jpeg',
   },
   {
     num: '100%', label: 'Enfoque sostenible',
-    image: "/icons/planta_donacion.svg",
+    image: "https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Aliados/photo-1542601906990-b4d3fb778b09.avif",
   },
 ]
 
@@ -131,7 +131,7 @@ export default function MarketplacePage() {
         description={<>Escaparate de organizaciones y soluciones sostenibles<br />del congreso ambiental más importante de LATAM</>}
         cta={{ label: 'EXPLORAR ECOWORLD →', href: '#ecoworld' }}
         ctaSecondary={{ label: 'Reserva tu stand', href: '/marketing/registro?tipo=asistencia&stand=true' }}
-        image="/icons/market_ex.svg"
+        image="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Marketplace/market_ex.svg"
         imageAlt="Marketplace del 3ICEO"
         imageLabel="Marketplace · 3° ICEO · Cali"
         imageScale={1.30}
@@ -317,6 +317,8 @@ export default function MarketplacePage() {
             </div>
           </FadeIn>
 
+          {/* El alto lo define EcoWorldEmbed mediante su aspect-ratio.
+              No le pongas height fijo a este wrapper o volverás a recortar el juego. */}
           <FadeIn delay={0.14}>
             <div style={{ borderRadius: 20, overflow: 'hidden', border: '1.5px solid rgba(174,229,218,0.18)', boxShadow: '0 8px 48px rgba(0,0,0,0.4)' }}>
               <EcoWorldEmbed />

@@ -35,6 +35,33 @@ function FadeIn({
   )
 }
 
+// ─── KEYCAP (para los controles del recorrido) ────────────────────────────────
+function Key({ children }: { children: React.ReactNode }) {
+  return (
+    <span
+      style={{
+        minWidth: 32,
+        height: 32,
+        padding: '0 7px',
+        borderRadius: 8,
+        background: '#fff',
+        border: '1px solid #C9D4D9',
+        boxShadow: '0 2px 0 #C9D4D9',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontFamily: 'Poppins, sans-serif',
+        fontSize: 15,
+        fontWeight: 700,
+        color: '#09344e',
+        lineHeight: 1,
+      }}
+    >
+      {children}
+    </span>
+  )
+}
+
 // ─── DATOS ────────────────────────────────────────────────────────────────────
 const INSTALACIONES = [
   { label: 'Auditorio Central',    bg: 'linear-gradient(135deg,#09344e 0%,#1C495C 100%)', imgSrc: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/donaciones/instalaciones_1.svg' },
@@ -69,6 +96,9 @@ const ESPACIOS_MAP = [
 // Cuando tengas el build final, solo reemplazas la carpeta /public/unity.
 const UNITY_EMBED_URL = '/unity-game/sede/index.html'
 
+const PDF_PLANO_URL =
+  'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/sedecongreso/mapa_uni.pdf'
+
 // ─── PLANO DEL ESPACIO + RECORRIDO VIRTUAL ────────────────────────────────────
 function PlanoDelEspacio() {
   const [vista, setVista] = useState<'mapa' | 'unity'>('mapa')
@@ -84,353 +114,384 @@ function PlanoDelEspacio() {
   return (
     <section style={{ backgroundColor: '#fff', padding: '72px 0' }}>
       <div className="container-brand" style={{ padding: '0 48px' }}>
+        {/* ── Encabezado (cambia según la vista) ── */}
+        <FadeIn>
+          <h2
+            style={{
+              fontFamily: 'Poppins, sans-serif',
+              fontSize: 26,
+              fontWeight: 600,
+              color: '#09344e',
+              marginBottom: 10,
+            }}
+          >
+            Plano del espacio
+          </h2>
+          <p
+            style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: 14,
+              color: '#5A6E77',
+              lineHeight: 1.8,
+              maxWidth: 560,
+              marginBottom: 24,
+            }}
+          >
+            {vista === 'mapa'
+              ? '¡Consulta el mapa de las instalaciones y llévalo contigo para no perderte!'
+              : 'Explora el campus en un recorrido 3D interactivo y descubre cada espacio donde se vivirá el congreso.'}
+          </p>
+        </FadeIn>
+
+        {/* ── Barra de herramientas: Toggle + PDF (siempre visible) ── */}
         <div
+          className="plano-toolbar"
           style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1.4fr',
-            gap: 56,
-            alignItems: 'start',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 16,
+            flexWrap: 'wrap',
+            marginBottom: 28,
           }}
-          className="plano-grid"
         >
-          {/* ── Columna izquierda ── */}
-          <FadeIn>
-            <h2
+          {/* Toggle: Ver Mapa / Recorrido Virtual */}
+          <div
+            role="tablist"
+            aria-label="Vista del plano"
+            style={{
+              display: 'flex',
+              gap: 0,
+              backgroundColor: '#F0F4F6',
+              borderRadius: 12,
+              padding: 4,
+              width: 'fit-content',
+            }}
+          >
+            <button
+              role="tab"
+              aria-selected={vista === 'mapa'}
+              onClick={() => setVista('mapa')}
               style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 7,
                 fontFamily: 'Poppins, sans-serif',
-                fontSize: 26,
+                fontSize: 12,
                 fontWeight: 600,
-                color: '#09344e',
-                marginBottom: 12,
+                padding: '9px 18px',
+                borderRadius: 9,
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                backgroundColor: vista === 'mapa' ? '#09344e' : 'transparent',
+                color: vista === 'mapa' ? '#fff' : '#5A6E77',
+                boxShadow: vista === 'mapa' ? '0 2px 8px rgba(9,52,78,0.25)' : 'none',
               }}
             >
-              Plano del espacio
-            </h2>
-            <p
-              style={{
-                fontFamily: 'Inter, sans-serif',
-                fontSize: 14,
-                color: '#5A6E77',
-                lineHeight: 1.8,
-                marginBottom: 24,
-              }}
-            >
-              ¡Consulta el mapa de las instalaciones y llévalo contigo para no perderte!
-            </p>
-
-            {/* Lista de espacios */}
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '6px 20px',
-                marginBottom: 28,
-              }}
-            >
-              {ESPACIOS_MAP.map((esp, i) => (
-                <div
-                  key={i}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    fontFamily: 'Inter, sans-serif',
-                    fontSize: 12,
-                    color: '#5A6E77',
-                    padding: '4px 0',
-                  }}
-                >
-                  <div
-                    style={{
-                      width: 20,
-                      height: 20,
-                      borderRadius: '50%',
-                      flexShrink: 0,
-                      backgroundColor: '#097589',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontFamily: 'Poppins, sans-serif',
-                      fontSize: 9,
-                      fontWeight: 700,
-                      color: '#fff',
-                    }}
-                  >
-                    {i + 1}
-                  </div>
-                  {esp}
-                </div>
-              ))}
-            </div>
-
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-              <a
-                href="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/sedecongreso/mapa_uni.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  backgroundColor: '#097589',
-                  color: '#fff',
-                  fontFamily: 'Poppins, sans-serif',
-                  fontSize: 12,
-                  fontWeight: 700,
-                  padding: '10px 20px',
-                  borderRadius: 999,
-                  textDecoration: 'none',
-                  letterSpacing: '0.04em',
-                  textTransform: 'uppercase',
-                }}
-              >
-                <IconPDF size={16} color="white" />
-                Ver Plano Completo PDF
-              </a>
-            </div>
-          </FadeIn>
-
-          {/* ── Columna derecha ── */}
-          <FadeIn delay={0.12}>
-            {/* Toggle: Ver Mapa / Recorrido Virtual */}
-            <div
-              role="tablist"
-              aria-label="Vista del plano"
-              style={{
-                display: 'flex',
-                gap: 0,
-                marginBottom: 16,
-                backgroundColor: '#F0F4F6',
-                borderRadius: 12,
-                padding: 4,
-                width: 'fit-content',
-              }}
-            >
-              <button
-                role="tab"
-                aria-selected={vista === 'mapa'}
-                onClick={() => setVista('mapa')}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 7,
-                  fontFamily: 'Poppins, sans-serif',
-                  fontSize: 12,
-                  fontWeight: 600,
-                  padding: '9px 18px',
-                  borderRadius: 9,
-                  border: 'none',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  backgroundColor: vista === 'mapa' ? '#09344e' : 'transparent',
-                  color: vista === 'mapa' ? '#fff' : '#5A6E77',
-                  boxShadow: vista === 'mapa' ? '0 2px 8px rgba(9,52,78,0.25)' : 'none',
-                }}
-              >
-                <svg width={14} height={14} viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"
-                    stroke={vista === 'mapa' ? '#AEE5DA' : '#5A6E77'}
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                Ver Mapa
-              </button>
-
-              <button
-                role="tab"
-                aria-selected={vista === 'unity'}
-                onClick={() => setVista('unity')}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 7,
-                  fontFamily: 'Poppins, sans-serif',
-                  fontSize: 12,
-                  fontWeight: 600,
-                  padding: '9px 18px',
-                  borderRadius: 9,
-                  border: 'none',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  backgroundColor: vista === 'unity' ? '#097589' : 'transparent',
-                  color: vista === 'unity' ? '#fff' : '#5A6E77',
-                  boxShadow: vista === 'unity' ? '0 2px 8px rgba(9,117,137,0.30)' : 'none',
-                }}
-              >
-                <svg width={14} height={14} viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
-                    stroke={vista === 'unity' ? '#AEE5DA' : '#5A6E77'}
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                Recorrido Virtual
-              </button>
-            </div>
-
-            {/* Panel: Mapa (por defecto) */}
-            {vista === 'mapa' && (
-              <motion.div
-                key="mapa"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, ease: 'easeOut' }}
-                style={{
-                  borderRadius: 14,
-                  overflow: 'hidden',
-                  boxShadow: '4px 8px 32px rgba(9,52,78,0.12)',
-                  border: '1px solid #D9DEE2',
-                }}
-              >
-                <img
-                  src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/sedecongreso/sede_vista_acortada.svg"
-                  alt="Plano Universidad de San Buenaventura Cali"
-                  style={{ width: '100%', height: 'auto', display: 'block' }}
+              <svg width={14} height={14} viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"
+                  stroke={vista === 'mapa' ? '#AEE5DA' : '#5A6E77'}
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
-              </motion.div>
-            )}
+              </svg>
+              Ver Mapa
+            </button>
 
-            {/* Panel: Recorrido virtual (Unity) */}
-            {vista === 'unity' && (
-              <motion.div
-                key="unity"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, ease: 'easeOut' }}
+            <button
+              role="tab"
+              aria-selected={vista === 'unity'}
+              onClick={() => setVista('unity')}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 7,
+                fontFamily: 'Poppins, sans-serif',
+                fontSize: 12,
+                fontWeight: 600,
+                padding: '9px 18px',
+                borderRadius: 9,
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                backgroundColor: vista === 'unity' ? '#097589' : 'transparent',
+                color: vista === 'unity' ? '#fff' : '#5A6E77',
+                boxShadow: vista === 'unity' ? '0 2px 8px rgba(9,117,137,0.30)' : 'none',
+              }}
+            >
+              <svg width={14} height={14} viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+                  stroke={vista === 'unity' ? '#AEE5DA' : '#5A6E77'}
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              Recorrido Virtual
+            </button>
+          </div>
+
+          {/* Botón PDF (siempre disponible) */}
+          <a
+            href={PDF_PLANO_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              backgroundColor: '#097589',
+              color: '#fff',
+              fontFamily: 'Poppins, sans-serif',
+              fontSize: 12,
+              fontWeight: 700,
+              padding: '10px 20px',
+              borderRadius: 999,
+              textDecoration: 'none',
+              letterSpacing: '0.04em',
+              textTransform: 'uppercase',
+            }}
+          >
+            <IconPDF size={16} color="white" />
+            Ver Plano Completo PDF
+          </a>
+        </div>
+
+        {/* ════════════════════ VISTA: MAPA ════════════════════ */}
+        {vista === 'mapa' && (
+          <motion.div
+            key="mapa"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+            className="plano-grid"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1.4fr',
+              gap: 56,
+              alignItems: 'start',
+            }}
+          >
+            {/* ── Leyenda de espacios ── */}
+            <div>
+              <span
+                style={{
+                  fontFamily: 'Poppins, sans-serif',
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: '#097589',
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                  display: 'block',
+                  marginBottom: 16,
+                }}
               >
-                {/* Descripción breve de cómo funciona */}
-                <div
-                  style={{
-                    backgroundColor: '#F0F9F7',
-                    border: '1px solid rgba(9,117,137,0.18)',
-                    borderRadius: 12,
-                    padding: '14px 18px',
-                    marginBottom: 14,
-                    display: 'flex',
-                    gap: 12,
-                    alignItems: 'flex-start',
-                  }}
-                >
+                Espacios del campus
+              </span>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '6px 20px',
+                }}
+              >
+                {ESPACIOS_MAP.map((esp, i) => (
                   <div
+                    key={i}
                     style={{
-                      width: 36,
-                      height: 36,
-                      borderRadius: 8,
-                      backgroundColor: '#097589',
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                      marginTop: 1,
+                      gap: 8,
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: 12,
+                      color: '#5A6E77',
+                      padding: '4px 0',
                     }}
                   >
-                    <svg width={18} height={18} viewBox="0 0 24 24" fill="none">
-                      <path
-                        d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
-                        stroke="#fff"
-                        strokeWidth="1.8"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </div>
-                  <div>
-                    <p
+                    <div
                       style={{
+                        width: 20,
+                        height: 20,
+                        borderRadius: '50%',
+                        flexShrink: 0,
+                        backgroundColor: '#097589',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                         fontFamily: 'Poppins, sans-serif',
-                        fontSize: 12,
+                        fontSize: 9,
                         fontWeight: 700,
-                        color: '#09344e',
-                        marginBottom: 3,
+                        color: '#fff',
                       }}
                     >
-                      Recorrido virtual de la sede
-                    </p>
-                    <p
-                      style={{
-                        fontFamily: 'Inter, sans-serif',
-                        fontSize: 12,
-                        color: '#5A6E77',
-                        lineHeight: 1.6,
-                        margin: 0,
-                      }}
-                    >
-                      Explora el campus de la Universidad de San Buenaventura en 3D.
-                      No necesitas moverte: haz <strong style={{ color: '#097589' }}>clic
-                      sobre cada ubicación</strong> para ver su descripción e información
-                      del espacio.
-                    </p>
+                      {i + 1}
+                    </div>
+                    {esp}
                   </div>
-                </div>
+                ))}
+              </div>
+            </div>
 
-                {/* Embed del build de Unity */}
-                <div
-                  ref={iframeContainerRef}
+            {/* ── Imagen del mapa ── */}
+            <div
+              style={{
+                borderRadius: 14,
+                overflow: 'hidden',
+                boxShadow: '4px 8px 32px rgba(9,52,78,0.12)',
+                border: '1px solid #D9DEE2',
+              }}
+            >
+              <img
+                src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/sedecongreso/sede_vista_acortada.svg"
+                alt="Plano Universidad de San Buenaventura Cali"
+                style={{ width: '100%', height: 'auto', display: 'block' }}
+              />
+            </div>
+          </motion.div>
+        )}
+
+        {/* ════════════════════ VISTA: RECORRIDO VIRTUAL ════════════════════ */}
+        {vista === 'unity' && (
+          <motion.div
+            key="unity"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+          >
+            {/* ── Panel de controles ── */}
+            <div
+              className="plano-controles"
+              style={{
+                backgroundColor: '#F0F9F7',
+                border: '1px solid rgba(9,117,137,0.18)',
+                borderRadius: 14,
+                padding: '18px 22px',
+                marginBottom: 18,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 28,
+                flexWrap: 'wrap',
+              }}
+            >
+              {/* Flechas del teclado */}
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 6,
+                  flexShrink: 0,
+                }}
+              >
+                <Key>↑</Key>
+                <div style={{ display: 'flex', gap: 6 }}>
+                  <Key>←</Key>
+                  <Key>↓</Key>
+                  <Key>→</Key>
+                </div>
+              </div>
+
+              {/* Texto de controles */}
+              <div style={{ flex: 1, minWidth: 220 }}>
+                <p
                   style={{
-                    borderRadius: 14,
-                    overflow: 'hidden',
-                    border: '1px solid rgba(9,117,137,0.20)',
-                    boxShadow: '4px 8px 32px rgba(9,52,78,0.15)',
-                    aspectRatio: '16/10',
-                    backgroundColor: '#09344e',
-                    position: 'relative',
+                    fontFamily: 'Poppins, sans-serif',
+                    fontSize: 13,
+                    fontWeight: 700,
+                    color: '#09344e',
+                    marginBottom: 6,
                   }}
                 >
-                  <button
-                    onClick={openFullscreen}
-                    style={{
-                      position: 'absolute',
-                      top: 12,
-                      right: 12,
-                      zIndex: 20,
-                      background: 'rgba(0,0,0,0.7)',
-                      color: '#fff',
-                      border: 'none',
-                      borderRadius: 8,
-                      padding: '8px 12px',
-                      cursor: 'pointer',
-                      fontSize: 12,
-                      fontWeight: 600,
-                    }}
-                  >
-                    ⛶ Pantalla completa
-                  </button>
-
-                  <iframe
-                    src={UNITY_EMBED_URL}
-                    title="Recorrido virtual USB Cali — 3° ICEO LATAM"
-                    allowFullScreen
-                    allow="fullscreen; autoplay; gamepad; xr-spatial-tracking"
-                    loading="lazy"
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      border: 'none',
-                      display: 'block',
-                    }}
-                  />
-                </div>
-
+                  Cómo moverte por el campus
+                </p>
                 <p
                   style={{
                     fontFamily: 'Inter, sans-serif',
-                    fontSize: 11,
-                    color: '#9AA8AF',
-                    marginTop: 10,
-                    textAlign: 'center',
+                    fontSize: 13,
+                    color: '#5A6E77',
+                    lineHeight: 1.6,
+                    margin: 0,
                   }}
                 >
-                  La experiencia puede tardar unos segundos en cargar la primera vez.
+                  Usa las{' '}
+                  <strong style={{ color: '#097589' }}>flechas del teclado</strong> para
+                  caminar. Para ver la información de un lugar,{' '}
+                  <strong style={{ color: '#097589' }}>entra a cada instalación</strong> y
+                  aparecerá su descripción.
                 </p>
-              </motion.div>
-            )}
-          </FadeIn>
-        </div>
+              </div>
+
+              {/* Botón pantalla completa (atajo en el panel) */}
+              <button
+                onClick={openFullscreen}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 7,
+                  background: '#09344e',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 999,
+                  padding: '10px 18px',
+                  cursor: 'pointer',
+                  fontFamily: 'Poppins, sans-serif',
+                  fontSize: 12,
+                  fontWeight: 700,
+                  letterSpacing: '0.03em',
+                  flexShrink: 0,
+                }}
+              >
+                ⛶ Pantalla completa
+              </button>
+            </div>
+
+            {/* ── Juego embebido (ancho completo y grande) ── */}
+            <div
+              ref={iframeContainerRef}
+              style={{
+                borderRadius: 16,
+                overflow: 'hidden',
+                border: '1px solid rgba(9,117,137,0.20)',
+                boxShadow: '4px 10px 40px rgba(9,52,78,0.18)',
+                width: '100%',
+                height: 'clamp(460px, 72vh, 780px)',
+                backgroundColor: '#09344e',
+                position: 'relative',
+              }}
+            >
+              <iframe
+                src={UNITY_EMBED_URL}
+                title="Recorrido virtual USB Cali — 3° ICEO LATAM"
+                allowFullScreen
+                allow="fullscreen; autoplay; gamepad; xr-spatial-tracking"
+                loading="lazy"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  border: 'none',
+                  display: 'block',
+                }}
+              />
+            </div>
+
+            <p
+              style={{
+                fontFamily: 'Inter, sans-serif',
+                fontSize: 11,
+                color: '#9AA8AF',
+                marginTop: 10,
+                textAlign: 'center',
+              }}
+            >
+              La experiencia puede tardar unos segundos en cargar la primera vez.
+            </p>
+          </motion.div>
+        )}
       </div>
     </section>
   )
@@ -784,7 +845,7 @@ export default function UniversidadPage() {
                 boxShadow: '2px 2px 8px rgba(9,52,78,0.07)',
               }}>
                 <img
-                  src="/icons/logo_uni_USB.svg"
+                  src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Aliados/universidad.png"
                   alt="Universidad de San Buenaventura"
                   height={20}
                   style={{ display: 'block', objectFit: 'contain', maxWidth: 120 }}
@@ -888,6 +949,7 @@ export default function UniversidadPage() {
         }
         @media (max-width: 600px) {
           .inst-grid { grid-template-columns: 1fr 1fr !important; }
+          .plano-controles { gap: 16px !important; }
         }
       `}</style>
     </div>

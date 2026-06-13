@@ -17,6 +17,7 @@
  *  │ imageAlt     │ alt de la imagen                                     │
  *  │ imageLabel   │ Texto del chip flotante sobre la imagen              │
  *  │ imageScale   │ Escala la imagen. Default: 1. Usar 1.40 p/ SVGs     │
+ *  │ imageRatio   │ Relación de aspecto del frame. Default: '16 / 10'    │
  *  │ waveVariant  │ 'default' | 'overlap' | 'sharp' | 'none'            │
  *  │ waveColor    │ Color de relleno de la ola (def: '#ffffff')          │
  *  │ children     │ Slot libre — se renderiza DENTRO de la ola, encima  │
@@ -31,6 +32,14 @@
  *  │    </>                                                              │
  *  │  }                                                                  │
  *  └─────────────────────────────────────────────────────────────────────┘
+ *
+ *  RELACIÓN DE ASPECTO (imageRatio):
+ *  · '16 / 10' → rectangular estándar (default)
+ *  · '16 / 9'  → más panorámico / cine
+ *  · '3 / 2'   → un poco más cuadrado
+ *  · '4 / 3'   → cuadrado clásico
+ *  El frame mantiene SIEMPRE esta proporción sin importar la imagen;
+ *  objectFit: cover recorta lo que sobre.
  *
  *  VARIANTES DE OLA:
  *  · 'default' → ola suave estándar (memoria, home…)
@@ -70,6 +79,8 @@ export interface HeroIceoProps {
   imageLabel?: string
   /** Escala la imagen dentro del frame. Default: 1. Usar 1.40 para SVGs que no llenan el contenedor */
   imageScale?: number
+  /** Relación de aspecto del frame de imagen. Default: '16 / 10' (rectangular) */
+  imageRatio?: string
   waveVariant?: WaveVariant
   waveColor?: string
   children?: React.ReactNode
@@ -145,6 +156,7 @@ export default function HeroIceo({
   imageAlt = 'ICEO LATAM',
   imageLabel,
   imageScale = 1,
+  imageRatio = '16 / 10',
   waveVariant = 'default',
   waveColor = '#ffffff',
   children,
@@ -298,8 +310,8 @@ export default function HeroIceo({
                 <div style={{ position: 'absolute', bottom: '-15%', right: '-5%', width: '55%', height: '55%', background: 'radial-gradient(ellipse at 55% 65%, rgba(174,229,218,0.40) 0%, transparent 65%)', pointerEvents: 'none' }} />
               </div>
 
-              {/* Capa 2 · Imagen · frontal */}
-              <div style={{ position: 'relative', zIndex: 2, borderRadius: 14, overflow: 'hidden', transform: `rotate(${imageHovered ? 0 : -1.5}deg)`, transition: 'transform 0.55s cubic-bezier(0.22,1,0.36,1)', boxShadow: '0 16px 56px rgba(0,0,0,0.38)', willChange: 'transform', isolation: 'isolate', backgroundColor: '#000', minHeight: 320 }}>
+              {/* Capa 2 · Imagen · frontal — proporción fija con aspectRatio */}
+              <div style={{ position: 'relative', zIndex: 2, borderRadius: 14, overflow: 'hidden', transform: `rotate(${imageHovered ? 0 : -1.5}deg)`, transition: 'transform 0.55s cubic-bezier(0.22,1,0.36,1)', boxShadow: '0 16px 56px rgba(0,0,0,0.38)', willChange: 'transform', isolation: 'isolate', backgroundColor: '#000', width: '100%', aspectRatio: imageRatio }}>
                 <img
                   src={image}
                   alt={imageAlt}

@@ -24,15 +24,15 @@ const FadeIn = ({ children, delay = 0, style }: { children: React.ReactNode; del
 // Imágenes LOCALES por ahora. Cuando tengas las fotos en Cloudflare R2,
 // solo reemplaza cada "image" por su URL (mismo orden, mismo num/label).
 const MOMENTOS = [
-  { num: '30', label: 'Panelistas',                       image: '/icons/panelistas.svg'       },
+  { num: '30', label: 'Panelistas',                       image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Panelistas.jpg'       },
   { num: '14', label: 'Conferencias',                     image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Conferencias.jpg'     },
-  { num: '02', label: 'Conversatorios',                   image: '/icons/conversatorios.svg'   },
+  { num: '02', label: 'Conversatorios',                   image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Conversatorios.jpeg'   },
   { num: '28', label: 'Organizaciones en el Marketplace', image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Marketplace.png'  },
   { num: '02', label: 'Convenios',                        image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Convenios.jpeg'        },
-  { num: '05', label: 'Talleres',                         image: '/icons/talleres.svg'         },
+  { num: '05', label: 'Talleres',                         image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Talleres.jpg'         },
   { num: '17', label: 'Entidades aliadas',                image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Aliados.png'      },
-  { num: '03', label: 'Días de Marketplace',              image: '/icons/dias_marketplace.svg' },
-  { num: '09', label: 'Universidades aliadas',            image: '/icons/uni_aliadas.svg'      },
+  { num: '03', label: 'Días de Marketplace',              image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/D%C3%ADas%20de%20Marketplace.png' },
+  { num: '09', label: 'Universidades aliadas',            image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Universidades.jpeg'      },
 ]
 
 const IMPACTO = [
@@ -280,7 +280,7 @@ export default function SegundoIceoPage() {
         title={<>Memoria <span style={{ color: '#ffffff' }}>2do ICEO</span></>}
         description={<>Descubre el impacto de la segunda edición del congreso<br />y el movimiento que transforma territorios en LATAM</>}
         cta={{ label: 'VER MEMORIA →', href: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Memorias_Congreso%202%C2%BAICEO.pdf', target: '_blank' }}
-        image="/icons/2do_iceo.svg"
+        image="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Hero%20memoria%202o%20ICEO.jpg"
         imageAlt="2° ICEO LATAM · Cali 2026"
         imageLabel="2° ICEO · 2026 · Cali"
         imageScale={1.40}
@@ -454,7 +454,7 @@ export default function SegundoIceoPage() {
             <FadeIn>
               <div style={{ borderRadius: 14, overflow: 'hidden', aspectRatio: '4/3', boxShadow: '8px 8px 40px rgba(0,0,0,0.3)', backgroundColor: '#09344e' }}>
                 <img
-                  src="/icons/2do_iceo.svg"
+                  src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Hero%20memoria%202o%20ICEO.jpg"
                   alt="Relevancia e Impacto 2° ICEO"
                   style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transform: 'scale(1.40)', transformOrigin: 'center center' }}
                 />

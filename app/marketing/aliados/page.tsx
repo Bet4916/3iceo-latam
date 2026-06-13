@@ -33,21 +33,21 @@ interface Socio {
 // ─── Organizadores — hardcodeados, nunca cambian ──────────────────────────────
 const ORGANIZADORES = [
   {
-    logo:     '/icons/AWAQ_aliado.svg',
+    logo:     'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Aliados/logo.png',
     name:     'Awaq ONGD',
     href:     'https://www.somosawaq.org/',
     desc:     'Awaq es una organización de cooperación internacional que, desde 2019, se dedica al desarrollo de proyectos de investigación científica y conservación de ecosistemas en comunidades menos favorecidas. A través de Estaciones Biológicas, Awaq implementa modelos económicos alternativos con el objetivo de mejorar la calidad de vida de los habitantes de estas comunidades.',
     accentBg: '#ADC6D9',
   },
   {
-    logo:     '/icons/humans_pro.svg',
+    logo:     'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Aliados/humanspro.png',
     name:     'HumansPRO®',
     href:     'https://www.humanspro.org/',
     desc:     'Como Ente de Acreditación Internacional, promovemos la confianza y la transparencia en los procesos de certificación, garantizando que nuestras acreditaciones reflejen competencia, excelencia y cumplimiento de estándares internacionales. Colaboramos con diversos sectores como industria, tecnología, educación y salud.',
     accentBg: '#4886B5',
   },
   {
-    logo:     '/icons/logo_uni_USB.svg',
+    logo:     'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Aliados/universidad.png',
     name:     'Universidad de San Buenaventura',
     href:     'https://usb.edu.co/',
     desc:     'La Universidad de San Buenaventura en Cali es una institución de educación superior que se distingue por su enfoque católico y franciscano, buscando la formación integral del ser humano y la transformación de la sociedad. Fue fundada por la comunidad Franciscana y ha contribuido al desarrollo de la educación colombiana desde su creación.',
@@ -57,11 +57,11 @@ const ORGANIZADORES = [
 
 // ─── Socios fallback hardcodeados ─────────────────────────────────────────────
 const SOCIOS_FALLBACK: Socio[] = [
-  { logo: '/icons/gob_valle_cauca.svg',      isJpg: false, name: 'Gobernación del Valle del Cauca',             desc: 'Máxima autoridad administrativa del departamento, promueve el desarrollo integral, la prosperidad y la preservación cultural de sus habitantes.',                              href: 'https://www.valledelcauca.gov.co/',                                    accentBg: '#097589' },
-  { logo: '/icons/sc_uni_lasalle_utopia.svg', isJpg: false, name: 'Proyecto Utopía · Universidad de La Salle',   desc: 'Referente de transformación territorial y agroecología con sentido social. Modelo educativo rural orientado a la paz y la sostenibilidad.',                                   href: 'https://lasalle.edu.co/es/campus-unisalle/campus-yopal/proyecto-utopia', accentBg: '#4886B5' },
-  { logo: '/icons/sc_proyecto_colombia.svg',  isJpg: false, name: 'Proyectando Colombia',                         desc: 'Integra regiones y fortalece la imagen de PMI® en Colombia, contribuyendo al desarrollo sostenible a través de la gestión de proyectos.',                                   href: 'https://www.proyectandocolombia.org/',                                  accentBg: '#ADC6D9' },
-  { logo: '/icons/sc_sophic.svg',             isJpg: false, name: 'SoPhIC — Sociedad Filosófica Iberoamérica-Colombia', desc: 'Asociación gremial de doctores e investigadores de Colombia, generando impacto social, económico y científico a nivel nacional e internacional.',               href: 'https://www.sophicol.org/',                                            accentBg: '#74B4A7' },
-  { logo: '/icons/sc_juanDcastellanos.jpg',   isJpg: true,  name: 'Fundación Universitaria Juan de Castellanos',  desc: 'Aliada en la articulación entre academia, sostenibilidad y acción comunitaria. Comprometida con el desarrollo rural y la conservación ambiental.',                        href: 'https://www.jdc.edu.co/',                                              accentBg: '#097589' },
+  { logo: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Aliados/gob_valle_cauca.svg',      isJpg: false, name: 'Gobernación del Valle del Cauca',             desc: 'Máxima autoridad administrativa del departamento, promueve el desarrollo integral, la prosperidad y la preservación cultural de sus habitantes.',                              href: 'https://www.valledelcauca.gov.co/',                                    accentBg: '#097589' },
+  { logo: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Aliados/sc_uni_lasalle_utopia.svg', isJpg: false, name: 'Proyecto Utopía · Universidad de La Salle',   desc: 'Referente de transformación territorial y agroecología con sentido social. Modelo educativo rural orientado a la paz y la sostenibilidad.',                                   href: 'https://lasalle.edu.co/es/campus-unisalle/campus-yopal/proyecto-utopia', accentBg: '#4886B5' },
+  { logo: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/patrocinadores/Socios%20Colaboradores/Proyectando%20Colombia.png',  isJpg: false, name: 'Proyectando Colombia',                         desc: 'Integra regiones y fortalece la imagen de PMI® en Colombia, contribuyendo al desarrollo sostenible a través de la gestión de proyectos.',                                   href: 'https://www.proyectandocolombia.org/',                                  accentBg: '#ADC6D9' },
+  { logo: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Aliados/sc_sophic.svg',             isJpg: false, name: 'SoPhIC — Sociedad Filosófica Iberoamérica-Colombia', desc: 'Asociación gremial de doctores e investigadores de Colombia, generando impacto social, económico y científico a nivel nacional e internacional.',               href: 'https://www.sophicol.org/',                                            accentBg: '#74B4A7' },
+  { logo: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/patrocinadores/Socios%20Colaboradores/Fundacion%20Juan%20de%20Castellanos.jpg',   isJpg: true,  name: 'Fundación Universitaria Juan de Castellanos',  desc: 'Aliada en la articulación entre academia, sostenibilidad y acción comunitaria. Comprometida con el desarrollo rural y la conservación ambiental.',                        href: 'https://www.jdc.edu.co/',                                              accentBg: '#097589' },
 ]
 
 function OrgCard({ org, delay = 0 }: { org: typeof ORGANIZADORES[0]; delay?: number }) {
@@ -148,7 +148,7 @@ export default function AliadosPage() {
         description={<>Una red de instituciones y organizaciones comprometidas<br />con el futuro de las fuentes hídricas</>}
         cta={{ label: 'QUIERO ASISTIR →', href: '/marketing/registro' }}
         ctaSecondary={{ label: 'Ver programa', href: '/marketing/agenda' }}
-        image="/icons/aliados.svg"
+        image="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/Aliados/aliados.svg"
         imageAlt="Red de aliados ICEO LATAM"
         imageLabel="3° ICEO · Aliados · 2027"
         waveVariant="default"

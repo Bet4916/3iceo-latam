@@ -119,7 +119,7 @@ export default function SectionDonacion({
                 >
                   {/* ── Ícono de PayPal (mismo que el HeroIceo) ── */}
                   <img
-                    src="/icons/icon_paypal.svg"
+                    src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/paypal.svg"
                     alt=""
                     width={18}
                     height={18}
@@ -152,7 +152,7 @@ export default function SectionDonacion({
                 backgroundColor: bg,
               }}>
                 <img
-                  src="/icons/planta_donacion.svg"
+                  src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/planta_donacion.svg"
                   alt="Donación — planta en manos"
                   style={{ width: '100%', height: 'auto', display: 'block', maxHeight: 360, objectFit: 'cover' }}
                 />

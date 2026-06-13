@@ -130,7 +130,7 @@ export default function ColaboraPage() {
         description="Súmate como voluntario virtual, aliado estratégico o medio acreditado para ampliar el impacto territorial del congreso."
         cta={{ label: 'Quiero colaborar', href: '#como-colaborar' }}
         ctaSecondary={{ label: 'Donar', href: '/marketing/donaciones' }}
-        image="/icons/convenios.svg"
+        image="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Convenios.jpeg"
         imageAlt="Colabora con 3ICEO"
         imageLabel="3er ICEO LATAM"
         waveVariant="default"

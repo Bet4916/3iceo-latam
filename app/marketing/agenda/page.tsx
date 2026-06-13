@@ -245,7 +245,7 @@ export default function AgendaPage() {
         description={<>Tres días de conferencias, paneles, talleres<br />y experiencias para activar soluciones hídricas</>}
         cta={{ label: 'QUIERO ASISTIR →', href: '/marketing/registro' }}
         ctaSecondary={{ label: 'VER LÍNEAS TEMÁTICAS', href: '/marketing/lineas-tematicas' }}
-        image="/icons/panelistas.svg"
+        image="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/2%20ICEO/Mermoria%202ICEO/3ICEO/Panelistas.jpg"
         imageAlt="Panelistas 3ICEO"
         imageLabel="3° ICEO · 17-19 Ago · Cali"
         imageScale={1.30}
@@ -361,7 +361,7 @@ export default function AgendaPage() {
                 onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#074954')}
                 onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#097589')}
               >
-                <img src="/icons/icon_PDF.svg" alt="PDF" width={18} height={18} style={{ display: 'block', filter: 'brightness(0) invert(1)' }} />
+                <img src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon_PDF.svg" alt="PDF" width={18} height={18} style={{ display: 'block', filter: 'brightness(0) invert(1)' }} />
                 DESCARGAR HORARIOS PDF
               </a>
               <Link href="/marketing/lineas-tematicas"

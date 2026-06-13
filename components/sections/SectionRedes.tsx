@@ -64,9 +64,9 @@ export default function SectionRedes({
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 320 }}>
               {[
-                { label: 'Instagram', bg: '#E1306C', href: 'https://instagram.com/awaqongd',       iconSrc: '/icons/icon_instagram.svg' },
-                { label: 'Facebook',  bg: '#1877F2', href: 'https://facebook.com/somosawaq',        iconSrc: '/icons/icon_facebook.svg'  },
-                { label: 'LinkedIn',  bg: '#0A66C2', href: 'https://www.linkedin.com/company/awaq-ongd/', iconSrc: '/icons/icon_linkedin.svg'  },
+                { label: 'Instagram', bg: '#E1306C', href: 'https://instagram.com/awaqongd',       iconSrc: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/instagram.svg' },
+                { label: 'Facebook',  bg: '#1877F2', href: 'https://facebook.com/somosawaq',        iconSrc: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/facebook.svg'  },
+                { label: 'LinkedIn',  bg: '#0A66C2', href: 'https://www.linkedin.com/company/awaq-ongd/', iconSrc: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/linkedin.svg'  },
               ].map(({ label, bg: redBg, href, iconSrc }) => (
                 <a
                   key={label}
@@ -115,7 +115,7 @@ export default function SectionRedes({
               boxShadow: '4px 4px 24px rgba(9,52,78,0.12)',
             }}>
               <img
-                src="/icons/follow.svg"
+                src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/follow.svg"
                 alt="Follow us on social media"
                 style={{ width: '100%', maxWidth: 320, height: 'auto', display: 'block' }}
               />

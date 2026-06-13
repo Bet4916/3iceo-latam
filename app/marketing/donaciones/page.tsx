@@ -46,30 +46,30 @@ function Icon({
 
 // ─── CONSTS ───────────────────────────────────────────────────────────────────
 const TAGS = [
-  { label: 'Alojamiento', icon: '/icons/icon_bed.svg'       },
-  { label: 'Transporte',  icon: '/icons/icon_transport.svg' },
-  { label: 'Dieta',       icon: '/icons/icon_food.svg'      },
+  { label: 'Alojamiento', icon: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/bed.svg'       },
+  { label: 'Transporte',  icon: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/bus.svg' },
+  { label: 'Dieta',       icon: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/cutlery.svg'      },
 ]
 
 const IMPACTOS = [
   {
     label: 'Mayor acceso a recursos tecnológicos',
-    image: '/icons/donaciones_ti.svg',
+    image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/donaciones_ti.svg',
     bg:    'linear-gradient(160deg, #1C495C 0%, #097589 100%)',
   },
   {
     label: 'Mayor representación en administraciones públicas',
-    image: '/icons/donaciones_admin_publicas.svg',
+    image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/donaciones_admin_publicas.svg',
     bg:    'linear-gradient(160deg, #09344e 0%, #437287 100%)',
   },
   {
     label: 'Mayor respaldo de empresas privadas',
-    image: '/icons/donaciones_empresas.svg',
+    image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/donaciones_empresas.svg',
     bg:    'linear-gradient(160deg, #074954 0%, #74B4A7 100%)',
   },
   {
     label: 'Mayor acceso a financiaciones',
-    image: '/icons/donaciones_finanzas.svg',
+    image: 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/donaciones_finanzas.svg',
     bg:    'linear-gradient(160deg, #437287 0%, #AEE5DA 100%)',
   },
 ]
@@ -188,13 +188,13 @@ export default function DonacionesPage() {
         cta={{
           label: 'DONAR',
           href:  '#form-donacion',
-          icon:  '/icons/icon_paypal.svg',
+          icon:  'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/paypal.svg',
           onClick: (e: React.MouseEvent) => {
             e.preventDefault()
             scrollToForm()
           },
         }}
-        image="/icons/donaciones_abrazo_azul.svg"
+        image="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/donacion_hero.png"
         imageAlt="Ilustración de donaciones"
         imageLabel="3° ICEO · Donaciones"
         waveVariant="default"
@@ -465,7 +465,7 @@ export default function DonacionesPage() {
                       ) : (
                         <>
                           DONAR
-                          <Icon src="/icons/icon_paypal.svg" size={18} />
+                          <Icon src="https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/paypal.svg" size={18} />
                         </>
                       )}
                     </button>
@@ -659,7 +659,7 @@ export default function DonacionesPage() {
                         <Icon
                           src={open
                             ? '/icons/icon_questionmark_selcted.svg'
-                            : '/icons/icon_questionmark_no_selcted.svg'
+                            : 'https://pub-94aa83314f8a41088bff3c1130d43ebd.r2.dev/3ICEO/ui/icon_questionmark_no_selcted.svg'
                           }
                           size={22}
                           style={{ flexShrink: 0, transition: 'transform 0.2s' }}
